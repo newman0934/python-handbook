@@ -15,12 +15,19 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.11",
     "tzdata>=2024.1",  # Windows 的 zoneinfo 需要（IANA 時區資料）
+    "pandas-stubs>=2.2",  # Part 17 範例的 pandas 型別（mypy 需要）
 ]
 # 實戰專案 task-api（Part 14 前後啟用）
 web = [
     "fastapi>=0.115",
     "uvicorn>=0.32",
     "pydantic>=2.9",
+]
+# 資料處理與科學計算（Part 17 啟用）
+data = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "matplotlib>=3.9",
 ]
 
 [build-system]
