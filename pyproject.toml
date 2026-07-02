@@ -1,0 +1,49 @@
+[project]
+name = "python-handbook"
+version = "0.1.0"
+description = "Python Engineering Handbook — From Zero to Senior Python Engineer"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+# 開發與驗證用依賴（跑測試、lint、型別檢查）
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+# 實戰專案 task-api（Part 14 前後啟用）
+web = [
+    "fastapi>=0.115",
+    "uvicorn>=0.32",
+    "pydantic>=2.9",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+# 內容型專案：不打包成單一 package，測試以路徑指定
+py-modules = []
+
+[tool.pytest.ini_options]
+testpaths = ["project", "examples", "solutions", "exercises"]
+python_files = ["test_*.py", "*_test.py"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = [".venv", "chapters"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+exclude = ["chapters/", "exercises/"]

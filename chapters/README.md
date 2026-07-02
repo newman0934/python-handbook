@@ -1,0 +1,30 @@
+# Python Handbook — 章節總覽
+
+> 全書規劃 **22 個 Part / 241 章**，由語言基礎往上逐步建立工程能力。
+
+| # | Part | 章數 | 主題 |
+|---|------|------|------|
+| 1 | [入門 Getting Started](01-getting-started/) | 12 | 從零開始：認識 Python、把開發環境準備好、理解 Python 怎麼被執行。 |
+| 2 | [語言基礎 Fundamentals](02-fundamentals/) | 15 | 動態型別、基本型別、運算子、流程控制、函式與作用域——寫任何 Python 的地基。 |
+| 3 | [資料結構 Data Structures](03-data-structures/) | 12 | list / tuple / dict / set 的用法與底層模型，可變性與 hashable。 |
+| 4 | [物件導向 OOP](04-oop/) | 15 | class、繼承、MRO、property 與魔術方法——Python 的物件模型。 |
+| 5 | [型別系統 Typing](05-typing/) | 11 | type hints、typing 模組、泛型與 Protocol，配合 mypy 做靜態型別檢查。 |
+| 6 | [錯誤處理 Error Handling](06-error-handling/) | 12 | exception 機制、try/except、自訂例外與 context manager。 |
+| 7 | [迭代器與生成器 Iterators & Generators](07-iterators-generators/) | 8 | iterable / iterator 協定、generator 與 yield、itertools。 |
+| 8 | [函數式與裝飾器 Functional & Decorators](08-functional-decorators/) | 7 | 高階函式、decorator 原理與 functools。 |
+| 9 | [並發與並行 Concurrency](09-concurrency/) | 13 | threading、GIL、multiprocessing、asyncio——Python 的並發全貌。 |
+| 10 | [CPython 內部與記憶體 CPython Internals & Memory](10-cpython-internals/) | 11 | 物件模型、引用計數、GC、bytecode、GIL 原理——理解 Python 為何這樣跑。 |
+| 11 | [標準庫 Standard Library](11-stdlib/) | 17 | os / pathlib / datetime / json / re / logging 等日常必備標準庫。 |
+| 12 | [測試 Testing](12-testing/) | 9 | unittest、pytest、fixture、mock、覆蓋率與 TDD。 |
+| 13 | [工程化與打包 Tooling & Packaging](13-tooling-packaging/) | 8 | pip、venv、uv/poetry、pyproject.toml、打包發佈與 lint/format。 |
+| 14 | [Web 開發 Web Development](14-web/) | 16 | WSGI/ASGI、FastAPI/Flask、REST API、pydantic 驗證與認證。 |
+| 15 | [資料庫 Database](15-database/) | 11 | DB-API、sqlite3、SQLAlchemy ORM、transaction、migration 與 Redis。 |
+| 16 | [架構與設計 Architecture](16-architecture/) | 11 | 分層、Clean Architecture、DI、Repository、SOLID 與設計模式。 |
+| 17 | [資料處理與科學計算 Data & Scientific Computing](17-data-science/) | 7 | numpy、pandas、資料清理與視覺化——Python 生態的殺手級應用。 |
+| 18 | [效能優化 Performance](18-performance/) | 7 | profiling、快取、Cython/numba 與記憶體優化。 |
+| 19 | [雲原生與部署 Cloud Native](19-cloud-native/) | 8 | Docker、Gunicorn/Uvicorn、12-factor、CI/CD、Kubernetes 與可觀測性。 |
+| 20 | [安全與系統設計面試 Security & System Design Interview](20-security-system-design/) | 15 | 輸入驗證、注入、認證授權、密鑰管理，以及系統設計案例與 Python 面試題庫。 |
+| 21 | [微服務 Microservices](21-microservices/) | 8 | gRPC、服務發現、API gateway、限流與熔斷——Python 的微服務實務。 |
+| 22 | [分散式系統 Distributed Systems](22-distributed-systems/) | 8 | CAP、一致性、分散式鎖、訊息佇列、冪等、Saga 與分散式追蹤。 |
+
+[⬆️ 回專案首頁](../README.md)
