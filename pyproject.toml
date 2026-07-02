@@ -14,6 +14,7 @@ dev = [
     "pytest-cov>=5.0",
     "ruff>=0.6",
     "mypy>=1.11",
+    "tzdata>=2024.1",  # Windows 的 zoneinfo 需要（IANA 時區資料）
 ]
 # 實戰專案 task-api（Part 14 前後啟用）
 web = [
