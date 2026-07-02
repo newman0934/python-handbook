@@ -1,0 +1,203 @@
+# 抽象基底類別 ABC
+
+> ABC 讓你定義「介面契約」——規定子類別必須實作哪些方法，否則無法實例化。它把 Python 的鴨子型別，加上「編譯前就檢查」的保障。
+
+## Why（為什麼）
+
+鴨子型別很自由：「只要有 `.area()` 方法就當它是形狀」。但自由的代價是「忘了實作某方法，要到執行到那一行才發現 AttributeError」。**抽象基底類別（ABC，Abstract Base Class）** 讓你明確定義一份契約：「任何 Shape 都必須實作 `area()`」——沒實作的子類別**連建立實例都會失敗**，把錯誤從執行期提前到「一建立物件」。這對設計框架、外掛系統、團隊協作的介面約定很有價值。
+
+## Theory（理論：介面契約與名義子型別）
+
+ABC 提供兩件事：
+
+1. **定義抽象方法**：用 `@abstractmethod` 標記「子類別必須實作」的方法。
+2. **阻止不完整的實例化**：若子類別沒實作全部抽象方法，`SubClass()` 會 `TypeError`。
+
+ABC 屬於**名義子型別（nominal subtyping）**——你要「明確繼承」那個 ABC。這和 Python 3.8 的 `Protocol`（結構化子型別，「長得像就算」，見 [Protocol](../05-typing/06-protocol.md)）是兩種互補的介面表達方式。
+
+## Specification（規範：定義 ABC）
+
+```python
+from abc import ABC, abstractmethod
+
+
+class Shape(ABC):                      # 繼承 ABC
+    @abstractmethod
+    def area(self) -> float:           # 抽象方法：子類別必須實作
+        ...
+
+    @abstractmethod
+    def perimeter(self) -> float:
+        ...
+
+    def describe(self) -> str:         # 具體方法：可提供共用實作
+        return f"面積 {self.area():.2f}, 周長 {self.perimeter():.2f}"
+
+
+class Circle(Shape):
+    def __init__(self, r: float) -> None:
+        self.r = r
+
+    def area(self) -> float:           # 必須實作
+        return 3.14159 * self.r ** 2
+
+    def perimeter(self) -> float:      # 必須實作
+        return 2 * 3.14159 * self.r
+```
+
+## Implementation（強制契約、混用具體方法、其他抽象成員）
+
+### 不實作抽象方法 → 無法實例化
+
+```pycon
+>>> Shape()                    # ABC 本身不能實例化
+TypeError: Can't instantiate abstract class Shape with abstract methods area, perimeter
+>>> class Square(Shape):
+...     def area(self): return 1     # 只實作了 area，漏了 perimeter
+>>> Square()
+TypeError: Can't instantiate abstract class Square with abstract method perimeter
+```
+
+**錯誤在「建立實例」時就爆**，而不是「呼叫 perimeter」時——這就是 ABC 的價值：契約在物件誕生時就被檢查。
+
+### ABC 可同時有抽象方法與具體方法
+
+ABC 不只定義「必須實作什麼」，也能提供**共用的具體實作**（如上面的 `describe`，它呼叫抽象的 `area`/`perimeter`）。這是「模板方法模式」——父類別定流程、子類別填細節。
+
+### 抽象 property / classmethod / staticmethod
+
+`@abstractmethod` 可疊加在 property、classmethod 上（`@abstractmethod` 要放最靠近函式）：
+
+```python
+class Base(ABC):
+    @property
+    @abstractmethod
+    def name(self) -> str: ...
+
+    @classmethod
+    @abstractmethod
+    def create(cls) -> "Base": ...
+```
+
+### ABC vs Protocol：名義 vs 結構
+
+| | ABC | Protocol（見 [Protocol](../05-typing/06-protocol.md)） |
+|--|-----|----------|
+| 子型別方式 | 名義（要明確繼承） | 結構（長得像就算） |
+| 執行期強制 | ✅ 沒實作無法實例化 | ❌（預設只給型別檢查器用） |
+| 適合 | 你控制的類別階層、框架基底 | 為既有/第三方類別定介面、鴨子型別的型別化 |
+
+想「執行期強制契約 + 明確階層」用 ABC；想「不強迫繼承、只描述結構」用 Protocol。
+
+### `collections.abc`：內建的 ABC 家族
+
+標準庫的 `collections.abc` 提供一堆現成 ABC（`Iterable`、`Sequence`、`Mapping`、`Hashable`…），可用來 `isinstance` 檢查或當基底（見 [collections.abc](../11-stdlib/16-collections-abc.md)）：
+
+```pycon
+>>> from collections.abc import Iterable
+>>> isinstance([1, 2], Iterable)      # True
+>>> isinstance("abc", Iterable)       # True
+```
+
+## Code Example（可執行的 Python 範例）
+
+```python
+# abc_demo.py
+from abc import ABC, abstractmethod
+
+
+class PaymentProcessor(ABC):
+    """付款處理器的介面契約。"""
+
+    @abstractmethod
+    def pay(self, amount: float) -> str:
+        """執行付款，回傳交易描述。"""
+        ...
+
+    def receipt(self, amount: float) -> str:    # 共用具體方法
+        return f"收據：{self.pay(amount)}"
+
+
+class CreditCard(PaymentProcessor):
+    def pay(self, amount: float) -> str:
+        return f"信用卡付款 ${amount:.2f}"
+
+
+class PayPal(PaymentProcessor):
+    def pay(self, amount: float) -> str:
+        return f"PayPal 付款 ${amount:.2f}"
+
+
+def checkout(processor: PaymentProcessor, amount: float) -> str:
+    """接受任何 PaymentProcessor（多型）。"""
+    return processor.receipt(amount)
+
+
+def demo() -> None:
+    print(checkout(CreditCard(), 100))     # 收據：信用卡付款 $100.00
+    print(checkout(PayPal(), 50))          # 收據：PayPal 付款 $50.00
+
+    # 不完整的實作無法實例化
+    try:
+        PaymentProcessor()                 # 抽象類別
+    except TypeError as e:
+        print(f"擋下抽象類別: {type(e).__name__}")
+
+
+if __name__ == "__main__":
+    demo()
+```
+
+**預期輸出**：
+
+```pycon
+$ python abc_demo.py
+收據：信用卡付款 $100.00
+收據：PayPal 付款 $50.00
+擋下抽象類別: TypeError
+```
+
+## Diagram（圖解：ABC 強制契約）
+
+```mermaid
+flowchart TD
+    A[PaymentProcessor ABC<br/>@abstractmethod pay] --> B[CreditCard 實作 pay]
+    A --> C[PayPal 實作 pay]
+    A --> D[Incomplete 沒實作 pay]
+    D --> E["Incomplete() → TypeError<br/>(建立實例時就爆)"]
+    style E fill:#ffebee
+    style B fill:#e8f5e9
+    style C fill:#e8f5e9
+```
+
+## Best Practice（最佳實踐）
+
+- **用 ABC 定義「你控制的類別階層」的介面契約**：框架基底、外掛介面、策略模式的抽象角色。
+- **抽象方法標 `@abstractmethod`**，讓「漏實作」在建立實例時就被抓到，而非執行到才炸。
+- **在 ABC 提供共用具體方法**（模板方法）：把重複流程放父類別，變動點留給子類別。
+- **為第三方/既有類別描述介面、或偏好鴨子型別 → 用 `Protocol`**（結構化，不需繼承）。
+- **用 `collections.abc` 的現成 ABC** 做 `isinstance` 檢查（如判斷是否 `Iterable`/`Sequence`）。
+- **ABC 搭配型別註記**：函式參數標成 ABC 型別，表達「我要一個滿足此契約的物件」。
+
+## Common Mistakes（常見誤解）
+
+- **以為 ABC 只是文件**：它會**強制**——不實作全部抽象方法就無法實例化。
+- **`@abstractmethod` 裝飾器順序錯**：與 property/classmethod 疊加時，`@abstractmethod` 要放**最靠近函式**（最下面）。
+- **忘了繼承 `ABC`（或用 `metaclass=ABCMeta`）**：只寫 `@abstractmethod` 但類別沒繼承 ABC，抽象檢查不會生效。
+- **抽象方法寫了實作卻期待子類別「不能不覆寫」**：子類別可用 `super()` 呼叫父類別實作，但仍**必須覆寫**才能實例化。
+- **該用 Protocol 卻硬用 ABC**：為第三方類別（你改不了原始碼）定介面時，Protocol 更合適（不需對方繼承）。
+- **過度抽象**：只有一個實作就不需要 ABC；抽象是為了「多個實作 + 契約保證」。
+
+## Interview Notes（面試重點）
+
+- 說得出 ABC 的作用：**定義介面契約 + 強制子類別實作**（沒實作抽象方法就**無法實例化**，錯誤提前到建立物件時）。
+- 會用 **`abc.ABC` + `@abstractmethod`**，知道 ABC 可同時有抽象與具體方法（模板方法模式）。
+- **能對比 ABC（名義子型別、執行期強制、要繼承）vs Protocol（結構化子型別、鴨子型別、不需繼承）**，並說出各自適用場景。
+- 知道 **`collections.abc`** 提供內建 ABC（`Iterable`/`Sequence`/`Mapping`…）可供 isinstance 與繼承。
+- 知道 `@abstractmethod` 與 property/classmethod 疊加的順序。
+
+---
+
+➡️ 下一章：[描述器 descriptor](11-descriptors.md)
+
+[⬆️ 回 Part 4 索引](README.md)
