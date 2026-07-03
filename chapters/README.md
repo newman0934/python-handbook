@@ -32,5 +32,6 @@
 | # | Part | 章數 | 主題 |
 |---|------|------|------|
 | 28 | [LLM 與生成式 AI 基礎 LLM & GenAI](28-llm-genai/) | 9 | LLM 原理、呼叫 Claude API、prompt engineering、tool use、串流、embeddings、向量資料庫、成本優化、評估。 |
+| 29 | [AI 應用工程 AI Application Engineering](29-ai-applications/) | 10 | RAG 全流程、chunking、混合檢索與 rerank、RAG 評估、ReAct agents、MCP、對話記憶、多 agent、應用框架、生產級 RAG Capstone。 |
 
 [⬆️ 回專案首頁](../README.md)
