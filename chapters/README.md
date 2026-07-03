@@ -32,6 +32,7 @@
 | # | Part | 章數 | 主題 |
 |---|------|------|------|
 | 23 | [分析用 SQL 與資料整理 SQL & Data Wrangling](23-data-analysis/) | 9 | 分析師工作流、SQL 聚合/JOIN/window/CTE、pandas groupby/merge/樞紐、EDA、端到端分析。 |
+| 24 | [統計分析與商業洞察 Statistics & Business Analytics](24-business-analytics/) | 9 | 描述統計、相關與因果、假設檢定、A/B 統計、時間序列、cohort/funnel/retention、視覺化、資料溝通、商業分析報告。 |
 | 28 | [LLM 與生成式 AI 基礎 LLM & GenAI](28-llm-genai/) | 9 | LLM 原理、呼叫 Claude API、prompt engineering、tool use、串流、embeddings、向量資料庫、成本優化、評估。 |
 | 29 | [AI 應用工程 AI Application Engineering](29-ai-applications/) | 10 | RAG 全流程、chunking、混合檢索與 rerank、RAG 評估、ReAct agents、MCP、對話記憶、多 agent、應用框架、生產級 RAG Capstone。 |
 | 30 | [生產級 AI 與 LLMOps Production AI & LLMOps](30-production-ai/) | 10 | LLMOps、API 化與串流、可靠性、可觀測性、prompt injection、護欄/PII、評估回歸 CI、A/B 與版本管理、資料飛輪、生產級 LLM 服務 Capstone。 |
