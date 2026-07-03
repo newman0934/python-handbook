@@ -33,5 +33,6 @@
 |---|------|------|------|
 | 28 | [LLM 與生成式 AI 基礎 LLM & GenAI](28-llm-genai/) | 9 | LLM 原理、呼叫 Claude API、prompt engineering、tool use、串流、embeddings、向量資料庫、成本優化、評估。 |
 | 29 | [AI 應用工程 AI Application Engineering](29-ai-applications/) | 10 | RAG 全流程、chunking、混合檢索與 rerank、RAG 評估、ReAct agents、MCP、對話記憶、多 agent、應用框架、生產級 RAG Capstone。 |
+| 30 | [生產級 AI 與 LLMOps Production AI & LLMOps](30-production-ai/) | 10 | LLMOps、API 化與串流、可靠性、可觀測性、prompt injection、護欄/PII、評估回歸 CI、A/B 與版本管理、資料飛輪、生產級 LLM 服務 Capstone。 |
 
 [⬆️ 回專案首頁](../README.md)
