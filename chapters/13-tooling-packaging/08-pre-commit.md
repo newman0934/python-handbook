@@ -243,7 +243,6 @@ flowchart LR
 
 ---
 
-🎉 **恭喜完成 Part 13！** 你已掌握 Python 的工程化與打包：pip 進階與可重現性、虛擬環境管理、uv/poetry、pyproject.toml、打包發佈到 PyPI、ruff（lint + format）、mypy 工程化、pre-commit。這是「把 Python 專案做得專業」的工具鏈。
-接下來 [Part 14 Web 開發](../14-web/README.md) 將進入 WSGI/ASGI、FastAPI/Flask、REST API、pydantic 與認證。
+➡️ 下一章：[CLI 應用開發 (argparse / click / typer)](09-cli-apps.md)
 
 [⬆️ 回 Part 13 索引](README.md)

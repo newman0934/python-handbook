@@ -16,6 +16,7 @@ dev = [
     "mypy>=1.11",
     "tzdata>=2024.1",  # Windows 的 zoneinfo 需要（IANA 時區資料）
     "pandas-stubs>=2.2",  # Part 17 範例的 pandas 型別（mypy 需要）
+    "hypothesis>=6.0",  # Part 12 屬性測試範例
 ]
 # 實戰專案 task-api（Part 14 前後啟用）
 web = [
@@ -28,6 +29,8 @@ data = [
     "numpy>=2.0",
     "pandas>=2.2",
     "matplotlib>=3.9",
+    "scikit-learn>=1.5",  # Part 17 機器學習入門
+    "polars>=1.0",  # Part 17 高效 DataFrame
 ]
 
 [build-system]
@@ -55,3 +58,8 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 python_version = "3.12"
 strict = true
 exclude = ["chapters/", "exercises/"]
+
+# scikit-learn 未提供型別 stubs（Part 17 機器學習範例）
+[[tool.mypy.overrides]]
+module = ["sklearn.*"]
+ignore_missing_imports = true

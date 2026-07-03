@@ -14,6 +14,7 @@
 | 06 | [ruff 與 black](06-ruff-black.md) |
 | 07 | [mypy 工程化](07-mypy-tooling.md) |
 | 08 | [pre-commit hooks](08-pre-commit.md) |
+| 09 | [CLI 應用開發 (argparse / click / typer)](09-cli-apps.md) |
 
 ---
 

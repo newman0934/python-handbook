@@ -13,6 +13,8 @@
 | 05 | [資料清理](05-data-cleaning.md) |
 | 06 | [資料視覺化](06-visualization.md) |
 | 07 | [Jupyter 與資料工作流](07-jupyter.md) |
+| 08 | [機器學習入門 scikit-learn](08-machine-learning-intro.md) |
+| 09 | [polars 高效 DataFrame](09-polars.md) |
 
 ---
 

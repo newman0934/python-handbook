@@ -300,6 +300,6 @@ flowchart TD
 
 ---
 
-⬅️ 這是 Part 14 的最後一章。
+➡️ 下一章：[GraphQL](17-graphql.md)
 
-[⬆️ 回 Part 14 索引](README.md) ｜ [下一 Part：資料庫 ➡️](../15-database/README.md)
+[⬆️ 回 Part 14 索引](README.md)

@@ -193,7 +193,6 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 2！** 你已掌握 Python 的語言地基：動態型別與名稱綁定、數值與字串、流程控制、函式與參數、作用域與閉包、推導式與現代語法。
-接下來 [Part 3 資料結構](../03-data-structures/README.md) 將深入 list / dict / set 的用法與底層模型。
+➡️ 下一章：[字元編碼與 bytes/str](16-encoding-bytes.md)
 
 [⬆️ 回 Part 2 索引](README.md)

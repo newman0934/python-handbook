@@ -22,6 +22,8 @@
 | 14 | [CORS、cookie 與 session](14-cors-cookie-session.md) |
 | 15 | [測試 Web：TestClient](15-testclient.md) |
 | 16 | [例外處理與錯誤回應](16-exception-handlers.md) |
+| 17 | [GraphQL](17-graphql.md) |
+| 18 | [API 設計實務](18-api-design.md) |
 
 ---
 

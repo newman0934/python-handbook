@@ -162,6 +162,6 @@ flowchart TD
 
 ---
 
-⬅️ 這是 Part 17 的最後一章。
+➡️ 下一章：[機器學習入門 scikit-learn](08-machine-learning-intro.md)
 
-[⬆️ 回 Part 17 索引](README.md) ｜ [下一 Part：效能優化 ➡️](../18-performance/README.md)
+[⬆️ 回 Part 17 索引](README.md)

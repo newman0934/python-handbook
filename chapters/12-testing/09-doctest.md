@@ -250,7 +250,6 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 12！** 你已掌握 Python 的測試：為什麼測試、unittest、pytest（基礎/fixture/參數化）、mock 與 patch、覆蓋率（及其迷思）、TDD、doctest。測試是「敢改程式」的安全網，也是良好設計的試金石。
-接下來 [Part 13 工程化與打包](../13-tooling-packaging/README.md) 將進入 pip、venv、uv/poetry、pyproject.toml、打包發佈、ruff/mypy 與 pre-commit。
+➡️ 下一章：[除錯技巧與工具](10-debugging.md)
 
 [⬆️ 回 Part 12 索引](README.md)

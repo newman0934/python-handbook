@@ -15,6 +15,8 @@
 | 07 | [測試覆蓋率](07-coverage.md) |
 | 08 | [TDD 測試驅動開發](08-tdd.md) |
 | 09 | [doctest](09-doctest.md) |
+| 10 | [除錯技巧與工具](10-debugging.md) |
+| 11 | [屬性測試 property-based testing](11-property-based-testing.md) |
 
 ---
 

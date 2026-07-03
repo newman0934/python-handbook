@@ -21,6 +21,7 @@
 | 13 | [推導式 comprehension](13-comprehensions.md) |
 | 14 | [海象運算子 := (assignment expression)](14-walrus-operator.md) |
 | 15 | [浮點誤差、decimal 與 fractions](15-float-precision-decimal.md) |
+| 16 | [字元編碼與 bytes/str](16-encoding-bytes.md) |
 
 ---
 
