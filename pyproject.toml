@@ -32,6 +32,10 @@ data = [
     "scikit-learn>=1.5",  # Part 17 機器學習入門
     "polars>=1.0",  # Part 17 高效 DataFrame
 ]
+# LLM 與生成式 AI（Part 28+）；範例用 mock client,真實呼叫 Claude 才需要
+ai = [
+    "anthropic>=0.40",
+]
 
 [build-system]
 requires = ["setuptools>=68"]
