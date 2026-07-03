@@ -138,7 +138,7 @@ python-handbook/
 | 22 | [分散式系統 Distributed Systems](chapters/22-distributed-systems/) | CAP、一致性、分散式鎖、訊息佇列、冪等、Saga、分散式追蹤 |
 
 > 各 Part 資料夾內有 README 索引（列出完整章節規劃）；每章彼此以「下一章」串接，可依序閱讀。
-> 🚧 本書持續建構中：目前已完成 **Part 1（入門）**，其餘 Part 陸續補完。
+> ✅ 全 22 Part 內文與可執行範例皆已完成（`examples/` 附 `pytest` 驗證）。
 
 ---
 
