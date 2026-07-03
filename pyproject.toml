@@ -63,7 +63,7 @@ python_version = "3.12"
 strict = true
 exclude = ["chapters/", "exercises/"]
 
-# scikit-learn 未提供型別 stubs（Part 17 機器學習範例）
+# scikit-learn / scipy 未提供型別 stubs（Part 17/25/26 機器學習範例）
 [[tool.mypy.overrides]]
-module = ["sklearn.*"]
+module = ["sklearn.*", "scipy.*"]
 ignore_missing_imports = true
