@@ -20,12 +20,20 @@ pytest solutions
 | 8 函數式/裝飾器 | `decorators`、`compose` |
 | 9 併發 | `thread_safe_counter`、`parallel_map`、`async_gather` |
 | 11 標準庫 | `text_re`、`collections_ex`、`datetime_ex` |
+| 14 Web | `app` |
 | 15 資料庫 | `task_repo` |
 | 16 架構 | `repository`、`di` |
+| 17 資料處理 | `array_ops`、`dataframe_ops` |
 | 18 效能 | `algorithms` |
 | 20 安全 | `password_hashing`、`rate_limiter` |
 | 22 分散式 | `idempotency`、`consistent_hash` |
+| 23 資料分析 | `sql_agg` |
+| 24 商業分析 | `stats` |
+| 25 機器學習 | `classifier` |
+| 26 進階 ML | `metrics` |
+| 27 深度學習 | `nn` |
+| 28 LLM | `embeddings` |
+| 29 AI 應用 | `rag` |
+| 30 生產級 AI | `reliability` |
 
-| 14 Web | `app` |
-| 17 資料處理 | `array_ops`、`dataframe_ops` |
 > 🚧 隨各 Part 內容陸續補上。

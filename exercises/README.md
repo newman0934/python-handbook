@@ -31,12 +31,20 @@ pytest exercises        # 實作前部分紅燈，屬正常
 | 8 函數式/裝飾器 | `decorators`（memoize）、`compose` |
 | 9 併發 | `thread_safe_counter`（Lock）、`parallel_map`、`async_gather` |
 | 11 標準庫 | `text_re`（re/slugify）、`collections_ex`（Counter）、`datetime_ex` |
+| 14 Web | `app`（FastAPI:health/建立/查詢 + TestClient） |
 | 15 資料庫 | `task_repo`（sqlite3 CRUD、參數化查詢） |
 | 16 架構 | `repository`（Repository + Protocol）、`di`（依賴注入） |
+| 17 資料處理 | `array_ops`（numpy 正規化/z-score）、`dataframe_ops`（pandas groupby） |
 | 18 效能 | `algorithms`（two_sum O(n)、去重、first-unique） |
 | 20 安全 | `password_hashing`（PBKDF2+salt）、`rate_limiter`（token bucket） |
 | 22 分散式 | `idempotency`（冪等去重）、`consistent_hash`（一致性雜湊環） |
+| 23 資料分析 | `sql_agg`（SQL GROUP BY） |
+| 24 商業分析 | `stats`（描述統計/成長率） |
+| 25 機器學習 | `classifier`（LogisticRegression 準確率） |
+| 26 進階 ML | `metrics`（precision/recall） |
+| 27 深度學習 | `nn`（sigmoid/relu/dense,numpy） |
+| 28 LLM | `embeddings`（餘弦相似度/top-k 檢索） |
+| 29 AI 應用 | `rag`（RRF 倒數排名融合） |
+| 30 生產級 AI | `reliability`（指數退避） |
 
-| 14 Web | `app`（FastAPI:health/建立/查詢 + TestClient） |
-| 17 資料處理 | `array_ops`（numpy 正規化/z-score）、`dataframe_ops`（pandas groupby） |
-> 🚧 隨各 Part 內容陸續補上（需第三方套件的 Part 如 web/AI 待另行處理）。
+> 🚧 需第三方套件的 Part 已用 CI 內含的 `.[web,data]` 完成;需真實 LLM API(anthropic)的部分改以純邏輯練習呈現。剩餘偏概念的 Part(10 CPython 內部、12 測試、13 打包、19 雲原生、21 微服務、31 雲端部署)不適合「stub+測試」形式,暫略。
