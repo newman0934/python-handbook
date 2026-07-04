@@ -37,4 +37,6 @@ pytest exercises        # 實作前部分紅燈，屬正常
 | 20 安全 | `password_hashing`（PBKDF2+salt）、`rate_limiter`（token bucket） |
 | 22 分散式 | `idempotency`（冪等去重）、`consistent_hash`（一致性雜湊環） |
 
+| 14 Web | `app`（FastAPI:health/建立/查詢 + TestClient） |
+| 17 資料處理 | `array_ops`（numpy 正規化/z-score）、`dataframe_ops`（pandas groupby） |
 > 🚧 隨各 Part 內容陸續補上（需第三方套件的 Part 如 web/AI 待另行處理）。

@@ -26,4 +26,6 @@ pytest solutions
 | 20 安全 | `password_hashing`、`rate_limiter` |
 | 22 分散式 | `idempotency`、`consistent_hash` |
 
+| 14 Web | `app` |
+| 17 資料處理 | `array_ops`、`dataframe_ops` |
 > 🚧 隨各 Part 內容陸續補上。
