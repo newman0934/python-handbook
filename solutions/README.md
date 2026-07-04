@@ -13,5 +13,12 @@ pytest solutions
 | 1 入門 | `fizzbuzz`、`word_frequency` |
 | 2 基礎 | `parameters`、`closures`、`comprehensions` |
 | 3 資料結構 | `dict_ops`、`sequences`、`sorting_heap` |
+| 4 OOP | `stack`、`shapes`、`temperature` |
+| 5 typing | `generics`、`unique_by` |
+| 6 錯誤處理 | `safe_ops`、`context_manager` |
+| 7 迭代器/生成器 | `generators`、`pipeline` |
+| 8 函數式/裝飾器 | `decorators`、`compose` |
+| 9 併發 | `thread_safe_counter`、`parallel_map`、`async_gather` |
+| 11 標準庫 | `text_re`、`collections_ex`、`datetime_ex` |
 
 > 🚧 隨各 Part 內容陸續補上。
