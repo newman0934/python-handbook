@@ -242,7 +242,7 @@ flowchart TD
 ## Common Mistakes（常見誤解）
 
 - **多步驟操作沒放同一交易**：中途失敗留下不一致狀態（扣了沒入帳）。
-- **忘記 commit**：變更沒生效（見 [DB-API](01-db-api.md)）；或忘記 rollback 導致連線卡在失敗交易。
+- **忘記 commit**：變更沒生效（見 [DB-API](11-db-api.md)）；或忘記 rollback 導致連線卡在失敗交易。
 - **交易開太久**：中間做慢操作、持鎖阻塞並發、易死鎖。
 - **以為隔離級別越高越好**：越高越慢（鎖多/重試多）；依需求選。
 - **不知道預設隔離級別**：以為有防幻讀其實沒有（Read Committed 仍有不可重複讀/幻讀）。
@@ -259,6 +259,6 @@ flowchart TD
 
 ---
 
-➡️ 下一章：[migration 與 Alembic](07-migration.md)
+➡️ 下一章：[migration 與 Alembic](17-migration.md)
 
 [⬆️ 回 Part 15 索引](README.md)

@@ -97,14 +97,14 @@ TTL 長短是**新鮮度 vs 命中率**的取捨：短 TTL 更新鮮但命中率
 
 ### 序列化：物件怎麼存
 
-Redis 值是字串/位元組——存物件要**序列化**（見 [序列化](../11-stdlib/13-serialization.md)）。常用 **JSON**（跨語言、可讀、安全）：
+Redis 值是字串/位元組——存物件要**序列化**（見 [序列化](../11-stdlib/12-pickle.md)）。常用 **JSON**（跨語言、可讀、安全）：
 
 ```python
 r.set(key, json.dumps(data))              # 存：物件 → JSON 字串
 data = json.loads(r.get(key))             # 取：JSON 字串 → 物件
 ```
 
-**別用 `pickle` 存跨信任邊界的快取**（反序列化不可信資料可執行任意程式碼，見 [序列化](../11-stdlib/13-serialization.md) 的安全警告）——JSON 較安全。
+**別用 `pickle` 存跨信任邊界的快取**（反序列化不可信資料可執行任意程式碼，見 [序列化](../11-stdlib/12-pickle.md) 的安全警告）——JSON 較安全。
 
 ### 三大快取問題
 
@@ -238,7 +238,7 @@ flowchart TD
 - **讀多寫少的熱門資料才快取**：不是所有東西都該快取。
 - **用 cache-aside 模式**：讀先查快取、miss 查 DB 寫回；寫時更新 DB 後**刪快取**（避免競態）。
 - **一律設 TTL** 當安全網：防漏失效導致永久過時；TTL 加隨機抖動防雪崩。
-- **序列化用 JSON**（跨語言、安全），別用 pickle 存不可信快取（見 [序列化](../11-stdlib/13-serialization.md)）。
+- **序列化用 JSON**（跨語言、安全），別用 pickle 存不可信快取（見 [序列化](../11-stdlib/12-pickle.md)）。
 - **防三大問題**：穿透（快取 null）、雪崩（TTL 抖動）、擊穿（鎖/熱點不過期）。
 - **key 命名有規範**（`user:1:profile`）：好管理、好除錯。
 - **理解 Redis 不只快取**：session、佇列、限流、排行榜、分散式鎖。
@@ -265,6 +265,6 @@ flowchart TD
 
 ---
 
-➡️ 下一章：[async 資料庫存取](09-async-database.md)
+➡️ 下一章：[async 資料庫存取](19-async-database.md)
 
 [⬆️ 回 Part 15 索引](README.md)

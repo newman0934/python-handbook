@@ -132,7 +132,7 @@ EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'a@b.com';
 - **只查需要的欄**（`SELECT id, name` 而非 `SELECT *`）：少傳資料、可能用到覆蓋索引。
 - **覆蓋索引（covering index）**：索引本身就含查詢要的所有欄，連表都不用回查。
 - **分頁用 keyset/seek 而非大 OFFSET**：`OFFSET 100000` 要掃過前 10 萬列，改用 `WHERE id > last_id`。
-- **避免 N+1**（見 [N+1](10-n-plus-1.md)）：這是查詢「次數」的優化。
+- **避免 N+1**（見 [N+1](20-n-plus-1.md)）：這是查詢「次數」的優化。
 - **慢查詢日誌**：開啟資料庫的 slow query log 找出該優化的查詢。
 
 ## Code Example（可執行的 Python 範例）
@@ -238,7 +238,7 @@ flowchart TD
 - **用 `EXPLAIN`/`EXPLAIN ANALYZE` 驗證索引是否被用**：別靠猜，看 Index Scan vs Seq Scan。
 - **先量測再優化**（慢查詢日誌找目標，見 [效能優化](../18-performance/README.md)）：別過早/盲目加索引。
 - **善用覆蓋索引、只查需要的欄、避免大 OFFSET 分頁**。
-- **索引變更也走 migration**（見 [migration](07-migration.md)），大表建索引注意鎖表。
+- **索引變更也走 migration**（見 [migration](17-migration.md)），大表建索引注意鎖表。
 
 ## Common Mistakes（常見誤解）
 
@@ -257,7 +257,7 @@ flowchart TD
 - **知道該對哪些欄位加索引**（WHERE/JOIN/ORDER BY 的高選擇性欄）、**低選擇性欄位加索引沒用**。
 - **能講複合索引的最左前綴原則**（欄位順序、跳過最左欄用不到）。
 - **能列舉索引失效情況**：索引欄包函式/運算、前置 `%` LIKE、型別不符、跳最左欄。
-- **知道用 `EXPLAIN`/`EXPLAIN ANALYZE` 驗證查詢計畫**（Index Scan vs Seq Scan）、先量測再優化；能連結 [N+1](10-n-plus-1.md)（查詢次數優化）與覆蓋索引、keyset 分頁。
+- **知道用 `EXPLAIN`/`EXPLAIN ANALYZE` 驗證查詢計畫**（Index Scan vs Seq Scan）、先量測再優化；能連結 [N+1](20-n-plus-1.md)（查詢次數優化）與覆蓋索引、keyset 分頁。
 
 ---
 

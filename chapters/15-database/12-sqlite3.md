@@ -4,7 +4,7 @@
 
 ## Why（為什麼）
 
-想學資料庫、寫個帶儲存的小工具、或給測試一個真的資料庫——架 PostgreSQL/MySQL 太重（要安裝、設定、跑 daemon）。**SQLite** 是「嵌入式」資料庫：**整個資料庫就是一個檔案**，不需要伺服器行程，而且 **Python 內建 `sqlite3` 模組**（免安裝）。它遵循 DB-API（見 [DB-API](01-db-api.md)），是練習 SQL、寫單元測試、做桌面/CLI 應用的理想選擇。SQLite 不是玩具——它是世界上部署最廣的資料庫（每支手機、每個瀏覽器裡都有）。理解它的能力與限制，你就知道何時它夠用、何時該換成 client-server 資料庫。
+想學資料庫、寫個帶儲存的小工具、或給測試一個真的資料庫——架 PostgreSQL/MySQL 太重（要安裝、設定、跑 daemon）。**SQLite** 是「嵌入式」資料庫：**整個資料庫就是一個檔案**，不需要伺服器行程，而且 **Python 內建 `sqlite3` 模組**（免安裝）。它遵循 DB-API（見 [DB-API](11-db-api.md)），是練習 SQL、寫單元測試、做桌面/CLI 應用的理想選擇。SQLite 不是玩具——它是世界上部署最廣的資料庫（每支手機、每個瀏覽器裡都有）。理解它的能力與限制，你就知道何時它夠用、何時該換成 client-server 資料庫。
 
 ## Theory（理論：嵌入式 vs client-server）
 
@@ -14,7 +14,7 @@
 |--|-----------------|----------------------------------|
 | 架構 | 函式庫 + 一個檔案 | 獨立伺服器行程 + 網路 |
 | 設定 | 零（免安裝伺服器） | 需安裝、設定、維運 |
-| 併發寫入 | 一次一個寫入者（檔案鎖） | 高併發（MVCC，見 [transaction](06-transactions.md)） |
+| 併發寫入 | 一次一個寫入者（檔案鎖） | 高併發（MVCC，見 [transaction](16-transactions.md)） |
 | 適合 | 測試、小工具、單機 app、讀多寫少 | 多使用者、高併發、正式服務 |
 | 網路存取 | ❌（本地檔案） | ✅ |
 
@@ -219,7 +219,7 @@ flowchart TD
 - **稍高併發用 `PRAGMA journal_mode = WAL`**：讀寫可並行、效能更好。
 - **測試用 `:memory:` 資料庫**：快、隔離、免清理（配 pytest fixture）。
 - **日期/時間存 ISO 字串或 timestamp**：SQLite 無原生 datetime 型別。
-- **參數化查詢**（見 [DB-API](01-db-api.md)）：防 SQL injection。
+- **參數化查詢**（見 [DB-API](11-db-api.md)）：防 SQL injection。
 - **知道 SQLite 的定位**：測試、單機 app、讀多寫少的中小服務適合；高併發寫入、多使用者用 client-server（PostgreSQL）。
 - **`executescript`** 一次跑多條 SQL（建 schema 方便）。
 
@@ -231,18 +231,18 @@ flowchart TD
 - **以為欄位型別是強制的**：SQLite 動態型別，宣告 INTEGER 也能塞字串（type affinity）。
 - **存 `datetime` 物件卻沒轉換**：無原生型別；存 ISO 字串/timestamp。
 - **正式服務仍用單一 SQLite 檔跨多機**：SQLite 是本地檔案、不能網路共享；多機要 client-server。
-- **不 `commit`**：寫入沒生效（見 [DB-API](01-db-api.md)）。
+- **不 `commit`**：寫入沒生效（見 [DB-API](11-db-api.md)）。
 
 ## Interview Notes（面試重點）
 
 - **能對比嵌入式（SQLite：函式庫+檔案、零設定、一次一個寫入者）vs client-server（PostgreSQL：獨立伺服器、高併發）**，並說出各自適用場景。
 - **知道 SQLite 常見陷阱：外鍵預設關（要 `PRAGMA foreign_keys = ON`）、動態型別、寫入併發限制**。
 - 知道 `row_factory = sqlite3.Row`（欄名存取）、`WAL` 模式改善併發、`:memory:` 適合測試。
-- 知道 SQLite 遵循 DB-API（見 [DB-API](01-db-api.md)）、是部署最廣的資料庫、無原生 datetime 型別。
+- 知道 SQLite 遵循 DB-API（見 [DB-API](11-db-api.md)）、是部署最廣的資料庫、無原生 datetime 型別。
 - 能說出「何時該從 SQLite 換成 PostgreSQL」：多使用者高併發寫入、需要網路存取、需要進階功能。
 
 ---
 
-➡️ 下一章：[SQLAlchemy Core](03-sqlalchemy-core.md)
+➡️ 下一章：[SQLAlchemy Core](13-sqlalchemy-core.md)
 
 [⬆️ 回 Part 15 索引](README.md)

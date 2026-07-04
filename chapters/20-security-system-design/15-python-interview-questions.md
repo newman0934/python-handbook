@@ -55,8 +55,8 @@
 ### Web、資料庫、架構
 
 - **「WSGI vs ASGI？」** → 同步 vs 非同步、Gunicorn/Uvicorn。見 [Gunicorn/Uvicorn](../19-cloud-native/03-gunicorn-uvicorn.md)。
-- **「N+1 查詢？怎麼解？」** → lazy loading、eager loading、`selectinload`。見 [N+1](../15-database/10-n-plus-1.md)。
-- **「交易 ACID / 隔離級別？」** → 原子性、一致性、隔離、持久。見 [交易](../15-database/06-transactions.md)。
+- **「N+1 查詢？怎麼解？」** → lazy loading、eager loading、`selectinload`。見 [N+1](../15-database/20-n-plus-1.md)。
+- **「交易 ACID / 隔離級別？」** → 原子性、一致性、隔離、持久。見 [交易](../15-database/16-transactions.md)。
 - **「依賴注入 / SOLID / Repository？」** → 鬆耦合、可測試、依賴反轉。見 [DI](../16-architecture/03-dependency-injection.md)、[SOLID](../16-architecture/05-solid.md)。
 
 ### 資安與系統設計

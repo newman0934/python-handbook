@@ -4,7 +4,7 @@
 
 ## Why（為什麼）
 
-ORM 的關聯（`user.orders`，見 [ORM](04-sqlalchemy-orm.md)）方便到讓人忘記它是資料庫查詢。你寫一個「列出每個使用者及其訂單數」的迴圈——看起來無害的幾行，實際對資料庫發了 **101 次查詢**（1 次查使用者 + 100 次查各自訂單）。這就是 **N+1 問題**：ORM 最常見的效能殺手，也是慢 API 的頭號原因。它在開發時（資料少）不明顯，上線後（資料多）突然爆炸。面試常考、code review 必抓。理解 N+1 與解法（**eager loading**），能讓你的查詢從 101 次降到 2 次——效能天差地別。這是「會用 ORM」和「懂 ORM」的分水嶺。
+ORM 的關聯（`user.orders`，見 [ORM](14-sqlalchemy-orm.md)）方便到讓人忘記它是資料庫查詢。你寫一個「列出每個使用者及其訂單數」的迴圈——看起來無害的幾行，實際對資料庫發了 **101 次查詢**（1 次查使用者 + 100 次查各自訂單）。這就是 **N+1 問題**：ORM 最常見的效能殺手，也是慢 API 的頭號原因。它在開發時（資料少）不明顯，上線後（資料多）突然爆炸。面試常考、code review 必抓。理解 N+1 與解法（**eager loading**），能讓你的查詢從 101 次降到 2 次——效能天差地別。這是「會用 ORM」和「懂 ORM」的分水嶺。
 
 ## Theory（理論：lazy vs eager loading）
 
@@ -120,7 +120,7 @@ eager loading 不是永遠對——如果你**根本不會存取關聯**，eager
 
 ### async 的特別注意
 
-async 下（見 [async DB](09-async-database.md)）**不能隱式 lazy loading**（存取未載入關聯會拋 `MissingGreenlet`）——所以 async **必須顯式 eager loading**。這讓 async 反而「強迫你避免 N+1」。
+async 下（見 [async DB](19-async-database.md)）**不能隱式 lazy loading**（存取未載入關聯會拋 `MissingGreenlet`）——所以 async **必須顯式 eager loading**。這讓 async 反而「強迫你避免 N+1」。
 
 ### 也要小心「查太多欄」
 
@@ -226,10 +226,10 @@ flowchart LR
 - **一對多/多對多用 `selectinload`、多對一/一對一用 `joinedload`**：避免列爆炸或善用 JOIN。
 - **開發時開 `echo=True` 觀察查詢**：看到滿屏重複 SELECT 就是 N+1。
 - **不一定用到的關聯保持 lazy**：別過度 eager 載入多餘資料。
-- **async 一律顯式 eager loading**（不能隱式 lazy load，見 [async DB](09-async-database.md)）。
+- **async 一律顯式 eager loading**（不能隱式 lazy load，見 [async DB](19-async-database.md)）。
 - **只查需要的欄位/關聯**：別無腦 `SELECT *` 與載入用不到的關聯。
 - **可在 relationship 設預設載入策略**（`lazy="selectin"`）但仍以查詢層 `.options()` 為主（更靈活）。
-- **監控慢查詢與查詢次數**：把「每請求查詢數」納入觀測（見 [監控](../19-cloud-native/09-observability.md)）。
+- **監控慢查詢與查詢次數**：把「每請求查詢數」納入觀測（見 [監控](../19-cloud-native/08-observability.md)）。
 
 ## Common Mistakes（常見誤解）
 
@@ -251,6 +251,6 @@ flowchart LR
 
 ---
 
-➡️ 下一章：[索引與查詢優化基礎](11-indexing.md)
+➡️ 下一章：[索引與查詢優化基礎](21-indexing.md)
 
 [⬆️ 回 Part 15 索引](README.md)

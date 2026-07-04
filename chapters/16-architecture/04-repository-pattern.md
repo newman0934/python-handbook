@@ -114,7 +114,7 @@ def test_register_duplicate_email():
 
 ### 與 Unit of Work 協作
 
-Repository 管「單一類型物件的存取」，但**交易邊界**（見 [transaction](../15-database/06-transactions.md)）常跨多個 repository（下單要同時動 Order 和 Inventory）。**Unit of Work（工作單元）模式**管理這個——把多個 repository 操作包在一個交易裡，一起 commit/rollback：
+Repository 管「單一類型物件的存取」，但**交易邊界**（見 [transaction](../15-database/16-transactions.md)）常跨多個 repository（下單要同時動 Order 和 Inventory）。**Unit of Work（工作單元）模式**管理這個——把多個 repository 操作包在一個交易裡，一起 commit/rollback：
 
 ```python
 # Unit of Work：統一交易邊界
@@ -124,7 +124,7 @@ with unit_of_work() as uow:
     uow.commit()    # 兩個 repository 的變更一起提交（或一起 rollback）
 ```
 
-SQLAlchemy 的 `Session`（見 [ORM](../15-database/04-sqlalchemy-orm.md)）本身就是一種 Unit of Work + identity map 的實作。
+SQLAlchemy 的 `Session`（見 [ORM](../15-database/14-sqlalchemy-orm.md)）本身就是一種 Unit of Work + identity map 的實作。
 
 ### ORM 已經是 Repository 嗎？
 
@@ -251,7 +251,7 @@ flowchart TD
 - **方法表達業務意圖**（`find_active_users`），別退化成通用 `query(sql)`（那又洩漏 SQL）。
 - **一個 aggregate 一個 repository**（見 [DDD](08-ddd.md)）：別做萬能 repository。
 - **測試用記憶體實作**：業務邏輯測試不碰 DB、飛快隔離。
-- **跨 repository 的交易用 Unit of Work**（見 [transaction](../15-database/06-transactions.md)）：統一 commit/rollback。
+- **跨 repository 的交易用 Unit of Work**（見 [transaction](../15-database/16-transactions.md)）：統一 commit/rollback。
 - **務實斟酌**：簡單 CRUD 直接用 ORM 可能就夠；需解耦/可測/可換 DB 才加 Repository 層。
 
 ## Common Mistakes（常見誤解）

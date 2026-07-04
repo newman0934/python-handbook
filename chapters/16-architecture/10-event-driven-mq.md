@@ -117,7 +117,7 @@ def notify_analytics(event: OrderPlaced): ...
 | **Celery** | Python 的分散式任務佇列框架 | 背景任務（寄信、轉檔、定時任務），Python 生態 |
 | **RabbitMQ** | 訊息 broker（AMQP） | 可靠的任務佇列、複雜路由、point-to-point |
 | **Kafka** | 分散式事件串流平台 | 高吞吐事件流、pub/sub、事件溯源、多消費者重播 |
-| **Redis** | 也能當輕量 broker（見 [Redis](../15-database/08-redis.md)） | 簡單佇列、Celery broker |
+| **Redis** | 也能當輕量 broker（見 [Redis](../15-database/18-redis.md)） | 簡單佇列、Celery broker |
 
 **經驗法則**：Python 背景任務用 **Celery**（broker 可用 RabbitMQ/Redis）；高吞吐事件串流、多消費者、需重播用 **Kafka**；簡單需求 Redis 佇列就夠。
 

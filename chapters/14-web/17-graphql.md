@@ -103,7 +103,7 @@
 
 **GraphQL 引擎如何執行查詢**：收到查詢後，引擎**依查詢的樹狀結構、遞迴呼叫 resolver**。以 `user(id:1){ name posts{ title } }` 為例：先呼叫 `user` resolver（拿到使用者物件）→ 對每個要求的欄位呼叫其 resolver（`name` 直接取、`posts` 呼叫 posts resolver 拿貼文列表）→ 對每篇貼文的 `title` 取值。最後**依查詢的形狀組裝 JSON** 回傳。因為「客戶端指定欄位 → 引擎只解析這些欄位」，所以**只回要的、不多不少**——這是解決 over-fetching 的機制。而巢狀查詢讓「使用者 + 貼文」一次拿齊，解決 under-fetching 的多次往返。
 
-**GraphQL 的頭號陷阱——N+1 查詢**：雖然 GraphQL 減少了「網路往返」，但在**伺服器端**很容易產生 [N+1 資料庫查詢](../15-database/10-n-plus-1.md)。查 `users{ posts{ title } }` 時：`users` resolver 查一次拿到 N 個使用者，然後對**每個**使用者的 `posts` resolver **各查一次資料庫**——1 + N 次查詢。這是 GraphQL 的經典效能坑。解法：**DataLoader**——一個批次載入 + 快取的機制，把「N 次單筆查詢」收集起來合併成「1 次批次查詢」（如 `WHERE user_id IN (...)`），大幅減少 DB 查詢（同 [eager loading](../15-database/10-n-plus-1.md) 的精神）。用 GraphQL 一定要懂 DataLoader，否則效能會很差。
+**GraphQL 的頭號陷阱——N+1 查詢**：雖然 GraphQL 減少了「網路往返」，但在**伺服器端**很容易產生 [N+1 資料庫查詢](../15-database/20-n-plus-1.md)。查 `users{ posts{ title } }` 時：`users` resolver 查一次拿到 N 個使用者，然後對**每個**使用者的 `posts` resolver **各查一次資料庫**——1 + N 次查詢。這是 GraphQL 的經典效能坑。解法：**DataLoader**——一個批次載入 + 快取的機制，把「N 次單筆查詢」收集起來合併成「1 次批次查詢」（如 `WHERE user_id IN (...)`），大幅減少 DB 查詢（同 [eager loading](../15-database/20-n-plus-1.md) 的精神）。用 GraphQL 一定要懂 DataLoader，否則效能會很差。
 
 **GraphQL 的其他挑戰**：**快取難**——REST 可用 HTTP 快取（URL 當 key），但 GraphQL 都是 `POST /graphql`、查詢多變，無法簡單用 HTTP 快取（要在應用層做）。**查詢複雜度攻擊**——客戶端能構造超深/超廣的巢狀查詢拖垮伺服器，要限制查詢深度/複雜度。這些是選 GraphQL 要付的代價。下面用純 Python 實作一個迷你 resolver，示範「客戶端指定欄位 → 只回這些」的核心概念（真實請用 Strawberry）。
 
@@ -184,7 +184,7 @@ query { user(1) { name posts { title } } }
 - **查詢 1（避免 over-fetching）**：客戶端只要 `name` → resolver 只回 `{'name': 'Alice'}`，**不回** email、post_ids 等用不到的欄位。對比 REST 的 `GET /users/1` 會回整包——GraphQL 讓客戶端精確控制，省頻寬。
 - **查詢 2**：要 `name` + `email` → 就回這兩個。**回傳形狀完全對應查詢**——這是 GraphQL 的核心特性。
 - **查詢 3（避免 under-fetching）**：巢狀查詢 `name` + `posts { title }` → **一次**拿到使用者名 + 他的貼文標題。對比 REST 要多次往返（先查 user 再查 posts），GraphQL 一次搞定。注意 posts 只回 `title`（不回 body），再次精確控制。
-- **N+1 警示**：這裡 `posts` resolver 對每個使用者查一次——真實系統若有 N 個使用者就是 N+1 次 DB 查詢，要用 **DataLoader** 批次化（見 [N+1](../15-database/10-n-plus-1.md)）。
+- **N+1 警示**：這裡 `posts` resolver 對每個使用者查一次——真實系統若有 N 個使用者就是 N+1 次 DB 查詢，要用 **DataLoader** 批次化（見 [N+1](../15-database/20-n-plus-1.md)）。
 - **要點**：GraphQL = 單一端點 + 客戶端指定欄位（含巢狀）→ 只回要的、一次拿齊。解決 over/under-fetching，代價是伺服器複雜、N+1 陷阱、快取難。真實用 Strawberry/Graphene。
 
 ## Diagram（圖解：REST vs GraphQL）

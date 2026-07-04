@@ -18,7 +18,7 @@
 | 12 | [測試 Testing](12-testing/) | 11 | unittest、pytest、fixture、mock、覆蓋率與 TDD。 |
 | 13 | [工程化與打包 Tooling & Packaging](13-tooling-packaging/) | 9 | pip、venv、uv/poetry、pyproject.toml、打包發佈與 lint/format。 |
 | 14 | [Web 開發 Web Development](14-web/) | 18 | WSGI/ASGI、FastAPI/Flask、REST API、pydantic 驗證與認證。 |
-| 15 | [資料庫 Database](15-database/) | 11 | DB-API、sqlite3、SQLAlchemy ORM、transaction、migration 與 Redis。 |
+| 15 | [資料庫 Database](15-database/) | 21 | **原理篇**:關聯模型、SQL 語意、正規化、儲存/索引/優化器、交易並發(MVCC)、WAL、複製分片、NoSQL 選型;**實作篇**:DB-API、SQLAlchemy、連線池、transaction、migration、Redis、async、N+1、索引。 |
 | 16 | [架構與設計 Architecture](16-architecture/) | 11 | 分層、Clean Architecture、DI、Repository、SOLID 與設計模式。 |
 | 17 | [資料處理與科學計算 Data & Scientific Computing](17-data-science/) | 9 | numpy、pandas、資料清理與視覺化——Python 生態的殺手級應用。 |
 | 18 | [效能優化 Performance](18-performance/) | 7 | profiling、快取、Cython/numba 與記憶體優化。 |

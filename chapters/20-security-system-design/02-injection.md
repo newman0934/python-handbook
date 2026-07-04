@@ -39,7 +39,7 @@ SELECT * FROM users WHERE name = '' OR '1'='1'
 
 ## Specification（規範：參數化查詢）
 
-**參數化查詢**（Python DB-API，見 [DB-API](../15-database/01-db-api.md)）：
+**參數化查詢**（Python DB-API，見 [DB-API](../15-database/11-db-api.md)）：
 
 ```python
 # ✅ 正確：佔位符 + 參數（值當純資料）
@@ -53,7 +53,7 @@ cursor.execute("SELECT * FROM users WHERE name = '%s'" % username) # 危險
 
 **佔位符風格依 driver 而異**：sqlite3 用 `?`、psycopg（PostgreSQL）用 `%s`（注意：這是 driver 的佔位符，**不是** Python 的字串格式化！）。
 
-**ORM 自動參數化**（見 [SQLAlchemy](../15-database/04-sqlalchemy-orm.md)）：
+**ORM 自動參數化**（見 [SQLAlchemy](../15-database/14-sqlalchemy-orm.md)）：
 
 ```python
 session.query(User).filter(User.name == username)   # ORM 自動參數化，安全
@@ -178,7 +178,7 @@ flowchart TD
 ## Best Practice（最佳實踐）
 
 - **永遠用參數化查詢**（佔位符 + 參數），**絕不字串拼接/格式化 SQL**。
-- **用 ORM**（SQLAlchemy）：自動參數化，另有其他好處（見 [SQLAlchemy ORM](../15-database/04-sqlalchemy-orm.md)）。
+- **用 ORM**（SQLAlchemy）：自動參數化，另有其他好處（見 [SQLAlchemy ORM](../15-database/14-sqlalchemy-orm.md)）。
 - **動態識別符（表名/欄名/排序）用 allowlist 驗證**：佔位符只能用於值。
 - **命令注入：用 `subprocess` 參數陣列**，別用 `shell=True` 拼字串。
 - **避免 `eval`/`exec` 執行任何含使用者輸入的字串**。

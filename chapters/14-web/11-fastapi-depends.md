@@ -97,7 +97,7 @@ def list_users(db = Depends(get_db)):
     # 端點結束後，get_db 的 finally 自動關閉 db
 ```
 
-`yield` 依賴保證清理（關 DB 連線、釋放資源）——這是管理「每請求資源」的標準做法（見 [async DB](../15-database/09-async-database.md)）。
+`yield` 依賴保證清理（關 DB 連線、釋放資源）——這是管理「每請求資源」的標準做法（見 [async DB](../15-database/19-async-database.md)）。
 
 ### 巢狀依賴：依賴用依賴
 

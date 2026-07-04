@@ -137,7 +137,7 @@ STAR 回答:
 空泛回答四要素完整: False  ← 缺任務與結果，沒說服力
 ```
 
-這個範例展示了一個好 STAR 回答的要素：**具體情境、明確任務、詳實的個人行動（含技術細節，呼應本書 [profiling](../18-performance/01-profiling.md)、[N+1](../15-database/10-n-plus-1.md)、[快取](../15-database/08-redis.md)）、量化結果 + 複用價值**。對比空泛回答（缺任務與結果），高下立判。
+這個範例展示了一個好 STAR 回答的要素：**具體情境、明確任務、詳實的個人行動（含技術細節，呼應本書 [profiling](../18-performance/01-profiling.md)、[N+1](../15-database/20-n-plus-1.md)、[快取](../15-database/18-redis.md)）、量化結果 + 複用價值**。對比空泛回答（缺任務與結果），高下立判。
 
 ## Best Practice（最佳實踐）
 

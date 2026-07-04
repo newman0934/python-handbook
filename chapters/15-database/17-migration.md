@@ -81,7 +81,7 @@ def downgrade() -> None:
 
 ### autogenerate：自動偵測差異
 
-Alembic 能**比對你的 SQLAlchemy 模型（見 [ORM](04-sqlalchemy-orm.md)）與資料庫現況**，自動產生 migration 腳本：
+Alembic 能**比對你的 SQLAlchemy 模型（見 [ORM](14-sqlalchemy-orm.md)）與資料庫現況**，自動產生 migration 腳本：
 
 ```bash
 # 你在模型加了一個欄位 age，然後：
@@ -276,6 +276,6 @@ flowchart TD
 
 ---
 
-➡️ 下一章：[Redis 與快取](08-redis.md)
+➡️ 下一章：[Redis 與快取](18-redis.md)
 
 [⬆️ 回 Part 15 索引](README.md)

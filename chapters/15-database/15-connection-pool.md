@@ -112,7 +112,7 @@ conn.execute(...)
 SQLAlchemy 有多種池類別，依場景選：
 
 - **`QueuePool`（預設）**：標準借還池，適合大多數服務。
-- **`NullPool`**：不池化（每次新建、用完關）。適合 serverless（見 [Serverless](../19-cloud-native/08-serverless.md)）或每個連線該獨立的場景。
+- **`NullPool`**：不池化（每次新建、用完關）。適合 serverless（見 [Serverless](../31-cloud-platform-deployment/05-serverless.md)）或每個連線該獨立的場景。
 - **`StaticPool`**：單一連線，常用於 SQLite `:memory:` 測試（讓多處共用同一記憶體 DB）。
 
 ## Code Example（可執行的 Python 範例）
@@ -220,7 +220,7 @@ flowchart TD
 - **生產開 `pool_pre_ping=True`**：避免用到被斷掉的死連線。
 - **設 `pool_recycle` 短於 DB/防火牆的 idle timeout**：主動回收防失效。
 - **池大小配合 DB `max_connections` 與實例數**：總連線別超過 DB 上限；別盲目調大。
-- **大量連線需求用 PgBouncer** 等外部池化器（見 [Serverless](../19-cloud-native/08-serverless.md)）。
+- **大量連線需求用 PgBouncer** 等外部池化器（見 [Serverless](../31-cloud-platform-deployment/05-serverless.md)）。
 - **serverless 用 `NullPool` 或外部池**：函式短命、連線不宜長持。
 - **監控連線池指標**（借出數、等待時間）：及早發現洩漏或池太小。
 
@@ -231,7 +231,7 @@ flowchart TD
 - **池設太大**：超過 DB `max_connections`、耗 DB 資源、反而變慢。
 - **不開 `pool_pre_ping`/`pool_recycle`**：用到死連線報「server has gone away」。
 - **多實例沒算總連線數**：10 實例 × 大池 = 撐爆 DB 連線上限。
-- **async 應用用同步池/Session**：阻塞 event loop（見 [async DB](09-async-database.md)）。
+- **async 應用用同步池/Session**：阻塞 event loop（見 [async DB](19-async-database.md)）。
 - **以為連線池能無限擴充併發**：DB 連線是稀缺資源，超過反效果。
 
 ## Interview Notes（面試重點）
@@ -244,6 +244,6 @@ flowchart TD
 
 ---
 
-➡️ 下一章：[transaction 交易](06-transactions.md)
+➡️ 下一章：[transaction 交易](16-transactions.md)
 
 [⬆️ 回 Part 15 索引](README.md)

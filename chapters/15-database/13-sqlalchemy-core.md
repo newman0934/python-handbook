@@ -4,7 +4,7 @@
 
 ## Why（為什麼）
 
-用原生 DB-API 寫 SQL 字串有兩個痛點：**易錯**（拼字、引號、方言差異）、**綁死資料庫**（PostgreSQL 和 MySQL 的 SQL 有差異）。全上 ORM（見 [SQLAlchemy ORM](04-sqlalchemy-orm.md)）又可能太重、藏太多細節、效能難掌控。**SQLAlchemy Core** 是理想的中間層：用 **Python 物件與表達式** 建構 SQL（`select(users).where(users.c.age > 18)`），編譯成對應資料庫的方言。你得到型別檢查、跨資料庫可攜、自動參數化（防注入），又保留對 SQL 的完整控制。對「重查詢、要效能、不想要 ORM 開銷」的場景（資料分析、報表、ETL），Core 常是最佳選擇。理解 Core 也讓你懂 ORM 底層——ORM 就是建在 Core 之上。
+用原生 DB-API 寫 SQL 字串有兩個痛點：**易錯**（拼字、引號、方言差異）、**綁死資料庫**（PostgreSQL 和 MySQL 的 SQL 有差異）。全上 ORM（見 [SQLAlchemy ORM](14-sqlalchemy-orm.md)）又可能太重、藏太多細節、效能難掌控。**SQLAlchemy Core** 是理想的中間層：用 **Python 物件與表達式** 建構 SQL（`select(users).where(users.c.age > 18)`），編譯成對應資料庫的方言。你得到型別檢查、跨資料庫可攜、自動參數化（防注入），又保留對 SQL 的完整控制。對「重查詢、要效能、不想要 ORM 開銷」的場景（資料分析、報表、ETL），Core 常是最佳選擇。理解 Core 也讓你懂 ORM 底層——ORM 就是建在 Core 之上。
 
 ## Theory（理論：Expression Language）
 
@@ -15,7 +15,7 @@ SQLAlchemy 分兩層：
 
 Core 的核心概念：
 
-- **Engine**：連線工廠與連線池的入口（見 [連線池](05-connection-pool.md)），代表「如何連到某資料庫」。
+- **Engine**：連線工廠與連線池的入口（見 [連線池](15-connection-pool.md)），代表「如何連到某資料庫」。
 - **MetaData / Table**：描述資料庫 schema（表、欄、約束）的 Python 物件。
 - **Expression**：`select()`、`insert()`、`update()`、`delete()` 等，用 Python 建構、編譯成 SQL。
 - **Connection**：實際執行語句、管理交易。
@@ -118,7 +118,7 @@ stmt = (
 
 Core 的兩大好處：
 
-1. **自動參數化**：所有值變成綁定參數（`:param`），驅動負責跳脫——**天然防 SQL injection**（見 [SQL injection](../20-security-system-design/06-sql-injection.md)），你不用手動處理。
+1. **自動參數化**：所有值變成綁定參數（`:param`），驅動負責跳脫——**天然防 SQL injection**（見 [SQL injection](../20-security-system-design/02-injection.md)），你不用手動處理。
 2. **跨方言**：同一段 `select()` 在 SQLite、PostgreSQL、MySQL 編譯成各自正確的 SQL（`LIMIT` 語法、跳脫、型別差異都由方言處理）。換資料庫時查詢碼不用改。
 
 ```python
@@ -257,10 +257,10 @@ flowchart TD
 - **重查詢、要效能、報表/ETL 用 Core**：貼近 SQL、可控、無 ORM 開銷。
 - **用表達式建構查詢**（`select().where()`）：型別安全、可組合、**自動參數化**、跨方言。
 - **需要原生 SQL 用 `text()` 且仍參數化**（`:name`）：別字串拼接。
-- **一個 Engine 全應用共用**（管連線池，見 [連線池](05-connection-pool.md)）：別到處 `create_engine`。
+- **一個 Engine 全應用共用**（管連線池，見 [連線池](15-connection-pool.md)）：別到處 `create_engine`。
 - **用 `with engine.connect()` 管理連線與交易**，記得 `commit()`（或用 `engine.begin()` 自動提交）。
 - **除錯用 `echo=True` 或 `stmt.compile(engine)`** 看實際 SQL。
-- **schema 用 `MetaData`/`Table` 描述**：可 `create_all` 建表、被 ORM 與 migration 共用（見 [migration](07-migration.md)）。
+- **schema 用 `MetaData`/`Table` 描述**：可 `create_all` 建表、被 ORM 與 migration 共用（見 [migration](17-migration.md)）。
 - **知道 Core 是 ORM 的基礎**：ORM 底層就是 Core。
 
 ## Common Mistakes（常見誤解）
@@ -282,6 +282,6 @@ flowchart TD
 
 ---
 
-➡️ 下一章：[SQLAlchemy ORM](04-sqlalchemy-orm.md)
+➡️ 下一章：[SQLAlchemy ORM](14-sqlalchemy-orm.md)
 
 [⬆️ 回 Part 15 索引](README.md)

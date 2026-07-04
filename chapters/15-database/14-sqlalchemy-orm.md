@@ -4,7 +4,7 @@
 
 ## Why（為什麼）
 
-用 Core（見 [SQLAlchemy Core](03-sqlalchemy-core.md)）或原生 SQL，你操作的是「表、欄、列」。但你的程式其實想操作「使用者物件、訂單物件」——每次查詢都手動把列轉成物件、把物件存回列，很煩。**ORM（Object-Relational Mapping，物件關聯映射）** 自動做這件事：**定義類別對應資料表，操作物件（`user.name = "Bob"`）ORM 自動生成 SQL**。它讓資料庫存取融入物件導向的程式碼，是多數 Web 應用（Django ORM、SQLAlchemy ORM）的標配。但 ORM 藏了很多機制——**session、identity map、unit of work、flush、lazy loading**——不理解就會遇到「為什麼沒存進去」「為什麼查了 100 次」（N+1，見 [N+1](10-n-plus-1.md)）等坑。這章講清楚 ORM 怎麼運作。
+用 Core（見 [SQLAlchemy Core](13-sqlalchemy-core.md)）或原生 SQL，你操作的是「表、欄、列」。但你的程式其實想操作「使用者物件、訂單物件」——每次查詢都手動把列轉成物件、把物件存回列，很煩。**ORM（Object-Relational Mapping，物件關聯映射）** 自動做這件事：**定義類別對應資料表，操作物件（`user.name = "Bob"`）ORM 自動生成 SQL**。它讓資料庫存取融入物件導向的程式碼，是多數 Web 應用（Django ORM、SQLAlchemy ORM）的標配。但 ORM 藏了很多機制——**session、identity map、unit of work、flush、lazy loading**——不理解就會遇到「為什麼沒存進去」「為什麼查了 100 次」（N+1，見 [N+1](20-n-plus-1.md)）等坑。這章講清楚 ORM 怎麼運作。
 
 ## Theory（理論：session、identity map、unit of work）
 
@@ -129,7 +129,7 @@ user.orders.append(new_order)      # 加關聯 → session 自動設 user_id
 session.commit()
 ```
 
-**⚠️ 陷阱**：`user.orders` 預設是 **lazy loading**（存取時才查 DB）——在迴圈裡對多個 user 存取 `.orders` 會產生 **N+1 查詢**（見 [N+1](10-n-plus-1.md)）。要注意載入策略。
+**⚠️ 陷阱**：`user.orders` 預設是 **lazy loading**（存取時才查 DB）——在迴圈裡對多個 user 存取 `.orders` 會產生 **N+1 查詢**（見 [N+1](20-n-plus-1.md)）。要注意載入策略。
 
 ### 查詢（2.0 風格）
 
@@ -278,31 +278,31 @@ flowchart TD
 - **每工作單元（Web 每請求）一個 session**（見 [Depends](../14-web/11-fastapi-depends.md) yield 依賴）：不全域、不每查詢，用完關閉。
 - **理解 unit of work**：改物件屬性即被追蹤、flush/commit 自動生成 SQL——別手動 `update`。
 - **關聯用 `relationship` + `back_populates`**：雙向關聯、物件導向存取。
-- **小心 lazy loading 造成 N+1**：迴圈存取關聯時用 eager loading（`selectinload`/`joinedload`，見 [N+1](10-n-plus-1.md)）。
+- **小心 lazy loading 造成 N+1**：迴圈存取關聯時用 eager loading（`selectinload`/`joinedload`，見 [N+1](20-n-plus-1.md)）。
 - **`session.get(id)` 走 identity map**：已載入的物件不重打 DB。
-- **交易用 `with Session()` 或 `session.begin()`**：明確邊界（見 [transaction](06-transactions.md)）。
+- **交易用 `with Session()` 或 `session.begin()`**：明確邊界（見 [transaction](16-transactions.md)）。
 - **需要極致效能/複雜查詢時退回 Core 或原生 SQL**：ORM 不是萬能。
 
 ## Common Mistakes（常見誤解）
 
 - **忘記 `commit()`**：變更只在 session 記憶體，沒寫進 DB。
-- **在迴圈裡觸發 lazy loading → N+1 查詢**：效能災難；用 eager loading（見 [N+1](10-n-plus-1.md)）。
+- **在迴圈裡觸發 lazy loading → N+1 查詢**：效能災難；用 eager loading（見 [N+1](20-n-plus-1.md)）。
 - **session 當全域單例跨執行緒/請求共用**：session 非執行緒安全、狀態污染；每請求一個。
 - **手動寫 `update`/`insert`**：ORM 追蹤變更自動生成；改屬性即可。
 - **commit 後存取 detached 物件的屬性**：預設 `expire_on_commit=True`，commit 後屬性過期、再存取會重查（或報錯若 session 關了）。
-- **在 `async def` 用同步 Session**：阻塞 event loop；async 用 `AsyncSession`（見 [async DB](09-async-database.md)）。
+- **在 `async def` 用同步 Session**：阻塞 event loop；async 用 `AsyncSession`（見 [async DB](19-async-database.md)）。
 - **以為 ORM 免懂 SQL**：ORM 生成 SQL，不懂 SQL 就無法優化、看不懂 N+1。
 
 ## Interview Notes（面試重點）
 
 - **能解釋 ORM 三大機制：identity map（同主鍵同物件）、unit of work（追蹤變更、flush 才寫入）、session（暫存+變更追蹤+快取）**。
 - **知道「改物件屬性，session 自動生成 UPDATE」**（不用手動 update）、`flush`（送 SQL）vs `commit`（提交交易）的差別。
-- **知道 lazy loading 造成 N+1 問題**，能說出用 eager loading 解決（連結 [N+1](10-n-plus-1.md)）。
+- **知道 lazy loading 造成 N+1 問題**，能說出用 eager loading 解決（連結 [N+1](20-n-plus-1.md)）。
 - 知道 **每請求一個 session** 的生命週期、identity map 讓 `get` 不重打 DB。
 - 能對比 ORM（方便、物件導向、藏 SQL）vs Core（可控、貼近 SQL）並說出取捨；知道 async 要用 `AsyncSession`。
 
 ---
 
-➡️ 下一章：[連線池](05-connection-pool.md)
+➡️ 下一章：[連線池](15-connection-pool.md)
 
 [⬆️ 回 Part 15 索引](README.md)

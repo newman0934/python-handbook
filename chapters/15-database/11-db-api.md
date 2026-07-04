@@ -4,13 +4,13 @@
 
 ## Why（為什麼）
 
-Python 要連 PostgreSQL、MySQL、SQLite、Oracle——每種資料庫的驅動套件不同（`psycopg`、`mysqlclient`、內建 `sqlite3`…）。如果每個驅動的用法都不一樣，你換資料庫就得重學一遍。**PEP 249（DB-API 2.0）** 是 Python 官方定義的「資料庫存取標準介面」——**所有驅動都遵循同一套 API**（`connect()`、`cursor()`、`execute()`、`fetchone()`…）。學會它，你就會用「所有」關聯式資料庫的驅動；換資料庫時，商業邏輯幾乎不用改。即使你平常用 SQLAlchemy ORM（見 [SQLAlchemy ORM](04-sqlalchemy-orm.md)），它底層也是走 DB-API——理解這層讓你在出問題時知道發生什麼。
+Python 要連 PostgreSQL、MySQL、SQLite、Oracle——每種資料庫的驅動套件不同（`psycopg`、`mysqlclient`、內建 `sqlite3`…）。如果每個驅動的用法都不一樣，你換資料庫就得重學一遍。**PEP 249（DB-API 2.0）** 是 Python 官方定義的「資料庫存取標準介面」——**所有驅動都遵循同一套 API**（`connect()`、`cursor()`、`execute()`、`fetchone()`…）。學會它，你就會用「所有」關聯式資料庫的驅動；換資料庫時，商業邏輯幾乎不用改。即使你平常用 SQLAlchemy ORM（見 [SQLAlchemy ORM](14-sqlalchemy-orm.md)），它底層也是走 DB-API——理解這層讓你在出問題時知道發生什麼。
 
 ## Theory（理論：connection 與 cursor 模型）
 
 DB-API 的核心是兩個物件：**connection（連線）** 與 **cursor（游標）**。
 
-- **connection**：代表「與資料庫的一條連線」。負責 **transaction 邊界**（commit/rollback，見 [transaction](06-transactions.md)）與關閉連線。建立連線成本高（TCP 握手、認證），所以實務上會用連線池重用（見 [連線池](05-connection-pool.md)）。
+- **connection**：代表「與資料庫的一條連線」。負責 **transaction 邊界**（commit/rollback，見 [transaction](16-transactions.md)）與關閉連線。建立連線成本高（TCP 握手、認證），所以實務上會用連線池重用（見 [連線池](15-connection-pool.md)）。
 - **cursor**：代表「一次查詢的執行與結果游標」。你用 cursor `execute()` SQL、用 `fetchone()`/`fetchall()` 取結果。一條連線可開多個 cursor。
 
 為什麼分兩層？因為「連線」是昂貴、長生命週期的資源（一條 TCP 連線），而「查詢」是短暫、頻繁的操作。分開讓一條連線能重複執行多個查詢、管理一致的 transaction。這個模型幾乎所有語言的資料庫 API 都採用（Java JDBC、Go database/sql 同理）。
@@ -60,7 +60,7 @@ conn.close()
 
 ### 🔴 參數化查詢：絕不要字串拼接
 
-**這是資料庫最重要的安全規則**：SQL 的值一律用**參數化**傳入，**絕不用字串格式化拼進 SQL**——否則會有 **SQL injection（SQL 注入）** 漏洞（見 [SQL injection](../20-security-system-design/06-sql-injection.md)）：
+**這是資料庫最重要的安全規則**：SQL 的值一律用**參數化**傳入，**絕不用字串格式化拼進 SQL**——否則會有 **SQL injection（SQL 注入）** 漏洞（見 [SQL injection](../20-security-system-design/02-injection.md)）：
 
 ```python
 # 🔴 危險：字串拼接 → SQL injection 漏洞
@@ -210,13 +210,13 @@ flowchart TD
 
 ## Best Practice（最佳實踐）
 
-- **永遠用參數化查詢**（`?`/`%s`/`:name`），**絕不字串拼接 SQL**——防 SQL injection（見 [SQL injection](../20-security-system-design/06-sql-injection.md)）。這是最重要的一條。
+- **永遠用參數化查詢**（`?`/`%s`/`:name`），**絕不字串拼接 SQL**——防 SQL injection（見 [SQL injection](../20-security-system-design/02-injection.md)）。這是最重要的一條。
 - **connection 管交易、cursor 執行查詢**：一條連線可開多 cursor、跑多查詢。
 - **明確 `commit()`**：寫入操作沒 commit 不生效（多數驅動預設不自動提交）。
 - **大結果集用迭代或 `fetchmany`**，別無腦 `fetchall()`（記憶體）。
 - **批次用 `executemany`**：比迴圈 execute 快。
 - **用 `with` / `closing` 管理資源**：確保 commit/rollback 與關閉——注意各驅動 `with` 語意（sqlite3 的 `with conn` 管交易不關連線）。
-- **實務用連線池**（見 [連線池](05-connection-pool.md)）：連線昂貴，別每次查詢都新建。
+- **實務用連線池**（見 [連線池](15-connection-pool.md)）：連線昂貴，別每次查詢都新建。
 - **知道底層**：即使用 ORM，理解 DB-API 幫你 debug。
 
 ## Common Mistakes（常見誤解）
@@ -239,6 +239,8 @@ flowchart TD
 
 ---
 
-➡️ 下一章：[sqlite3](02-sqlite3.md)
+⬅️ 上一章：[NoSQL 家族與資料庫選型](10-nosql-selection.md)(資料庫原理篇結束,由此進入實作篇)
+
+➡️ 下一章：[sqlite3](12-sqlite3.md)
 
 [⬆️ 回 Part 15 索引](README.md)
