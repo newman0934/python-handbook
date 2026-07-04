@@ -261,6 +261,6 @@ flowchart TD
 
 ---
 
-⬅️ 這是 Part 15 的最後一章。
+➡️ 下一章：[PostgreSQL 專屬功能與實戰](22-postgresql-features.md)
 
-[⬆️ 回 Part 15 索引](README.md) ｜ [下一 Part：架構與設計 ➡️](../16-architecture/README.md)
+[⬆️ 回 Part 15 索引](README.md)

@@ -23,7 +23,7 @@
 
 ## 第二區塊:用 Python 操作資料庫(實作)
 
-把上面的原理落到 Python 實務——連線、ORM、交易、遷移、快取、async 與效能。
+把上面的原理落到 Python 實務——連線、ORM、交易、遷移、快取、async、效能,以及 PostgreSQL 專屬功能與多資料庫上手對照。
 
 | 章 | 標題 |
 |----|------|
@@ -38,6 +38,8 @@
 | 19 | [async 資料庫存取 (SQLAlchemy async / asyncpg)](19-async-database.md) |
 | 20 | [N+1 問題與 eager / lazy loading](20-n-plus-1.md) |
 | 21 | [索引與查詢優化基礎](21-indexing.md) |
+| 22 | [PostgreSQL 專屬功能與實戰](22-postgresql-features.md) |
+| 23 | [多資料庫上手與語法對照](23-multi-db-guide.md) |
 
 > 🔗 兩區呼應:原理篇 [ch05 索引內部原理](05-index-internals.md) ↔ 實作篇 [ch21 索引與查詢優化基礎](21-indexing.md);原理篇 [ch07 交易與並發控制](07-transactions-concurrency.md) ↔ 實作篇 [ch16 transaction 交易](16-transactions.md)。原理篇講「引擎為什麼這樣」,實作篇講「Python 怎麼用」。
 
