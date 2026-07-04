@@ -20,5 +20,8 @@ pytest solutions
 | 8 函數式/裝飾器 | `decorators`、`compose` |
 | 9 併發 | `thread_safe_counter`、`parallel_map`、`async_gather` |
 | 11 標準庫 | `text_re`、`collections_ex`、`datetime_ex` |
+| 15 資料庫 | `task_repo` |
+| 16 架構 | `repository`、`di` |
+| 18 效能 | `algorithms` |
 
 > 🚧 隨各 Part 內容陸續補上。

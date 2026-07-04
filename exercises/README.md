@@ -31,5 +31,8 @@ pytest exercises        # 實作前部分紅燈，屬正常
 | 8 函數式/裝飾器 | `decorators`（memoize）、`compose` |
 | 9 併發 | `thread_safe_counter`（Lock）、`parallel_map`、`async_gather` |
 | 11 標準庫 | `text_re`（re/slugify）、`collections_ex`（Counter）、`datetime_ex` |
+| 15 資料庫 | `task_repo`（sqlite3 CRUD、參數化查詢） |
+| 16 架構 | `repository`（Repository + Protocol）、`di`（依賴注入） |
+| 18 效能 | `algorithms`（two_sum O(n)、去重、first-unique） |
 
-> 🚧 隨各 Part 內容陸續補上。
+> 🚧 隨各 Part 內容陸續補上（需第三方套件的 Part 如 web/AI 待另行處理）。
