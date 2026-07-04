@@ -247,6 +247,6 @@ flowchart TB
 
 ---
 
-⬅️ 這是 Part 15 的最後一章。
+➡️ 下一章:[MongoDB 與文件資料庫實戰](25-mongodb.md)
 
-[⬆️ 回 Part 15 索引](README.md) ｜ [下一 Part:架構與設計 ➡️](../16-architecture/README.md)
+[⬆️ 回 Part 15 索引](README.md)
