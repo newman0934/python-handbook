@@ -157,6 +157,4 @@ A/B 分流 → 限流 → 輸入護欄(注入/PII) → 預算 → LLM → 輸出
 
 ---
 
-⬅️ [Part 29](part29-ai-applications.md) ｜ [回索引](README.md)
-
-🎉 **完成全 30 Part 面試題庫!** 依 chapters 逐 Part 涵蓋語言核心 → 工程 → 資料 → AI 的高頻面試題,每題附「面試官想聽到的完整回答」與追問。
+⬅️ [Part 29](part29-ai-applications.md) ｜ [回索引](README.md) ｜ ➡️ [Part 31 雲端平台部署](part31-cloud-platform-deployment.md)

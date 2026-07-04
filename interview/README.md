@@ -41,5 +41,6 @@
 | [part28-llm-genai.md](part28-llm-genai.md) | 28 LLM 與生成式 AI |
 | [part29-ai-applications.md](part29-ai-applications.md) | 29 AI 應用工程(RAG/Agents) |
 | [part30-production-ai.md](part30-production-ai.md) | 30 生產級 AI 與 LLMOps |
+| [part31-cloud-platform-deployment.md](part31-cloud-platform-deployment.md) | 31 雲端平台部署(AWS + GCP) |
 
 > 每題設計為「先自己答一遍,再看解答」。解答對齊各章的 **Interview Notes(面試重點)**,並補上追問與程式碼。
