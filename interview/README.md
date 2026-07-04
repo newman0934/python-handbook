@@ -29,7 +29,7 @@
 | [part21-microservices.md](part21-microservices.md) | 21 微服務 |
 | [part22-distributed-systems.md](part22-distributed-systems.md) | 22 分散式系統 |
 
-## 資料 / AI 學習線
+## 資料 / AI / 雲端學習線
 
 | 檔案 | 對應 Part |
 |------|-----------|

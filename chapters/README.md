@@ -1,6 +1,6 @@
 # Python Handbook — 章節總覽
 
-> 核心 **22 個 Part** 由語言基礎往上逐步建立工程能力；另有**資料 / AI 學習線**(Part 23–30,對應 Data Analyst / ML Engineer / AI Engineer 職位)陸續補上。
+> 核心 **22 個 Part** 由語言基礎往上逐步建立工程能力;**資料 / AI 學習線**(Part 23–30,對應 Data Analyst / ML Engineer / AI Engineer 職位)與 **Part 31 雲端平台部署(AWS + GCP)** 皆已完成,全書共 **31 個 Part**。
 
 | # | Part | 章數 | 主題 |
 |---|------|------|------|

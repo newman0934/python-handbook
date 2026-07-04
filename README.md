@@ -86,7 +86,7 @@ python-handbook/
 ├── Dockerfile             # task-api 多階段建置（見 project/）
 ├── .github/workflows/     # CI：ruff + mypy + pytest
 │
-├── chapters/             # 各 Part 的章節內容（.md，20 Part）
+├── chapters/             # 各 Part 的章節內容（.md，31 Part）
 ├── project/              # 貫穿全書的實戰專案：task-api（FastAPI 分層服務，附測試）
 ├── examples/             # 可執行範例（pytest 驗證）
 ├── exercises/            # 練習題（stub + 測試，實作前為紅燈）
@@ -108,7 +108,7 @@ python-handbook/
 
 ## 📖 Chapters
 
-全書規劃 **22 個 Part**，由語言基礎往上：
+全書規劃 **31 個 Part**，由語言基礎一路到資料分析、機器學習、LLM/AI 與雲端部署：
 
 > **可跑資源圖示**：📂 examples（可執行範例）｜ ✏️ exercises + solutions（練習與解答）｜ 🎯 interview（面試題庫）｜ 🏗️ project（task-api 實戰）
 
@@ -136,9 +136,18 @@ python-handbook/
 | 20 | [安全與系統設計面試 Security & System Design Interview](chapters/20-security-system-design/) | 輸入驗證、注入、認證授權、JWT、密鑰、OWASP、系統設計案例、Python 面試題庫 |
 | 21 | [微服務 Microservices](chapters/21-microservices/) | gRPC、protobuf、服務發現、API gateway、健康檢查、限流與熔斷 |
 | 22 | [分散式系統 Distributed Systems](chapters/22-distributed-systems/) | CAP、一致性、分散式鎖、訊息佇列、冪等、Saga、分散式追蹤 |
+| 23 | [分析用 SQL 與資料整理 SQL & Data Wrangling](chapters/23-data-analysis/) | 分析師工作流、SQL 聚合/JOIN/window/CTE、pandas groupby/merge/樞紐、EDA、端到端分析 |
+| 24 | [統計分析與商業洞察 Statistics & Business Analytics](chapters/24-business-analytics/) | 描述統計、相關與因果、假設檢定、A/B 統計、時間序列、cohort/funnel、視覺化、資料溝通 |
+| 25 | [機器學習基礎 ML Foundations](chapters/25-machine-learning/) | ML 概論、train/test split、特徵工程、線性/邏輯回歸、模型評估、過擬合與正則化 |
+| 26 | [進階機器學習 Advanced ML](chapters/26-advanced-ml/) | 決策樹、集成學習、k-means、PCA、超參數調校、類別不平衡、模型可解釋性 |
+| 27 | [深度學習 Deep Learning](chapters/27-deep-learning/) | 神經網路、反向傳播、從零手刻 NN、PyTorch、CNN、注意力機制、訓練技巧 |
+| 28 | [LLM 與生成式 AI LLM & GenAI](chapters/28-llm-genai/) | LLM 原理、Claude API、prompt engineering、tool use、串流、embeddings、向量資料庫、成本、評估 |
+| 29 | [AI 應用工程 AI Application Engineering](chapters/29-ai-applications/) | RAG 全流程、chunking、混合檢索與 rerank、RAG 評估、ReAct agents、MCP、記憶、多 agent、框架 |
+| 30 | [生產級 AI 與 LLMOps Production AI & LLMOps](chapters/30-production-ai/) | LLMOps、串流、可靠性、可觀測性、prompt injection、護欄/PII、eval gate、A/B、資料飛輪 |
+| 31 | [雲端平台部署 Cloud Platform Deployment（AWS + GCP）](chapters/31-cloud-platform-deployment/) | AWS↔GCP 對照、IAM、容器/K8s/serverless、託管 DB/儲存、密鑰/網路、Terraform、OIDC 免金鑰 CI/CD、成本、上雲 Capstone |
 
 > 各 Part 資料夾內有 README 索引（列出完整章節規劃）；每章彼此以「下一章」串接，可依序閱讀。
-> ✅ 全 22 Part 內文與可執行範例皆已完成（`examples/` 附 `pytest` 驗證）。
+> ✅ 全 31 Part 內文與可執行範例皆已完成（`examples/` 附 `pytest` 驗證）。
 
 ---
 

@@ -15,4 +15,4 @@ examples/
 pytest examples
 ```
 
-> 🚧 隨各 Part 內容陸續補上。
+> ✅ 全 31 Part 皆有可執行範例與 `test_*.py`,`pytest examples` 應全綠。
