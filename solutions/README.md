@@ -23,5 +23,7 @@ pytest solutions
 | 15 資料庫 | `task_repo` |
 | 16 架構 | `repository`、`di` |
 | 18 效能 | `algorithms` |
+| 20 安全 | `password_hashing`、`rate_limiter` |
+| 22 分散式 | `idempotency`、`consistent_hash` |
 
 > 🚧 隨各 Part 內容陸續補上。

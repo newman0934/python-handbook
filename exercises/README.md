@@ -34,5 +34,7 @@ pytest exercises        # 實作前部分紅燈，屬正常
 | 15 資料庫 | `task_repo`（sqlite3 CRUD、參數化查詢） |
 | 16 架構 | `repository`（Repository + Protocol）、`di`（依賴注入） |
 | 18 效能 | `algorithms`（two_sum O(n)、去重、first-unique） |
+| 20 安全 | `password_hashing`（PBKDF2+salt）、`rate_limiter`（token bucket） |
+| 22 分散式 | `idempotency`（冪等去重）、`consistent_hash`（一致性雜湊環） |
 
 > 🚧 隨各 Part 內容陸續補上（需第三方套件的 Part 如 web/AI 待另行處理）。
