@@ -8,7 +8,7 @@
 
 - **一個環節錯,整條鏈斷**:DB 忘了放私有子網、密鑰寫死、CI 用了長期金鑰、擴縮沒設上限……**任一環節的疏漏都會變成資安漏洞或帳單災難**。這章給你一份**端到端檢查清單**,確保每塊都到位。
 - **要看見「全貌」而非零件**:面試官問「你會怎麼把一個 Python 服務部署上雲?」,考的是**你腦中有沒有完整架構**——運算在哪、狀態在哪、憑證怎麼流、CI 怎麼安全部署、上線後怎麼看。這章就是那張全貌圖。
-- **task-api 是全書縮影**:它用到 [FastAPI](../14-web/README.md)、[分層架構](../16-architecture/README.md)、[DB](../13-database/README.md)、[async](../11-concurrency-async/README.md)、[測試](../15-testing-tooling/README.md)、[可觀測性](../17-observability/README.md)——把它成功部署上雲,等於驗證你**從寫程式到營運的完整能力**。
+- **task-api 是全書縮影**:它用到 [FastAPI](../14-web/README.md)、[分層架構](../16-architecture/README.md)、[DB](../15-database/README.md)、[async](../09-concurrency/README.md)、[測試](../12-testing/README.md)、[可觀測性](../19-cloud-native/README.md)——把它成功部署上雲,等於驗證你**從寫程式到營運的完整能力**。
 - **從「能跑」到「生產級」的差距**:本機 `uvicorn` 能跑,離「生產級雲服務」還有一大段——這章明確標出那段差距,讓你知道還缺什麼。
 
 **核心心法**:**把前十章組裝成一條無縫的路徑**,每個決策都有前面章節的依據。這是你上雲能力的總驗收。
@@ -77,7 +77,7 @@
 **追一次「push 到上線」的完整流程**,看每章如何接力:
 
 1. **開發者 `git push`** → 觸發 GitHub Actions([ch09](09-cicd-to-cloud.md))。
-2. **CI 跑品質門檻**:`pytest`/`ruff`/`mypy`([Part 15](../15-testing-tooling/README.md))——不過就停,不部署。
+2. **CI 跑品質門檻**:`pytest`/`ruff`/`mypy`([Part 12 測試](../12-testing/README.md))——不過就停,不部署。
 3. **build 映像**:多階段 Docker build,slim image([ch03](03-containers-ecs-cloudrun.md))。
 4. **OIDC 換臨時憑證**:GitHub OIDC token → 雲驗證 repo+branch → 換發**短時效憑證**,**無長期金鑰**([ch09](09-cicd-to-cloud.md))。
 5. **push 到 Artifact Registry / ECR**,tag = commit SHA。
@@ -278,6 +278,6 @@ flowchart TB
 
 🎉 **完成 Part 31!** 你已把全書實戰專案 task-api 從程式碼帶到**生產級雲部署**——涵蓋 AWS 與 GCP 的容器、K8s、serverless、DB/儲存、IAM、密鑰、IaC、免金鑰 CI/CD、可觀測性與成本管理。
 
-⬅️ 相關:[Part 19 雲原生與部署](../19-cloud-native/README.md) ｜ [Part 17 可觀測性](../17-observability/README.md)
+⬅️ 相關:[Part 19 雲原生與部署](../19-cloud-native/README.md) ｜ [Part 14 Web](../14-web/README.md)
 
 [⬆️ 回 Part 31 索引](README.md) ｜ [⬆️ 回章節總覽](../README.md)

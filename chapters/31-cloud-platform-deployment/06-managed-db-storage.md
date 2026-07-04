@@ -68,7 +68,7 @@ postgresql://user:pass@/tasks?host=/cloudsql/proj:region:instance  # Cloud SQL(s
 
 **連線池(connection pooling)——DB 不可省的一環**:資料庫連線**昂貴**(建立要 TCP + TLS + 認證),且 DB 有**最大連線數上限**。無伺服器/多實例環境下,每個實例都開一堆連線會**很快耗盡 DB 連線**。解法:
 
-- **應用層連線池**:如 SQLAlchemy 的 pool,重用連線([Part 13 資料庫](../13-database/README.md))。
+- **應用層連線池**:如 SQLAlchemy 的 pool,重用連線([Part 15 資料庫](../15-database/README.md))。
 - **外部 pooler**:PgBouncer、RDS Proxy、Cloud SQL 的連線管理——在 DB 前擋一層,收斂連線數。**Serverless(Lambda/Cloud Run 縮放到很多實例)尤其需要**,否則瞬間擴容會打爆 DB。
 
 **物件儲存的預簽 URL(presigned URL)——關鍵模式**:讓客戶端**直接**上傳/下載物件,**不經過你的伺服器**:

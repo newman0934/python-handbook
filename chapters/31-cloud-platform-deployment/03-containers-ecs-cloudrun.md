@@ -174,7 +174,7 @@ $ python containers.py
 
 - **`readiness_check`**:把「上雲前該檢查的事」變成規則——讀 `$PORT`(平台動態指派埠,寫死會綁不上)、無狀態、`/health`、密鑰不寫死、記憶體夠。**部署失敗十之八九是這幾條沒過**。
 - **`estimate_instances` 用 Little's Law**:在途請求數 = 到達率 × 停留時間(`peak_rps × latency`),再除以每實例並發。這解釋了為什麼**低延遲 + 高並發**的服務用很少實例就能扛大流量——500 rps × 0.2s = 100 在途,concurrency 80 → 只需 2 實例。
-- **async 的價值再現**:若服務是同步阻塞、concurrency 只能設 1,同樣 500 rps 就要 100 個實例——**I/O-bound 用 async 提高單實例並發 = 直接省成本**(呼應 [Part 11 asyncio](../11-concurrency-async/README.md))。
+- **async 的價值再現**:若服務是同步阻塞、concurrency 只能設 1,同樣 500 rps 就要 100 個實例——**I/O-bound 用 async 提高單實例並發 = 直接省成本**(呼應 [Part 09 併發/asyncio](../09-concurrency/README.md))。
 - **要點**:容器上雲 = build→push registry→deploy;無伺服器容器自動擴縮、按用量;無狀態是硬需求;用並發模型估實例數。
 
 ## Diagram(圖解:build → push → deploy → 擴縮)

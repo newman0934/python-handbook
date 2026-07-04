@@ -1,6 +1,6 @@
 # 可觀測性與成本管理
 
-> 服務上線後,兩個問題會立刻找上你:「**它現在好不好?**」(可觀測性)和「**這個月要花多少?**」(成本)。[Part 17 教過可觀測性的原理](../17-observability/README.md)(logs/metrics/traces、SLO、p95)——這章把它落到**雲平台**:雲怎麼幫你收集監控、怎麼設告警、以及雲獨有的痛點——**成本會失控**。按用量計費是雙面刃:彈性,但一個沒設上限的自動擴縮、忘了關的資源、或被灌爆的流量,帳單會爆。這章講雲的可觀測性工具、成本模型與省錢策略,並用 Python 實作 SLO/error budget 與成本異常偵測。
+> 服務上線後,兩個問題會立刻找上你:「**它現在好不好?**」(可觀測性)和「**這個月要花多少?**」(成本)。[Part 19 雲原生教過可觀測性的原理](../19-cloud-native/README.md)(logs/metrics/traces、SLO、p95)——這章把它落到**雲平台**:雲怎麼幫你收集監控、怎麼設告警、以及雲獨有的痛點——**成本會失控**。按用量計費是雙面刃:彈性,但一個沒設上限的自動擴縮、忘了關的資源、或被灌爆的流量,帳單會爆。這章講雲的可觀測性工具、成本模型與省錢策略,並用 Python 實作 SLO/error budget 與成本異常偵測。
 
 ## Why(為什麼)
 
@@ -15,7 +15,7 @@
 
 ## Theory(理論:可觀測性三支柱 + SLO + 成本模型)
 
-**可觀測性三支柱**(承 [Part 17](../17-observability/README.md),雲上一樣適用):
+**可觀測性三支柱**(承 [Part 19 雲原生](../19-cloud-native/README.md),雲上一樣適用):
 
 ```text
 Logs    發生了什麼(離散事件、除錯細節)
@@ -56,7 +56,7 @@ Traces  一個請求跨服務的完整路徑(定位瓶頸)
 | **成本分攤** | Cost Allocation Tags | Labels |
 | **標準協定** | OpenTelemetry(兩雲皆支援) | OpenTelemetry |
 
-**OpenTelemetry(OTel)——可攜的可觀測性**:與其綁定單一雲的 SDK,用 **OTel** 這個廠商中立標準來 instrument 你的應用(產生 logs/metrics/traces),再匯出到任一後端(CloudWatch/Cloud Monitoring/Datadog…)。**降低廠商鎖定**,呼應 [Part 17](../17-observability/README.md)。
+**OpenTelemetry(OTel)——可攜的可觀測性**:與其綁定單一雲的 SDK,用 **OTel** 這個廠商中立標準來 instrument 你的應用(產生 logs/metrics/traces),再匯出到任一後端(CloudWatch/Cloud Monitoring/Datadog…)。**降低廠商鎖定**,呼應 [Part 19 雲原生](../19-cloud-native/README.md)。
 
 **成本分攤標籤(tag/label)——歸因的關鍵**:給每個資源打標籤(`team`、`env`、`service`),帳單就能**按團隊/環境/服務分組**——才知道錢花在哪、哪個服務要優化。**沒打標籤 = 帳單是一團無法拆解的數字**。
 
@@ -196,7 +196,7 @@ flowchart TB
 - **忘了關測試/臨時資源**:閒置資源持續計費,月底才發現。
 - **忽略 egress/資料傳輸費**:出雲/跨區傳輸常是隱形大宗成本。
 - **不打標籤**:帳單無法拆解,不知道錢花在哪、無法歸因優化。
-- **只看平均延遲**:被長尾掩蓋;看 p95/p99([Part 17](../17-observability/README.md))。
+- **只看平均延遲**:被長尾掩蓋;看 p95/p99([Part 19 雲原生](../19-cloud-native/README.md))。
 - **把 SLO 訂成 100%**:不切實際且極貴;留 error budget 才能兼顧創新。
 - **等月底看帳單**:太遲;要即時預算告警 + 異常偵測。
 - **過度追求高可用**:每多一個 9 成本跳升;依實際需求定 SLO。

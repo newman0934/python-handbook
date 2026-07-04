@@ -1,6 +1,6 @@
 # CI/CD 上雲(OIDC 免金鑰)
 
-> [Part 15 講 CI/CD 的原理](../15-testing-tooling/README.md)(test → build → deploy 的自動化管線)。這章把它**接到雲**:GitHub Actions 如何**build 映像、推 registry、部署到 Cloud Run/ECS**,而最關鍵的一題是——**CI 怎麼安全地取得雲的部署權限?** 舊做法是把長期 access key 存進 CI secret,但那是**外洩重災區**。現代做法是 **OIDC 聯合身分(federation)免金鑰**:CI 用短時效 token 換取雲的臨時憑證,**完全不存任何長期金鑰**。這章講清楚部署管線、OIDC 的運作與為何它更安全,並用 Python 實作一個 OIDC 信任驗證器。
+> [Part 19 雲原生講過 CI/CD 的原理](../19-cloud-native/README.md)(test → build → deploy 的自動化管線)。這章把它**接到雲**:GitHub Actions 如何**build 映像、推 registry、部署到 Cloud Run/ECS**,而最關鍵的一題是——**CI 怎麼安全地取得雲的部署權限?** 舊做法是把長期 access key 存進 CI secret,但那是**外洩重災區**。現代做法是 **OIDC 聯合身分(federation)免金鑰**:CI 用短時效 token 換取雲的臨時憑證,**完全不存任何長期金鑰**。這章講清楚部署管線、OIDC 的運作與為何它更安全,並用 Python 實作一個 OIDC 信任驗證器。
 
 ## Why(為什麼)
 
