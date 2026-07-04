@@ -73,7 +73,7 @@ p = Point(1, 2)
 {p, Point(1, 2)}    # ✅ 可放 set（frozen 自動產生 __hash__）
 ```
 
-`frozen=True` 讓實例不可變，並自動實作 `__hash__`（滿足 hash/eq 契約，見 [hashable](08-dunder-methods.md)）——所以能當 dict key、放 set。非 frozen 的 dataclass 預設 `__hash__` 為 None（不可 hash）。
+`frozen=True` 讓實例不可變，並自動實作 `__hash__`（滿足 hash/eq 契約，見 [hashable](../03-data-structures/07-hashable.md)）——所以能當 dict key、放 set。非 frozen 的 dataclass 預設 `__hash__` 為 None（不可 hash）。
 
 ### `order=True`：自動排序
 
