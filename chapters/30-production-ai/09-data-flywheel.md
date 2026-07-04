@@ -12,7 +12,7 @@
 - **使用者回饋是免費的標註**:讚/倒讚、重問、放棄、轉人工——這些訊號告訴你**哪些答案不好**,等於使用者幫你標了資料。
 - **越多使用 → 越多資料 → 越好的產品 → 越多使用**:這就是**飛輪**——一個自我強化的正向循環。做對了,產品會**越用越好**,形成競爭護城河(別人沒有你的使用資料)。
 
-**資料飛輪**就是把這個循環**工程化**:系統性地收集回饋、挖出失敗、轉成改進(擴充[評估集](07-eval-in-cicd.md)、優化 [prompt/RAG](../29-ai-applications/03-prompt-engineering.md)、必要時 fine-tune)、驗證、再上線——周而復始。這是 LLMOps 從「把系統跑起來」邁向「讓系統持續變強」的關鍵。
+**資料飛輪**就是把這個循環**工程化**:系統性地收集回饋、挖出失敗、轉成改進(擴充[評估集](07-eval-in-cicd.md)、優化 [prompt/RAG](../28-llm-genai/03-prompt-engineering.md)、必要時 fine-tune)、驗證、再上線——周而復始。這是 LLMOps 從「把系統跑起來」邁向「讓系統持續變強」的關鍵。
 
 ## Theory(理論:飛輪的循環)
 
@@ -43,7 +43,7 @@
 |------|------|------|
 | **改 prompt** | 指令不清、格式不對、遺漏規則 | 最低,先試 |
 | **改 [RAG](../29-ai-applications/01-rag-pipeline.md)** | 答案錯因於檢索不到/知識過時 → 改 [chunking/檢索](../29-ai-applications/03-hybrid-retrieval-rerank.md)、更新知識庫 | 低—中 |
-| **加 few-shot / 範例** | 特定類型答不好 → 給[範例](../29-ai-applications/03-prompt-engineering.md) | 低 |
+| **加 few-shot / 範例** | 特定類型答不好 → 給[範例](../28-llm-genai/03-prompt-engineering.md) | 低 |
 | **換更強模型** | 推理/能力不足 | 中(成本升) |
 | **fine-tune(微調)** | 需固定風格/格式/領域技能,且 prompt/RAG 都不夠 | 高(要資料、訓練、維運) |
 

@@ -22,7 +22,7 @@
 儘管 API 不同,主流框架的核心抽象相通:
 
 - **統一的模型介面**:把不同供應商的 LLM 包成一致的 `invoke`/`stream` 介面,換模型不改業務碼。
-- **Prompt 模板(prompt template)**:把變數填進 prompt 骨架(對應 [prompt engineering](03-prompt-engineering.md))。
+- **Prompt 模板(prompt template)**:把變數填進 prompt 骨架(對應 [prompt engineering](../28-llm-genai/03-prompt-engineering.md))。
 - **可組合的管線(chain / pipeline)**:把「prompt → 模型 → 解析 → 下一步」串成一條可執行的鏈。LangChain 的 **LCEL(LangChain Expression Language)** 用 `|` 運算子組合(像 shell pipe):`prompt | model | parser`。
 - **Retriever(檢索器)**:統一的「query → 相關文件」介面,背後可接任何[向量庫](../28-llm-genai/07-vector-databases.md)或[混合檢索](03-hybrid-retrieval-rerank.md)。
 - **Agent / Graph**:封裝 [ReAct 迴圈](05-agents-react.md)、工具編排、狀態管理(LangGraph 用「節點 + 邊」建有狀態、可循環的 agent 流程)。

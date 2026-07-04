@@ -13,7 +13,7 @@ from examples.part15.mongodb_demo import (
 )
 
 
-def _users() -> list[dict]:
+def _users() -> list[dict[str, object]]:
     return [
         {"_id": 1, "name": "Alice", "age": 30, "tags": ["vip", "gold"]},
         {"_id": 2, "name": "Bob", "age": 25, "tags": ["normal"]},
@@ -50,7 +50,7 @@ def test_find_equality() -> None:
         ({"age": {"$gt": 100}}, 0),
     ],
 )
-def test_find_counts(query: dict, count: int) -> None:
+def test_find_counts(query: dict[str, object], count: int) -> None:
     assert len(find(_users(), query)) == count
 
 

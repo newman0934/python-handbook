@@ -172,7 +172,7 @@ class ReportService:
 
 Python 是動態語言，SOLID 的落地更輕量：
 
-- **DIP/ISP 常用 `Protocol`**（結構型別，見 [Protocol](../05-typing/09-protocol.md)）而非強制繼承 ABC——更 Pythonic。
+- **DIP/ISP 常用 `Protocol`**（結構型別，見 [Protocol](../05-typing/06-protocol.md)）而非強制繼承 ABC——更 Pythonic。
 - **OCP 也可用函式/字典分派**（不一定要類別階層）：`handlers = {"credit": pay_credit, ...}`。
 - **別為了 SOLID 而 SOLID**：小腳本不需要五層抽象。原則是為了管理「會成長、會變」的複雜度。
 

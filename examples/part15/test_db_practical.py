@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sqlite3
+
 import pytest
 
 from examples.part15.db_practical import (
@@ -37,9 +39,7 @@ def test_upsert_accumulates() -> None:
     assert conn.execute("SELECT hits FROM kv WHERE k='a'").fetchone()[0] == 3
 
 
-def sqlite_kv():
-    import sqlite3
-
+def sqlite_kv() -> sqlite3.Connection:
     conn = sqlite3.connect(":memory:")
     conn.execute("CREATE TABLE kv (k TEXT PRIMARY KEY, hits INT)")
     return conn

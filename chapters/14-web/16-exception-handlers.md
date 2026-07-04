@@ -4,7 +4,7 @@
 
 ## Why（為什麼）
 
-API 一定會遇到錯誤：找不到資源、驗證失敗、沒權限、外部服務掛掉。**怎麼回應錯誤，決定 API 的專業程度**。糟糕的 API 讓例外直接冒出變成 `500 Internal Server Error`（洩漏堆疊、客戶端無從處理）；好的 API 回**結構化、一致、正確狀態碼**的錯誤回應（`404` + `{"detail": "找不到使用者"}`）。這章講清楚 FastAPI 的錯誤處理——`HTTPException`、自訂例外處理器、統一錯誤格式——把 [錯誤處理](../06-error-handling/01-exceptions-basics.md) 的原則落實到 Web。
+API 一定會遇到錯誤：找不到資源、驗證失敗、沒權限、外部服務掛掉。**怎麼回應錯誤，決定 API 的專業程度**。糟糕的 API 讓例外直接冒出變成 `500 Internal Server Error`（洩漏堆疊、客戶端無從處理）；好的 API 回**結構化、一致、正確狀態碼**的錯誤回應（`404` + `{"detail": "找不到使用者"}`）。這章講清楚 FastAPI 的錯誤處理——`HTTPException`、自訂例外處理器、統一錯誤格式——把 [錯誤處理](../06-error-handling/01-exceptions.md) 的原則落實到 Web。
 
 ## Theory（理論：例外到 HTTP 回應的映射）
 
@@ -153,7 +153,7 @@ def handle_validation_error(request: Request, exc: RequestValidationError):
 
 ### 別洩漏內部細節
 
-**生產環境的錯誤回應絕不能洩漏堆疊追蹤、內部路徑、SQL**（見 [安全](../20-security-system-design/01-security-mindset.md)）——那是資安風險。對「未預期的例外」回一般的 `500`，把細節寫進 log（見 [logging](../11-stdlib/12-logging.md)）給自己看，不回給客戶端：
+**生產環境的錯誤回應絕不能洩漏堆疊追蹤、內部路徑、SQL**（見 [安全](../20-security-system-design/README.md)）——那是資安風險。對「未預期的例外」回一般的 `500`，把細節寫進 log（見 [logging](../11-stdlib/08-logging.md)）給自己看，不回給客戶端：
 
 ```python
 import logging
@@ -275,7 +275,7 @@ flowchart TD
 - **端點的錯誤用 `HTTPException` 回對的狀態碼**：404 找不到、403 沒權限、400 客戶端錯——別讓例外冒成 500。
 - **領域邏輯拋領域例外（不含 HTTP）、Web 層用例外處理器映射**（見 [分層架構](../16-architecture/01-layered-architecture.md)）：領域乾淨、可重用、好測。
 - **統一錯誤格式**（都有 `code`/`message`）：客戶端用同一套邏輯解析。
-- **未預期的例外回一般 500 + 細節進 log，絕不洩漏堆疊/內部路徑給客戶端**（見 [安全](../20-security-system-design/01-security-mindset.md)）。
+- **未預期的例外回一般 500 + 細節進 log，絕不洩漏堆疊/內部路徑給客戶端**（見 [安全](../20-security-system-design/README.md)）。
 - **善用狀態碼語意**（見 [HTTP 基礎](02-http-basics.md)）：讓客戶端能程式化處理錯誤。
 - **可覆寫 `RequestValidationError`** 讓驗證錯誤符合你的統一格式（見 [pydantic 驗證](06-pydantic-validation.md)）。
 - **錯誤也要測試**（見 [TestClient](15-testclient.md)）：測 404/403/422/500 回對的狀態碼與格式。

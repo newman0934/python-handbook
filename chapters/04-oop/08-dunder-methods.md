@@ -78,7 +78,7 @@ class Point:
 
 ### `__eq__`（與 `__hash__` 的連動）
 
-定義 `__eq__` 讓 `==` 比較「值」而非「身分」。注意：**一旦定義 `__eq__`，`__hash__` 會被設為 None**（物件變不可 hash，見 [hashable](07-hashable.md)）——要放 set/dict 就得一併定義 `__hash__`，或用 `@dataclass`（見 [dataclass](09-dataclass.md)）。
+定義 `__eq__` 讓 `==` 比較「值」而非「身分」。注意：**一旦定義 `__eq__`，`__hash__` 會被設為 None**（物件變不可 hash，見 [hashable](08-dunder-methods.md)）——要放 set/dict 就得一併定義 `__hash__`，或用 `@dataclass`（見 [dataclass](09-dataclass.md)）。
 
 ```python
 def __eq__(self, other: object) -> bool:
@@ -211,9 +211,9 @@ flowchart LR
 ## Common Mistakes（常見誤解）
 
 - **只實作 `__str__` 沒實作 `__repr__`**：REPL/容器/log 顯示醜（`<obj at 0x...>`）。至少寫 `__repr__`。
-- **定義 `__eq__` 忘了 `__hash__`**：物件變不可 hash，放進 set/dict 時 TypeError（見 [hashable](07-hashable.md)）。
+- **定義 `__eq__` 忘了 `__hash__`**：物件變不可 hash，放進 set/dict 時 TypeError（見 [hashable](08-dunder-methods.md)）。
 - **`__eq__` 對不同型別回 `False` 而非 `NotImplemented`**：阻止了對方的比較機會，可能導致不對稱比較。
-- **違反契約**：定義 `__eq__` 卻讓相等物件 hash 不同（見 [hashable](07-hashable.md)）。
+- **違反契約**：定義 `__eq__` 卻讓相等物件 hash 不同（見 [hashable](08-dunder-methods.md)）。
 - **`__repr__` 不夠明確**：回傳看不出物件狀態的字串，除錯時沒幫助。
 - **手寫一堆比較運算子**：用 `@total_ordering` 或 dataclass 的 `order=True`。
 - **濫用運算子多載**：讓 `+` 做不直覺的事會害人；只在語意自然時多載。

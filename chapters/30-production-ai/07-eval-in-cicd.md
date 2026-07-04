@@ -1,6 +1,6 @@
 # 評估回歸與 CI/CD
 
-> 傳統程式碼有單元測試把關:改壞了,CI 紅燈,擋下合併。但 LLM 應用的「行為」藏在 [prompt](../29-ai-applications/03-prompt-engineering.md)、模型版本、[RAG 知識庫](../29-ai-applications/01-rag-pipeline.md)裡——你改一句 prompt,某些問題悄悄變差,`pytest` 全綠卻**品質退化**。解法是把 [LLM 評估](../29-ai-applications/04-rag-evaluation.md)搬進 CI/CD,當作「品質的單元測試」:改動若讓評估分數退步或造成回歸,**CI 紅燈擋下**。這章講評估驅動的 CI/CD。
+> 傳統程式碼有單元測試把關:改壞了,CI 紅燈,擋下合併。但 LLM 應用的「行為」藏在 [prompt](../28-llm-genai/03-prompt-engineering.md)、模型版本、[RAG 知識庫](../29-ai-applications/01-rag-pipeline.md)裡——你改一句 prompt,某些問題悄悄變差,`pytest` 全綠卻**品質退化**。解法是把 [LLM 評估](../29-ai-applications/04-rag-evaluation.md)搬進 CI/CD,當作「品質的單元測試」:改動若讓評估分數退步或造成回歸,**CI 紅燈擋下**。這章講評估驅動的 CI/CD。
 
 ## Why(為什麼)
 

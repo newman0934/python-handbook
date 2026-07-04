@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import pytest
 
 from examples.part15.db_internals import (
@@ -38,7 +40,7 @@ from examples.part15.db_internals import (
 # ---- ch01 關聯代數 ----
 
 
-def _users() -> set:
+def _users() -> set[tuple[tuple[str, object], ...]]:
     return relation(
         [
             {"id": 1, "name": "Alice", "age": 30},
@@ -55,7 +57,7 @@ def test_project_deduplicates() -> None:
 
 
 def test_select_filters() -> None:
-    over26 = select_rel(_users(), lambda d: d["age"] > 26)
+    over26 = select_rel(_users(), lambda d: cast("int", d["age"]) > 26)
     assert {dict(r)["name"] for r in over26} == {"Alice", "Cara"}
 
 
@@ -82,7 +84,7 @@ def test_join_no_match_empty() -> None:
         (30, None, None),
     ],
 )
-def test_sql_gt_three_valued(a, b, expected) -> None:
+def test_sql_gt_three_valued(a: int | None, b: int | None, expected: bool | None) -> None:
     assert sql_gt(a, b) is expected
 
 
@@ -94,7 +96,7 @@ def test_sql_gt_three_valued(a, b, expected) -> None:
         (None, False),  # WHERE 丟掉 UNKNOWN
     ],
 )
-def test_where_keep_only_true(result, kept) -> None:
+def test_where_keep_only_true(result: bool | None, kept: bool) -> None:
     assert where_keep(result) is kept
 
 
@@ -178,7 +180,7 @@ def test_index_point_and_range() -> None:
         ({"a", "b", "c"}, True, ["a", "b", "c"]),
     ],
 )
-def test_leftmost_prefix(eq, usable, used) -> None:
+def test_leftmost_prefix(eq: set[str], usable: bool, used: list[str]) -> None:
     u, cols = can_use_composite_index(["a", "b", "c"], eq)
     assert u is usable
     assert cols == used
@@ -207,7 +209,7 @@ def test_merge_presorted_cheaper() -> None:
         (0.5, "Seq Scan"),  # 低選擇性 → 全表掃描
     ],
 )
-def test_optimizer_scan_choice(sel, choice) -> None:
+def test_optimizer_scan_choice(sel: float, choice: str) -> None:
     assert ScanDecision(1_000_000, sel).choose() == choice
 
 
@@ -300,7 +302,7 @@ def test_replication_lag_read_your_writes() -> None:
         (Workload("keyvalue", "oltp", False, True), "wide-column"),  # 海量寫入先於 KV
     ],
 )
-def test_recommend_db(w, expected) -> None:
+def test_recommend_db(w: Workload, expected: str) -> None:
     assert recommend_db(w) == expected
 
 

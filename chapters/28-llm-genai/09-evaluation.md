@@ -53,7 +53,7 @@ def evaluate(app, test_cases, scorer):
 
 **常見指標**:
 
-- **分類/抽取**:準確率(accuracy)、精確率/召回率/F1(見 [ML 評估](../24-analytics-engineering/README.md))。
+- **分類/抽取**:準確率(accuracy)、精確率/召回率/F1(見 [ML 評估](../24-business-analytics/README.md))。
 - **開放生成**:LLM-as-judge 的平均分、通過率(達某分數門檻的比例)。
 - **RAG**:忠實度(答案是否只依據檢索到的資料,不幻覺)、檢索相關性、答案正確性。
 - **安全**:拒絕率(該拒的有拒)、越獄成功率(見 [prompt injection](../20-security-system-design/07-owasp-xss-csrf.md))。
