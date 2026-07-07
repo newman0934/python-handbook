@@ -2,17 +2,48 @@
 
 > `subprocess.run` 是執行外部命令的正解——傳引數列表（不是字串）、取得輸出與退出碼、檢查錯誤。最重要的一課是安全：絕不用 `shell=True` 拼接使用者輸入（命令注入漏洞）。
 
+## 💡 白話導讀（建議先讀）
+
+有時 Python 要「派差」——請作業系統幫忙跑別的程式（git、ffmpeg、系統指令），並把結果收回來。
+
+現代標準姿勢一個函式打天下：
+
+```python
+import subprocess
+
+result = subprocess.run(
+    ["git", "status", "--short"],   # ⚠️ 注意:是「列表」,不是字串!
+    capture_output=True, text=True, check=True,
+)
+result.stdout      # 它印了什麼
+result.returncode  # 退出碼(0=成功)
+```
+
+**「傳列表,不傳字串」是這章最重要的一課**,而且是安全課：
+
+傳字串通常伴隨 `shell=True`——指令交給 shell 解讀。如果指令裡拼了使用者輸入：
+
+```python
+subprocess.run(f"convert {filename}", shell=True)   # 🔴 災難
+# 使用者把 filename 填成 "x; rm -rf ~" —— shell 會照做!
+```
+
+這是**命令注入**——[SQL injection](../15-database/11-db-api.md) 的表親。
+**傳列表就天生免疫**：每個元素就是一個引數,`"x; rm -rf ~"` 只會被當成一個奇怪的檔名,不會被執行。
+
+三個常用參數一次記：`capture_output=True`（收輸出）、`text=True`（給 str 不給 bytes）、`check=True`（失敗就拋例外,別默默吞掉錯誤——[Part 6 守則](../06-error-handling/08-error-handling-best-practices.md)）。
+
 ## Why（為什麼）
 
 Python 程式常需要呼叫外部命令：跑 git、呼叫 ffmpeg、執行系統工具。`subprocess` 模組提供這能力。但它也是**命令注入漏洞**的常見來源——用錯方式（`shell=True` + 字串拼接）會讓惡意輸入執行任意命令。這章講清楚 `subprocess.run` 的正確用法（引數列表、取輸出、檢查錯誤）與**安全鐵律**——這是既實用又攸關安全的模組。
 
 ## Theory（理論：run 與引數列表）
 
-**`subprocess.run(args, ...)`** 是現代執行外部命令的主要介面（Python 3.5+，取代舊的 `os.system`、`call`）。核心原則：
+**`subprocess.run(args, ...)`** 是現代執行外部命令的主要介面（3.5+，取代舊的 `os.system`、`call`）。核心原則：
 
-- **args 傳「引數列表」而非「字串」**：`["git", "status"]` 而非 `"git status"`——這是安全與正確的關鍵。
+- **args 傳「引數列表」而非「字串」**：`["git", "status"]` 而非 `"git status"`——這是**安全與正確的關鍵**（列表天生免疫命令注入；字串 + `shell=True` 是災難配方）。
 - **取得結果**：`CompletedProcess` 物件，含 `returncode`（退出碼）、`stdout`、`stderr`。
-- **檢查錯誤**：`check=True` 讓非零退出碼拋例外。
+- **檢查錯誤**：`check=True` 讓非零退出碼拋例外——失敗不會被默默吞掉。
 
 ## Specification（規範：run 常用參數）
 

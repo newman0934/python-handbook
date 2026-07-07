@@ -2,17 +2,42 @@
 
 > `pathlib.Path` 用物件導向、跨平台的方式處理檔案路徑——`/` 運算子組路徑、`.read_text()` 讀檔、`.glob()` 找檔。它取代了老舊的 `os.path` 字串操作，是現代 Python 處理路徑的標準。
 
+## 💡 白話導讀（建議先讀）
+
+老派處理路徑是「手寫地址字串」：`"data" + os.sep + "logs" + os.sep + name`——拼接易錯、Windows/Linux 分隔符還不同。
+
+`pathlib` 把路徑**從字串升級成物件**——像從「手寫地址」升級成「導航系統」：
+
+```python
+from pathlib import Path
+
+p = Path("data") / "logs" / "app.txt"   # 用 / 拼路徑!直觀且自動處理分隔符
+p.name        # "app.txt"     —— 檔名
+p.suffix      # ".txt"        —— 副檔名
+p.parent      # data/logs     —— 上一層
+p.exists()    # 在不在?
+p.read_text(encoding="utf-8")           # 直接讀!不用 open
+```
+
+三個立即的好處：
+
+1. **`/` 運算子拼路徑**——不再手拼字串、不再管分隔符。
+2. **想知道什麼,問路徑物件本人**——`.name`、`.parent`、`.glob("*.csv")`,不用背一堆 `os.path.*` 函式。
+3. **跨平台**——同一份程式碼 Windows/Linux 都對。
+
+守則:**新程式碼一律 pathlib**;`os.path` 看得懂即可(存量程式碼裡很多)。
+
 ## Why（為什麼）
 
 用字串處理路徑很痛：手動拼 `/`（還要煩惱 Windows 的 `\`）、用 `os.path.join`/`os.path.dirname`/`os.path.splitext` 一堆函式、跨平台易錯。**`pathlib`（Python 3.4+）** 把路徑變成物件，用 `/` 運算子組路徑、用方法查詢與操作、自動跨平台。它讓路徑處理從「一堆字串函式」變成「乾淨的物件方法鏈」。現代 Python 一律用 pathlib，這章講清楚它的核心用法。
 
 ## Theory（理論：路徑即物件）
 
-`pathlib` 把路徑表示成 **`Path` 物件**，而非字串。好處：
+`pathlib` 把路徑表示成 **`Path` 物件**，而非字串——地址升級成導航物件。好處：
 
-- **`/` 運算子組路徑**：`Path("a") / "b" / "c"` —— 直觀、自動處理分隔符。
-- **方法查詢**：`.name`、`.suffix`、`.parent`、`.exists()`、`.is_file()`——不必記一堆 `os.path.*` 函式。
-- **跨平台**：`Path` 自動用當前 OS 的分隔符（Windows `\`、Unix `/`），程式碼一份到處跑。
+- **`/` 運算子組路徑**：`Path("a") / "b" / "c"`——直觀、自動處理分隔符。
+- **方法查詢**：`.name`、`.suffix`、`.parent`、`.exists()`、`.is_file()`——問物件本人，不必背一堆 `os.path.*`。
+- **跨平台**：`Path` 自動用當前 OS 的分隔符（Windows `\`、Unix `/`），一份程式碼到處跑。
 - **整合操作**：`.read_text()`、`.write_text()`、`.glob()`、`.mkdir()`——路徑物件直接能讀寫、找檔、建目錄。
 
 ## Specification（規範：常用操作）

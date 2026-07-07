@@ -2,16 +2,40 @@
 
 > `collections.abc` 提供一組「抽象容器型別」——`Iterable`、`Sequence`、`Mapping`、`Hashable` 等。用它們做 `isinstance` 檢查（「這東西可不可迭代？」）、做型別註記（參數用寬鬆型別）、或當基底類別實作自訂容器。
 
+## 💡 白話導讀（建議先讀）
+
+問一個設計問題：你的函式想接收「任何可以逐一讀取的東西」——list 行、tuple 行、生成器也行。型別怎麼標？參數怎麼驗？
+
+按「具體型別」清點（`isinstance(x, (list, tuple, set, ...))`）永遠列不完。
+`collections.abc` 换一個思路——**按「能力證照」分類**：
+
+> 不問「你是誰」,問「**你會什麼**」。
+
+| 證照 | 代表的能力 | 持照條件 |
+|------|-----------|----------|
+| `Iterable` | 能被 for | 有 `__iter__` |
+| `Sized` | 能被 len | 有 `__len__` |
+| `Sequence` | 有序可索引 | `__getitem__` + `__len__` |
+| `Mapping` | 鍵值查找 | dict 家族的能力組 |
+| `Callable` | 能被呼叫 | 有 `__call__` |
+
+而且發照是**自動的**——你的類別只要裝了對應的 [dunder 插座](../04-oop/08-dunder-methods.md),`isinstance(x, Iterable)` 就是 True,**不用註冊、不用繼承**（鴨子型別的正式認證版——和 [Part 5 的 Protocol](../05-typing/06-protocol.md) 一個精神,一個管執行期、一個管型別檢查）。
+
+兩個實用場景：
+
+1. **型別註記**:「參數寬」原則的落地——`def f(items: Iterable[int])` 而非硬要求 `list`（[Part 5 守則](../05-typing/08-typing-best-practices.md)）。
+2. **執行期檢查**:`isinstance(x, Mapping)`——問能力,比 `type(x) == dict` 高明(子類別、第三方 dict 都過)。
+
 ## Why（為什麼）
 
 「怎麼判斷一個東西可不可迭代/是不是序列/像不像 dict？」——用 `isinstance(x, list)` 太窄（tuple、生成器也可迭代但不是 list）。`collections.abc` 提供**抽象基底類別（ABC）**，描述「能做什麼」而非「是什麼具體型別」——`Iterable`（可迭代）、`Sequence`（有序可索引）、`Mapping`（像 dict）。它們是型別註記（見 [基本註記](../05-typing/02-basic-annotations.md)）與鴨子型別檢查的基礎，也是實作自訂容器時該繼承的基底。
 
 ## Theory（理論：以「能力」分類）
 
-`collections.abc` 用**能力（協定）** 而非具體型別來分類物件。核心 ABC 形成一個階層——每個描述「支援哪些操作」：
+`collections.abc` 用**能力（協定）** 而非具體型別來分類物件——能力證照制度。核心 ABC 形成階層，每張證照描述「支援哪些操作」：
 
-| ABC | 意義（能做什麼） | 需要的方法 |
-|-----|------------------|-----------|
+| ABC | 意義（能做什麼） | 需要的方法（持照條件） |
+|-----|------------------|------------------------|
 | `Iterable` | 可迭代（能 for） | `__iter__` |
 | `Iterator` | 迭代器 | `__iter__`, `__next__` |
 | `Hashable` | 可 hash（能當 key） | `__hash__` |
@@ -23,7 +47,7 @@
 | `Set` | 集合 | 集合操作 |
 | `Callable` | 可呼叫 | `__call__` |
 
-這呼應 [ABC](../04-oop/10-abc.md)（抽象基底）與 [Protocol](../05-typing/06-protocol.md)（結構化子型別）——`collections.abc` 是標準庫預先定義好的一組容器 ABC。
+發照自動：實作了對應 dunder，`isinstance` 檢查就通過——不用註冊、不用繼承（鴨子型別的執行期認證）。
 
 ## Specification（規範：用法）
 

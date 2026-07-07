@@ -2,6 +2,37 @@
 
 > `tempfile` 建臨時檔/目錄（自動清理）、`shutil` 做高階檔案操作（複製、移動、刪整個目錄樹）、`glob` 用萬用字元找檔。這三個補足了 pathlib，是檔案系統操作的常用工具。
 
+## 💡 白話導讀（建議先讀）
+
+檔案雜務三兄弟，各管一攤：
+
+**`tempfile`——自動收拾的臨時工作桌。**
+需要一個暫存檔/暫存目錄做中間處理？別自己在 /tmp 亂建（撞名、忘了刪、權限問題）：
+
+```python
+with tempfile.TemporaryDirectory() as tmpdir:
+    ...   # 在這個專屬臨時目錄裡隨便折騰
+# 離開 with —— 整個目錄自動消失,乾乾淨淨
+```
+
+（測試裡建暫存檔的標準姿勢;pytest 的 `tmp_path` fixture 底層就是它。）
+
+**`shutil`——搬家公司。**
+`pathlib` 管單一檔案的日常,但「整個目錄樹」級別的粗活找 shutil：
+
+```python
+shutil.copy2(src, dst)        # 複製檔案(含中繼資料)
+shutil.copytree(src, dst)     # 複製整棵目錄樹
+shutil.rmtree(path)           # ⚠️ 刪整棵樹 —— 不進資源回收桶,三思!
+shutil.make_archive(...)      # 打包 zip/tar
+```
+
+**`glob`——萬用字元找檔。**
+`*.csv`、`data/**/*.log`(`**` 遞迴)——shell 的找檔語法搬進 Python。
+（`pathlib` 的 `.glob()` 同功能,新程式碼建議直接用 pathlib 版——見 [pathlib](02-pathlib.md)。）
+
+三句定位:**臨時的交給 tempfile 自動收,搬大件的找 shutil,按模式找檔用 glob**。
+
 ## Why（為什麼）
 
 檔案操作除了讀寫（見 [io](06-io.md)）與路徑（見 [pathlib](02-pathlib.md)），還有幾個常見需求：需要臨時檔案（測試、暫存、處理中間結果）、複製/移動/刪除檔案與整個目錄、用模式找一批檔案。手動做這些又麻煩又容易出錯（臨時檔忘了刪、遞迴刪目錄要自己寫）。`tempfile`、`shutil`、`glob` 提供這些高階操作。這章講清楚它們的常用功能，尤其 `tempfile` 的自動清理（測試必備）。
@@ -10,11 +41,11 @@
 
 | 模組 | 用途 | 一句話 |
 |------|------|--------|
-| **`tempfile`** | 建臨時檔/目錄 | 自動清理的暫存空間 |
-| **`shutil`** | 高階檔案操作 | 複製/移動/刪目錄樹 |
+| **`tempfile`** | 建臨時檔/目錄 | 自動收拾的臨時工作桌 |
+| **`shutil`** | 高階檔案操作 | 搬家公司：複製/移動/刪目錄樹 |
 | **`glob`** | 萬用字元找檔 | 模式比對找檔案 |
 
-（註：`glob` 的功能 `pathlib.Path.glob` 也有，見 [pathlib](02-pathlib.md)；這裡也介紹獨立的 `glob` 模組。）
+（註：`glob` 的功能 `pathlib.Path.glob` 也有，見 [pathlib](02-pathlib.md)——新程式碼建議 pathlib 版；這裡也介紹獨立的 `glob` 模組。）
 
 ## Specification（規範：三模組速覽）
 

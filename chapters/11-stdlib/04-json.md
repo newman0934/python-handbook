@@ -2,16 +2,43 @@
 
 > `json` 模組在 Python 物件與 JSON 文字之間轉換——`dumps`/`loads` 處理字串、`dump`/`load` 處理檔案。它是 API、設定、資料交換的通用語言，但有幾個型別對應與陷阱要注意。
 
+## 💡 白話導讀（建議先讀）
+
+JSON 是 API 世界的通用語——你的 Python dict 要出門見人（存檔、傳給前端、呼叫 API），得先翻譯成 JSON 文字；收到的 JSON 文字要用，得翻譯回 dict。
+
+`json` 模組就是這位**翻譯官**，四個函式全部記住只要一個口訣：
+
+> **有 `s` 的管字串（**s**tring），沒 `s` 的管檔案（file）。**
+
+| 方向 | 字串版 | 檔案版 |
+|------|--------|--------|
+| Python → JSON（打包出門） | `dumps(obj)` | `dump(obj, f)` |
+| JSON → Python（拆包進來） | `loads(text)` | `load(f)` |
+
+兩個常用參數順手記：
+
+```python
+json.dumps(data, ensure_ascii=False, indent=2)
+#          中文正常顯示不轉碼 ↑      ↑ 排版好讀
+```
+
+兩個常見疑問先答：
+
+- **dict 的 key 變字串了？**——JSON 規格 key 只能是字串,`{1: "a"}` 過去會變 `{"1": "a"}`,回不來。
+- **datetime/自訂物件不能直接 dumps？**——JSON 只支援基本型別(dict/list/str/數字/bool/null),其餘要自己轉(如 `.isoformat()`)。
+
+跟 [pickle](12-pickle.md) 的分工之後會講:**JSON 安全、跨語言、限基本型別**——對外交流一律 JSON。
+
 ## Why（為什麼）
 
 JSON 是網路世界資料交換的通用格式——REST API、設定檔、前後端溝通都用它。`json` 模組讓 Python 物件（dict、list…）與 JSON 文字互轉。看似簡單，但有幾個實務要點：型別對應（Python 的 tuple → JSON array、dict key 只能是字串）、中文編碼（`ensure_ascii`）、以及「JSON 不支援的型別」（datetime、自訂物件）怎麼處理。搞懂這些，處理 API/設定資料才不會出包。
 
 ## Theory（理論：序列化與反序列化）
 
-- **序列化（serialize / dump）**：Python 物件 → JSON 文字。
-- **反序列化（deserialize / load）**：JSON 文字 → Python 物件。
+- **序列化（serialize / dump）**：Python 物件 → JSON 文字——打包出門。
+- **反序列化（deserialize / load）**：JSON 文字 → Python 物件——拆包進來。
 
-**四個核心函式**（記憶法：有 `s` 的處理字串 string、沒 `s` 的處理檔案 file）：
+**四個核心函式**（口訣：有 `s` 的處理字串 **s**tring、沒 `s` 的處理檔案 file）：
 
 | 函式 | 方向 | 對象 |
 |------|------|------|

@@ -2,20 +2,50 @@
 
 > 時間處理的頭號地雷是「時區」——naive（無時區）與 aware（有時區）的 datetime 不能混用，混了就出錯或算錯。掌握 `datetime`、時區、以及「一律用 aware UTC」的原則，才能正確處理時間。
 
+## 💡 白話導讀（建議先讀）
+
+時間處理的頭號地雷,一個問題就暴露：
+
+> 「下午 3 點」——是**哪裡的**下午 3 點？台北的？倫敦的？
+
+Python 的 `datetime` 物件分兩種,正對應這個問題：
+
+- **naive（天真的）**：只寫「3 點」,**沒掛時區**——`datetime.now()` 預設給你這種。有歧義。
+- **aware（有意識的）**：明確寫「UTC 的 3 點」「台北的 3 點」——**掛了時區牌**。無歧義。
+
+兩者**不能混算**（比較/相減直接 TypeError）——這是時間 bug 的頭號來源。
+
+黃金原則背起來,一輩子受用：
+
+> **程式內部與資料庫,一律存 aware 的 UTC;只在顯示給使用者的最後一刻,轉成當地時區。**
+
+```python
+from datetime import datetime, UTC
+
+now = datetime.now(UTC)               # ✓ aware 的 UTC —— 標準姿勢
+now = datetime.now()                  # ✗ naive —— 埋雷
+```
+
+（時區資料用標準庫 `zoneinfo`:`ZoneInfo("Asia/Taipei")`——3.9+ 內建,不用裝 pytz。）
+
+這章其餘是常用操作:格式化(`strftime`)、解析(`strptime`)、時間差(`timedelta`)——都是工具,地雷只有上面那顆。
+
 ## Why（為什麼）
 
 時間看似簡單，卻是 bug 溫床：時區搞錯（伺服器在 UTC、使用者在台北）、naive/aware 混用、字串解析格式錯、日光節約時間。`datetime` 模組提供時間處理，但用不好會算錯時間、跨時區出包。這章講清楚 datetime 的核心，尤其**最重要的一課——naive vs aware 與時區處理**——這是時間 bug 的根源，也是面試常考的實務題。
 
 ## Theory（理論：naive vs aware）
 
-`datetime` 物件分兩種，這是**最關鍵的區分**：
+`datetime` 物件分兩種——**這是最關鍵的區分**：
 
-- **naive（天真的）**：**不帶時區資訊**——只是「某年某月某日某時」，不知道是哪個時區的。`datetime.now()` 預設回這種。
+- **naive（天真的）**：**不帶時區資訊**——只是「某年某月某日某時」，不知道是哪個時區的（沒掛時區牌）。`datetime.now()` 預設回這種。
 - **aware（有意識的）**：**帶時區資訊**（tzinfo）——明確知道是「UTC 的某時」或「台北的某時」。
 
-**核心問題**：naive datetime 有歧義（「下午 3 點」是哪裡的 3 點？），且**naive 與 aware 不能互相比較/相減**（會 `TypeError`）。混用 naive/aware 是時間 bug 的頭號來源。
+**核心問題**：naive 有歧義（「下午 3 點」是哪裡的 3 點？），且 **naive 與 aware 不能互相比較/相減**（`TypeError`）。混用是時間 bug 的頭號來源。
 
-**黃金原則**：**內部一律用 aware 的 UTC 時間，只在顯示給使用者時才轉成當地時區**。
+**黃金原則**：
+
+> **內部一律用 aware 的 UTC 時間，只在顯示給使用者時才轉成當地時區。**
 
 ## Specification（規範：datetime 核心）
 

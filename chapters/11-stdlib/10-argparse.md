@@ -2,24 +2,51 @@
 
 > 手動解析 `sys.argv` 遲早出錯——`argparse` 幫你處理位置引數、選項、旗標、型別轉換、預設值、說明訊息、錯誤處理。它是標準庫做命令列工具的正解。
 
+## 💡 白話導讀（建議先讀）
+
+腳本要收參數,手刨 `sys.argv` 撐不了三天：順序錯了？參數要轉 int？使用者打 `--help` 想看說明？——全要自己寫。
+
+`argparse` 的思路是**開一個櫃檯窗口**：你只要**宣告**「本櫃檯收哪些單子」,剩下全自動：
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description="批次處理圖片")
+parser.add_argument("input")                          # 位置引數(必填)
+parser.add_argument("--width", type=int, default=800) # 選項(自動轉 int!)
+parser.add_argument("-v", "--verbose", action="store_true")  # 開關旗標
+
+args = parser.parse_args()
+args.input, args.width, args.verbose   # 直接用,型別都對好了
+```
+
+宣告完,櫃檯自動提供：**解析、型別轉換、必填驗證、錯誤提示,以及免費的 `--help` 說明頁**——使用者打 `myprog -h`,一份專業的使用說明自動生成。
+
+兩類引數分清楚：
+
+- **位置引數**（`input`）：像「請出示證件」——按順序、通常必填。
+- **選用引數**（`--width`、`-v`）：像「加購選項」——有預設值、順序隨意。
+
+一句定位:**只要腳本會給第二個人用（包括三個月後的你）,就值得上 argparse**。
+
 ## Why（為什麼）
 
 寫命令列工具（CLI）少不了解析引數：`myprog --verbose input.txt --count 5`。手動拆 `sys.argv` 又累又易錯（順序、型別、缺漏、`--help`）。**`argparse`** 幫你做這一切——宣告你要哪些引數，它負責解析、轉型、驗證、產生 `--help` 說明、處理錯誤。這是把腳本變成專業 CLI 工具的關鍵，也是 [os/sys](01-os-sys.md) 提到「複雜命令列別手動解析」的正解。
 
 ## Theory（理論：宣告式解析）
 
-`argparse` 用**宣告式**——你「宣告」要哪些引數（名稱、型別、是否必填、說明），它自動：
+`argparse` 用**宣告式**——你「宣告」要哪些引數（名稱、型別、是否必填、說明），櫃檯自動：
 
 - 解析 `sys.argv`。
 - 型別轉換（字串 → int/float）。
 - 驗證（必填、選項合法值）。
-- 產生 `--help`/`-h` 說明。
+- 產生 `--help`/`-h` 說明頁。
 - 錯誤時印友善訊息並退出。
 
 兩類引數：
 
-- **位置引數（positional）**：依位置，通常必填（`myprog input.txt`）。
-- **選用引數（optional）**：用 `-`/`--` 前綴，可有預設值（`myprog --count 5`、`-v`）。
+- **位置引數（positional）**：依位置，通常必填（`myprog input.txt`）——出示證件。
+- **選用引數（optional）**：`-`/`--` 前綴，可有預設值（`--count 5`、`-v`）——加購選項。
 
 ## Specification（規範：argparse 用法）
 

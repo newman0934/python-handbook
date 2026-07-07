@@ -2,16 +2,53 @@
 
 > `csv` 處理表格資料（別自己 split，會被引號/逗號咬到）、`tomllib`（3.11+）讀 TOML 設定（`pyproject.toml` 的格式）。加上 JSON，這些是處理資料檔與設定檔的標準工具。
 
+## 💡 白話導讀（建議先讀）
+
+兩類日常檔案的正確開法。
+
+**第一類:CSV（表格）——別自己 split！**
+
+看起來 `line.split(",")` 就搞定？直到遇到這行：
+
+```text
+"Wang, Ming",25,"他說:「你好」再見"
+```
+
+欄位裡有逗號（被引號包著）、有引號跳脫、甚至有換行——手刨的 split 全部陣亡。
+`csv` 模組替你處理所有這些鬼細節：
+
+```python
+import csv
+with open("data.csv", encoding="utf-8", newline="") as f:
+    for row in csv.DictReader(f):    # 每列變 dict,用欄名取值
+        print(row["name"])
+```
+
+（`DictReader` 比 `reader` 好用:`row["name"]` 比 `row[0]` 可讀多了。）
+
+**第二類:設定檔——現代答案是 TOML。**
+
+```python
+import tomllib                        # 3.11+ 內建
+with open("config.toml", "rb") as f:  # 注意:要用二進位模式 "rb"
+    config = tomllib.load(f)
+```
+
+TOML 就是 `pyproject.toml` 的格式——支援註解、型別清楚,是 Python 生態的現代標準。
+其他格式的江湖地位:JSON(通用但**不能寫註解**,當設定檔很痛)、INI(老,configparser)、YAML(強大但複雜,需第三方套件)。
+
+守則:**新專案的設定檔,預設 TOML。**
+
 ## Why（為什麼）
 
 兩個常見需求：讀寫 **CSV**（試算表、資料匯出、簡單資料交換）與讀 **設定檔**（應用設定、`pyproject.toml`）。CSV 看似「用逗號 split 就好」，但正確處理引號、逗號、換行很麻煩——`csv` 模組幫你做對。設定檔方面，TOML 是現代 Python 的標準格式（`pyproject.toml`），`tomllib`（3.11+）讓你讀它。這章講清楚 csv 的正確用法與 tomllib/設定檔的選擇。
 
 ## Theory（理論：兩類需求）
 
-- **CSV（逗號分隔值）**：表格資料的通用格式。用 `csv` 模組**別自己 split**——因為 CSV 的欄位可能含逗號（被引號包住）、換行、引號跳脫，手動 split 會出錯。
-- **設定檔**：Python 生態有幾種格式，各有定位：
-  - **TOML**：現代標準（`pyproject.toml`），`tomllib` 讀（3.11+）。
-  - **JSON**：通用但不支援註解（見 [json](04-json.md)）。
+- **CSV（逗號分隔值）**：表格資料的通用格式。**用 `csv` 模組，別自己 split**——欄位可能含逗號（引號包住）、換行、引號跳脫，手動 split 必陣亡。
+- **設定檔**：Python 生態的格式地圖：
+  - **TOML**：現代標準（`pyproject.toml` 的格式），`tomllib` 讀（3.11+ 內建，注意用 `"rb"` 模式）。**新專案預設它。**
+  - **JSON**：通用但**不支援註解**（見 [json](04-json.md)）——當設定檔很痛。
   - **INI**：`configparser` 讀（老格式）。
   - **YAML**：需第三方 `pyyaml`（強大但複雜）。
 

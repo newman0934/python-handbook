@@ -2,20 +2,51 @@
 
 > `print` 除錯遲早會後悔——`logging` 給你分級（DEBUG/INFO/WARNING/ERROR）、可開關、含時間戳與來源、可輸出到檔案/多目的地的專業日誌。正式程式一律用 logging 不用 print。
 
+## 💡 白話導讀（建議先讀）
+
+[Part 6](../06-error-handling/08-error-handling-best-practices.md) 立過守則「用 logging 別用 print」。這章教怎麼用。
+
+先看 print 輸在哪：它是**用擴音器喊話**——喊完就沒了、不知道幾點喊的、不知道誰喊的、上線後想關關不掉、想存檔存不了。
+
+logging 是**正規的值班日誌制度**，四個角色：
+
+| 角色 | 管什麼 | 白話 |
+|------|--------|------|
+| **Logger** | 記錄的入口 | 值班員（每個模組一位：`getLogger(__name__)`） |
+| **Level** | 嚴重程度 | 事件分級：DEBUG < INFO < WARNING < ERROR < CRITICAL |
+| **Handler** | 送到哪 | 日誌本放哪：終端？檔案？兩者都要？ |
+| **Formatter** | 長什麼樣 | 格式:時間＋等級＋來源＋訊息 |
+
+**分級**是靈魂——開發時門檻調到 DEBUG（鉅細靡遺）,上線調到 WARNING（只記異常）——**同一份程式碼,不同吵鬧程度,改一行設定**。print 做不到的就是這個。
+
+快速起步兩行：
+
+```python
+import logging
+logging.basicConfig(level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+log = logging.getLogger(__name__)
+log.info("服務啟動")     # 2026-07-08 10:00:00 INFO myapp: 服務啟動
+```
+
+一個高頻好物:`log.exception("處理失敗")` 在 except 裡用——**自動附上完整 traceback**,除錯神器。
+
 ## Why（為什麼）
 
 用 `print` 除錯的問題：無法分級（全部混在一起）、無法關閉（正式環境還在印）、無時間/來源、無法輸出到檔案、混在正常輸出裡。**`logging`** 解決這一切——分級記錄、可設定門檻開關、含脈絡（時間、模組、行號）、可送到檔案/syslog/多目的地。正式程式、函式庫、服務一律用 logging。這章講清楚 logging 的核心概念與正確用法。
 
 ## Theory（理論：logger、level、handler）
 
-logging 有幾個核心概念：
+logging 的四個核心角色——值班日誌制度：
 
-- **Logger**：記錄日誌的入口，通常每個模組一個（`logging.getLogger(__name__)`）。
-- **Level（等級）**：日誌的嚴重程度——`DEBUG < INFO < WARNING < ERROR < CRITICAL`。設定門檻，低於門檻的不記錄。
-- **Handler**：決定日誌**送到哪**（終端、檔案、網路…）。
-- **Formatter**：決定日誌**長什麼樣**（時間、等級、訊息、來源）。
+- **Logger**：記錄日誌的入口（值班員），通常每個模組一個（`logging.getLogger(__name__)`）。
+- **Level（等級）**：嚴重程度——`DEBUG < INFO < WARNING < ERROR < CRITICAL`。設定門檻，低於門檻的不記錄（同一份碼、不同吵鬧度）。
+- **Handler**：決定日誌**送到哪**（終端、檔案、網路⋯⋯）。
+- **Formatter**：決定日誌**長什麼樣**（時間、等級、來源、訊息）。
 
-一條日誌流程：`logger.info(...)` → 若等級達門檻 → 交給 handler → formatter 格式化 → 輸出。
+一條日誌的旅程：
+
+> `logger.info(...)` → 等級達門檻？ → 交給 handler → formatter 格式化 → 輸出。
 
 ## Specification（規範：基本用法）
 

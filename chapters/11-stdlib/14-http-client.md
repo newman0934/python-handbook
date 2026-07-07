@@ -2,6 +2,32 @@
 
 > 呼叫別人的 API 是後端日常。標準庫有 `urllib`（能用但笨拙），實務上幾乎都用第三方的 `requests`（同步、經典）或 `httpx`（支援 async、現代）。搞懂請求、回應、錯誤處理與逾時，才能可靠地與外部服務溝通。
 
+## 💡 白話導讀（建議先讀）
+
+呼叫別人的 API 是後端日常。Python 的 HTTP client 江湖很簡單，三個選手：
+
+| 選手 | 身分 | 一句話 |
+|------|------|--------|
+| **`urllib`** | 標準庫 | 能用,但囉嗦得像填公文 |
+| **`requests`** | 第三方經典 | `requests.get(url).json()` 一行搞定——**同步程式的預設** |
+| **`httpx`** | 第三方新秀 | API 長得像 requests,**還會 async**——配 FastAPI/asyncio 的預設 |
+
+選擇樹兩句話：
+
+- 一般同步腳本 → **requests**（生態最熟、範例最多）。
+- 專案有 asyncio（[Part 9 的服務生](../09-concurrency/07-asyncio-basics.md)）→ **httpx**——記住:**在 async 裡用 requests 是「服務生站住」的經典事故**（同步 HTTP 會凍結整個 event loop）。
+- 堅決不裝套件 → urllib 忍著用。
+
+不管用哪個,共通的專業習慣三件套：
+
+```python
+r = httpx.get(url, timeout=10)   # 1. 永遠設 timeout(不設=可能永遠卡住)
+r.raise_for_status()             # 2. 檢查狀態碼(4xx/5xx 拋例外,別默默用錯誤回應)
+data = r.json()                  # 3. 解析 JSON
+```
+
+這章用三個選手各示範一遍,重點放在 requests/httpx 的實戰模式（headers、POST、重試）。
+
 ## Why（為什麼）
 
 現代程式很少獨立運作——要呼叫第三方 API、抓資料、串接微服務。這需要 **HTTP client**。標準庫的 `urllib` 能做但囉嗦；社群標準是 **`requests`**（「HTTP for Humans」，同步、極簡）與 **`httpx`**（requests 的現代繼任者，支援 async）。這章講清楚三者的定位、基本的請求/回應處理、以及可靠呼叫外部服務的關鍵（逾時、錯誤處理、狀態碼）——這是後端工程師的必備技能。
@@ -10,11 +36,11 @@
 
 | Client | 定位 | 何時用 |
 |--------|------|--------|
-| **`urllib`** | 標準庫、無需安裝、但笨拙 | 不想裝套件的簡單需求 |
+| **`urllib`** | 標準庫、無需安裝、但笨拙（填公文） | 不想裝套件的簡單需求 |
 | **`requests`** | 第三方、同步、極簡好用、生態成熟 | **同步程式的首選** |
 | **`httpx`** | 第三方、同步 + **async**、API 類似 requests | **需要 async、或新專案** |
 
-**準則**：**同步程式用 `requests`**（最成熟、範例最多）；**需要 async（配 asyncio/FastAPI）用 `httpx`**（見 [async/await](../09-concurrency/08-async-await.md)）。`urllib` 只在「絕不想裝套件」時用。
+**準則**：同步程式用 `requests`（最成熟）；需要 async（配 asyncio/FastAPI）用 `httpx`（見 [async/await](../09-concurrency/08-async-await.md)——在 async 裡用同步 requests 會凍結 event loop）。`urllib` 只在「絕不想裝套件」時用。
 
 ## Specification（規範：三者語法）
 

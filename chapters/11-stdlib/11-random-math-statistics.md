@@ -2,6 +2,30 @@
 
 > `random` 產生亂數（但別用它做密碼學——那要用 `secrets`）、`math` 提供數學函式、`statistics` 做基本統計。三個小而常用的標準庫模組，各有一個關鍵安全/正確性要點。
 
+## 💡 白話導讀（建議先讀）
+
+三個小而常用的計算工具，各一句話：
+
+- **`random`**——抽籤箱：亂數、抽樣、洗牌（`randint`、`choice`、`shuffle`、`sample`）。
+- **`math`**——工程計算機：sqrt、log、三角函數、`math.isclose`（[浮點比較](../02-fundamentals/15-float-precision-decimal.md)的正解）。
+- **`statistics`**——統計小算盤：mean、median、stdev（小資料夠用;大資料上 numpy）。
+
+這章真正的重點只有一個,是**安全課**：
+
+> **`random` 是「偽」隨機——絕對不能拿來做密碼、token、驗證碼。**
+
+它的「亂」是由種子算出來的**確定序列**（`random.seed(42)` 之後每次「亂」得一模一樣）——這對模擬、測試是**優點**（可重現）,對安全是**致命傷**（可預測=可被猜出）。
+
+安全場景的正解是 **`secrets`** 模組：
+
+```python
+import secrets
+secrets.token_urlsafe(32)      # 產生安全 token —— 密碼重設連結、API key 用這個
+secrets.choice(alphabet)       # 密碼學安全的抽選
+```
+
+口訣:**遊戲抽獎用 random,涉及安全用 secrets**——用錯方向的後果是帳號被接管。
+
 ## Why（為什麼）
 
 需要亂數（洗牌、抽樣、模擬）、數學運算（開根號、對數、常數）、基本統計（平均、中位數、標準差）時，這三個模組就是答案。它們簡單，但各有一個容易忽略的重點：`random` **不安全於密碼學**（密鑰/token 要用 `secrets`）、`math` 的浮點函式有精度考量、`statistics` 適合小資料（大資料用 numpy）。這章講清楚三者的常用功能與這些關鍵點。
@@ -10,9 +34,9 @@
 
 | 模組 | 用途 | 關鍵點 |
 |------|------|--------|
-| **`random`** | 偽亂數（模擬、抽樣、洗牌） | **不可用於密碼學**（用 `secrets`） |
-| **`math`** | 數學函式與常數 | 浮點運算（精度見 [decimal](../02-fundamentals/15-float-precision-decimal.md)） |
-| **`statistics`** | 基本統計 | 小資料用它、大資料用 numpy |
+| **`random`** | 偽亂數（模擬、抽樣、洗牌）——抽籤箱 | **不可用於密碼學**（種子可重現＝可預測；安全用 `secrets`） |
+| **`math`** | 數學函式與常數——工程計算機 | 浮點運算（精度見 [decimal](../02-fundamentals/15-float-precision-decimal.md)） |
+| **`statistics`** | 基本統計——小算盤 | 小資料用它、大資料用 numpy |
 
 ## Specification（規範：三模組速覽）
 
