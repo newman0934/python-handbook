@@ -2,15 +2,42 @@
 
 > 從 Python 3.9 起，你可以直接寫 `list[int]`、`dict[str, int]`，不必再 import `List`、`Dict`。掌握內建容器泛型、可呼叫、以及 `from __future__ import annotations` 的延遲評估，是寫好註記的基礎。
 
+## 💡 白話導讀（建議先讀）
+
+上一章說型別註記是「箱子上的標籤」。這一章教你**標籤的寫法**。
+
+單一值很直觀：`x: int` 就是「x 是一個 int」。
+
+容器稍微多一步——光說「這是一個箱子」不夠，要說**「這是一個裝什麼的箱子」**：
+
+- `list[int]`——裝 int 的 list
+- `dict[str, int]`——鍵是 str、值是 int 的 dict
+- `tuple[int, str]`——第一格 int、第二格 str 的 tuple
+
+方括號讀作「裝著⋯⋯的」，這個念法可以帶你走完全章。
+
+一個歷史包袱要先知道，免得看舊程式碼困惑：
+**Python 3.9 之前**，這些標籤要用「進口版」——`from typing import List` 然後寫 `List[int]`（大寫 L）。
+**3.9 之後直接用內建的小寫 `list[int]` 就好**——舊的大寫版已經是過時寫法，看到它知道是老程式碼即可，自己別再寫。
+
+這章還會教兩個常用標籤：函式本身怎麼標（`Callable`）、以及「什麼都可能」的萬用標籤 `Any`（和為什麼要少用它）。
+
 ## Why（為什麼）
 
 型別註記的「詞彙」就是各種型別的寫法。寫錯或用了過時語法（`List[int]` vs `list[int]`）會讓程式看起來老舊、或在舊版出錯。這章把最常用的註記語法一次講清楚：基本型別、容器泛型、巢狀、可呼叫、以及現代簡化語法，讓你之後的每一個註記都寫得對、寫得現代。
 
 ## Theory（理論：型別即註記）
 
-Python 的型別註記直接**用型別本身**當標記：`x: int` 的 `int` 就是內建的 int 型別。容器則用**下標語法**表達「裝什麼的容器」：`list[int]` 表示「裝 int 的 list」。
+Python 的型別註記直接**用型別本身**當標籤：`x: int` 裡的 `int`，就是那個內建的 int 型別——不是字串、不是別的符號。
 
-從 **Python 3.9（PEP 585）** 起，內建容器（`list`/`dict`/`set`/`tuple`）可**直接下標**當泛型，不必從 `typing` import 大寫版本。從 **3.10（PEP 604）** 起，聯集可寫 `X | Y`（見 [Optional 與 Union](04-optional-union.md)）。
+容器則用**下標語法**表達「裝什麼的容器」：`list[int]` 讀作「裝 int 的 list」。
+
+兩個版本分水嶺：
+
+- **Python 3.9（PEP 585）** 起：內建容器（`list`/`dict`/`set`/`tuple`）可**直接下標**當泛型——不必再從 `typing` import 大寫版本（`List`、`Dict` 已過時）。
+- **Python 3.10（PEP 604）** 起：聯集可寫 `X | Y`（見 [Optional 與 Union](04-optional-union.md)）。
+
+一句話：**現代寫法用小寫內建 + `|`，大寫 typing 容器是歷史**。
 
 ## Specification（規範：常用註記速覽）
 

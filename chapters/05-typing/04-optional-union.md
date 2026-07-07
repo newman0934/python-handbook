@@ -2,16 +2,55 @@
 
 > `X | None` 是 Python 型別系統最有價值的一環——它強迫你面對「這裡可能是 None」，把最常見的 `AttributeError: 'NoneType'` 消滅在執行前。而型別窄化讓檢查後的分支型別自動收斂。
 
+## 💡 白話導讀（建議先讀）
+
+去便利商店取包裹。店員的回答只有兩種：「有你的包裹」或「沒有」。
+
+程式裡到處是這種情境：查資料庫可能查無此人、讀設定可能沒設、找元素可能找不到。
+Python 用 `None` 表示「沒有」——而**忘了處理「沒有」**，就是那個最有名的錯誤：
+
+```text
+AttributeError: 'NoneType' object has no attribute ...
+```
+
+（半夜把你叫醒的，十次有八次是它。）
+
+型別系統的解法：把「可能沒有」**寫在標籤上**——`User | None`，讀作「一個 User，**或者沒有**」。
+
+貼了這個標籤後，規則改變了：
+
+1. 你**不能直接拆包裹**——mypy 會攔：「你還沒確認有沒有！」
+2. 你得先問：`if user is not None:`
+3. **問過之後，mypy 就記住了**——在那個分支裡，它知道 user 一定是 User，隨便你用。
+
+第 3 點有個名字叫**型別窄化（narrowing）**：檢查過的分支，型別自動「收窄」。
+這是整個 Optional 體驗的靈魂——檢查不是白做工，檢查器看得懂你的 if。
+
+另外破除一個誤會：`Optional[X]` 的意思**不是「這個參數可以不傳」**，而是「值可能是 None」——它就等於 `X | None`，現代直接寫後者。
+
 ## Why（為什麼）
 
 `None` 相關的錯誤（`'NoneType' object has no attribute ...`）是 Python 最常見的執行期崩潰之一。原因是「一個值可能有、可能沒有」的情況無所不在（查無資料、可選參數、找不到的 key）。**`Optional` / `Union`** 讓你在型別上明確標出「這裡可能是 None / 可能是好幾種型別」，於是 mypy 會**強迫你在使用前檢查**——把 None 錯誤提前到執行前。這是型別註記最能立即回本的地方。
 
 ## Theory（理論：Union 與 Optional）
 
-- **Union（聯集）**：「這個值是 A 或 B」。寫法 `A | B`（3.10+）或 `Union[A, B]`（舊）。
-- **Optional**：「A 或 None」的特例。`Optional[X]` **完全等於** `X | None`——它不是「可省略」的意思，而是「可能是 None」。
+- **Union（聯集）**：「這個值是 A **或** B」。寫法 `A | B`（3.10+）或 `Union[A, B]`（舊）。
+- **Optional**：「A 或 None」這個最常見的特例。`Optional[X]` **完全等於** `X | None`。
+  再說一次：它不是「參數可省略」的意思，而是「值可能是 None」——現代寫法直接用 `X | None`。
 
-關鍵機制：**型別窄化（type narrowing）**。當你對一個 Union 型別做檢查（`if x is None`、`isinstance`），mypy 會在各分支**自動收斂**型別——檢查過 `is not None` 後，那個分支裡 mypy 就知道它不是 None，可安全使用。
+靈魂機制：**型別窄化（type narrowing）**。
+
+當你對 Union 型別做檢查（`if x is None`、`isinstance(x, str)`⋯⋯），mypy 會在各分支**自動收斂**型別：
+
+```text
+x: User | None
+if x is not None:
+    # 這個分支裡，mypy 知道 x 是 User —— 放心使用
+else:
+    # 這裡 mypy 知道 x 是 None
+```
+
+檢查過 `is not None` 的分支裡，mypy 就不再警告——**你的 if 檢查，檢查器看得懂**。
 
 ## Specification（規範：寫法）
 

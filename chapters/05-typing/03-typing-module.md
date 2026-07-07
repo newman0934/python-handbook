@@ -2,21 +2,45 @@
 
 > 內建型別能表達大部分註記，但 `typing` 模組提供了更豐富的詞彙：`Any`、`Optional`、`Callable`、`Iterator`、`TypeAlias` 等。知道哪些已被內建取代、哪些仍需 typing，是寫現代註記的關鍵。
 
+## 💡 白話導讀（建議先讀）
+
+寫中文時，常用字直接寫；生僻字才翻字典。
+
+型別註記也一樣：
+
+- **常用的**直接用內建語法：`int`、`str`、`list[int]`、`X | None`——不用 import 任何東西。
+- **表達不了的**才去翻 `typing` 這本「字典」：`Any`（什麼都行）、`Callable`（一個函式）、`TypeVar`（泛型變數）⋯⋯
+
+這章的重點其實是一個歷史演變的故事：
+
+早年，**所有**標籤都得翻字典——連 `List[int]` 都要 import。
+後來語言進化，常用字一批批「畢業」離開字典、變成日常語言：
+
+- 容器 → 直接用內建小寫（3.9）
+- `Union[X, Y]` → 直接寫 `X | Y`（3.10）
+- `Iterable`、`Mapping` 這些抽象容器 → 改從 `collections.abc` 拿
+
+所以你會在網路上看到大量「舊課本」的寫法。判斷原則很簡單：
+
+> **能用內建語法就用內建，剩下的才找 typing。**
+
+這章幫你把 typing 字典裡「還沒畢業、真正需要的字」整理出來。
+
 ## Why（為什麼）
 
 `typing` 模組是型別註記的「進階詞彙庫」。但它經歷了多次演進——很多曾經只能從 `typing` import 的東西（`List`、`Dict`），現在被內建取代了；有些搬去了 `collections.abc`。不搞清楚「現在該從哪 import 什麼」，你會寫出過時或混亂的註記。這章釐清 typing 模組的現況：哪些還要用、哪些已淘汰、以及型別別名的用法。
 
 ## Theory（理論：typing 的定位與演進）
 
-`typing` 模組提供「內建型別表達不了」的型別構造：特殊型別（`Any`、`Never`）、型別運算子（`Union`、`Optional`）、泛型工具（`TypeVar`、`Generic`）、型別別名等。
+`typing` 模組提供「內建型別表達不了」的型別構造：特殊型別（`Any`、`Never`）、型別運算子（`Union`、`Optional`）、泛型工具（`TypeVar`、`Generic`）、型別別名等——它是那本「字典」。
 
-但隨著語言演進，很多東西「畢業」到更自然的位置：
+但隨著語言演進，很多字「畢業」到更自然的位置：
 
-- **容器泛型** → 用內建（`list[int]`，3.9+），`typing.List` 已棄用。
-- **抽象容器型別**（`Iterable`、`Iterator`、`Mapping`…）→ 從 `collections.abc` import，`typing` 版是別名。
+- **容器泛型** → 用內建（`list[int]`，3.9+）；`typing.List` 已棄用。
+- **抽象容器型別**（`Iterable`、`Iterator`、`Mapping`⋯⋯）→ 從 `collections.abc` import；`typing` 版只是別名。
 - **聯集** → 用 `X | Y`（3.10+），比 `Union[X, Y]` 簡潔。
 
-所以現代用法是「**能用內建/運算子就用，剩下的才找 typing**」。
+所以現代原則就一句：**能用內建/運算子就用，剩下的才找 typing**。
 
 ## Specification（規範：現況對照表）
 
