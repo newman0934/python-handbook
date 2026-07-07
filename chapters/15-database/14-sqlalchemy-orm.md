@@ -2,6 +2,28 @@
 
 > ORM 把「資料列」變成「Python 物件」，讓你用物件導向的方式操作資料庫——不用手寫 SQL。但它藏了很多魔法（session、identity map、flush、lazy loading），不懂這些就會踩坑。這章帶你看懂 ORM 的運作。
 
+## 💡 白話導讀（建議先讀）
+
+ORM 的體驗像有了一位**專屬管家（Session）**：
+
+```python
+user = session.get(User, 1)     # 「幫我拿 1 號客戶的檔案」
+user.name = "Bob"               # 你只管改物件——不寫 UPDATE!
+session.commit()                # 「結帳」——管家自動生成並執行 SQL
+```
+
+你從頭到尾沒寫一句 SQL——管家在背後做了兩件關鍵的事，名字要記（面試愛問）：
+
+**1. Unit of Work（工作單元）——管家的記事本。**
+你對物件的每個更動（新增、修改、刪除），管家都默默記著；**commit 時一次結算**，自動生成最優的 SQL 批次寫入。所以「改了屬性怎麼沒存進去?」——因為你還沒喊結帳（commit）。
+
+**2. Identity Map（身分映射）——同一人只有一份檔案。**
+同一個 session 裡查兩次 1 號客戶，拿到的是**同一個 Python 物件**（`is` 相同）——不會出現兩份「1 號客戶」互相打架。
+
+管家的服務範圍就是 **session 的生命週期**——Web 應用的慣例:一個請求配一個 session（開場拿、結束還）。
+
+先預告管家的一個陷阱:關聯屬性（`user.orders`）預設是**到用時才去查**（lazy loading）——方便,但在迴圈裡會引爆 [N+1 問題](20-n-plus-1.md),第 20 章專門拆彈。
+
 ## Why（為什麼）
 
 用 Core（見 [SQLAlchemy Core](13-sqlalchemy-core.md)）或原生 SQL，你操作的是「表、欄、列」。但你的程式其實想操作「使用者物件、訂單物件」——每次查詢都手動把列轉成物件、把物件存回列，很煩。**ORM（Object-Relational Mapping，物件關聯映射）** 自動做這件事：**定義類別對應資料表，操作物件（`user.name = "Bob"`）ORM 自動生成 SQL**。它讓資料庫存取融入物件導向的程式碼，是多數 Web 應用（Django ORM、SQLAlchemy ORM）的標配。但 ORM 藏了很多機制——**session、identity map、unit of work、flush、lazy loading**——不理解就會遇到「為什麼沒存進去」「為什麼查了 100 次」（N+1，見 [N+1](20-n-plus-1.md)）等坑。這章講清楚 ORM 怎麼運作。

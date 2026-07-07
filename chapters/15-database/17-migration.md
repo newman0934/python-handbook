@@ -2,6 +2,30 @@
 
 > 程式碼有 git 版本控制，資料庫的 schema 呢？migration 就是「schema 的版本控制」——每次改表結構都留下可追蹤、可重播、可回滾的紀錄。Alembic 是 SQLAlchemy 生態的標準工具。
 
+## 💡 白話導讀（建議先讀）
+
+程式碼有 git 管版本——那**資料庫的結構（schema）** 呢？
+
+沒管理的下場很熟悉：開發機的表長這樣、正式機長那樣、新同事問「這個欄位哪來的」沒人記得——schema 成了口耳相傳的都市傳說。
+
+**migration = schema 的 git**：
+
+- 每次結構變更（加欄位、建表）寫成一支**有版本號的腳本**，included `upgrade()`（前進）和 `downgrade()`（後退）。
+- 資料庫裡有張小表記著「我目前在第幾版」。
+- 部署 = 「升級到最新版」——工具自動跑完中間所有 upgrade。
+
+於是得到 git 給程式碼的一切好處：**任何環境可重現同一 schema、每個變更可追蹤可回滾、schema 改動能進 code review**。
+
+Python 生態的工具是 **Alembic**（SQLAlchemy 官方搭檔），日常就三招：
+
+```bash
+alembic revision --autogenerate -m "add email"  # 比對模型與DB,自動生成腳本
+alembic upgrade head                             # 升到最新
+alembic downgrade -1                             # 退一版
+```
+
+`--autogenerate` 很香但別盲信——**生成的腳本要人工檢查**（它抓不到改名,會判成「刪舊欄+加新欄」——資料就沒了）。這章教你安全的工作流。
+
 ## Why（為什麼）
 
 程式改了，你 `git commit`；但資料庫的 **schema**（表結構、欄位、索引）改了怎麼辦？手動在每個環境（本地、測試、正式）敲 `ALTER TABLE`？——不同環境 schema 會不一致、忘了在正式跑、無法回滾、團隊成員資料庫結構各異。**migration（資料庫遷移）** 是解法：**把每次 schema 變更寫成一個有版本、可執行、可回滾的腳本**，像 git commit 一樣串成歷史。任何環境只要「跑到最新版本」就得到一致的 schema。**Alembic** 是 SQLAlchemy 官方的 migration 工具（Django 有內建 migrations，概念相同）。這是團隊協作與正式部署的必備——沒有 migration 的資料庫管理是災難。

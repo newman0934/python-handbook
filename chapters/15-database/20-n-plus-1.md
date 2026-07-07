@@ -2,6 +2,33 @@
 
 > ORM 讓你用 `user.orders` 存取關聯，方便到讓你忘了它背後在打 DB。一個迴圈裡存取關聯，就從 1 個查詢暴增成 N+1 個——這是 ORM 最常見、最致命的效能陷阱。搞懂它與 eager loading，是資深工程師的分水嶺。
 
+## 💡 白話導讀（建議先讀）
+
+看一段人畜無害的程式碼：
+
+```python
+users = session.query(User).all()      # 查 100 個使用者(1 次查詢)
+for user in users:
+    print(user.name, len(user.orders)) # 每次碰 .orders —— 各查 1 次!
+```
+
+實際對資料庫發了 **1 + 100 = 101 次查詢**。這就是 **N+1 問題**——ORM 的頭號效能殺手。
+
+畫面感:你要「100 位客戶各自的訂單」——**跑了 100 趟倉庫,每趟拿一個人的**,而不是一趟拉齊。
+
+兇手是 [上一章管家](14-sqlalchemy-orm.md)的預設習慣 **lazy loading**:關聯資料「等你碰到才去查」。
+單獨用很貼心;**放進迴圈就是災難**——而且開發時資料少感覺不到,上線資料一多直接翻車(慢 API 的第一大宗)。
+
+解法一個詞:**eager loading**——「我等等會用到訂單,一開始就一起拿」:
+
+```python
+users = session.query(User).options(selectinload(User.orders)).all()
+# 2 次查詢搞定:1 次拿 users + 1 次 WHERE user_id IN (...) 拿全部訂單
+```
+
+101 次 → 2 次。**這是「會用 ORM」和「懂 ORM」的分水嶺**,面試必考、code review 必抓。
+怎麼發現它(開 SQL echo 數查詢次數)、`selectinload` vs `joinedload` 怎麼選——章內實戰。
+
 ## Why（為什麼）
 
 ORM 的關聯（`user.orders`，見 [ORM](14-sqlalchemy-orm.md)）方便到讓人忘記它是資料庫查詢。你寫一個「列出每個使用者及其訂單數」的迴圈——看起來無害的幾行，實際對資料庫發了 **101 次查詢**（1 次查使用者 + 100 次查各自訂單）。這就是 **N+1 問題**：ORM 最常見的效能殺手，也是慢 API 的頭號原因。它在開發時（資料少）不明顯，上線後（資料多）突然爆炸。面試常考、code review 必抓。理解 N+1 與解法（**eager loading**），能讓你的查詢從 101 次降到 2 次——效能天差地別。這是「會用 ORM」和「懂 ORM」的分水嶺。

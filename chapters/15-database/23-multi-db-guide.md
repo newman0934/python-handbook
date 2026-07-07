@@ -4,6 +4,29 @@
 
 > 🧭 定位:這章是**上手 + 對照速查**,不深入單一 DB 的所有功能。原理見 [原理篇 01-10](README.md);PostgreSQL 進階功能見 [ch22](22-postgresql-features.md);選型見 [ch10](10-nosql-selection.md)。範例用 Python 實作一個「語法對照查詢器」,可驗證。
 
+## 💡 白話導讀(建議先讀)
+
+SQL 是標準——但「會 SQL 就通吃所有資料庫」是半真半假。像英式英語 vs 美式英語:核心相通,**慣用語各搞各的**。
+
+好消息:SELECT/JOIN/WHERE/交易這些**核心,家家一致**。
+壞消息:坑集中在幾個「**方言熱區**」,換資料庫時專門埋伏你:
+
+| 熱區 | PostgreSQL | MySQL | SQLite |
+|------|-----------|-------|--------|
+| 自動遞增 | `SERIAL` | `AUTO_INCREMENT` | `AUTOINCREMENT` |
+| UPSERT | `ON CONFLICT` | `ON DUPLICATE KEY` | `ON CONFLICT` |
+| 字串串接 | `\|\|` | `CONCAT()` | `\|\|` |
+| 大小寫比較 | 敏感 | **預設不敏感** | 依設定 |
+
+(注意 PG 和 SQLite 常常同一掛,MySQL 自成一派——所以「SQLite 開發、PG 部署」相對順。)
+
+MongoDB 則根本不是 SQL——`find()`/`insertOne()`/`aggregate()`,另一套思維([ch25](25-mongodb.md) 專講)。
+
+實務姿勢兩條:
+
+1. **日常讓 SQLAlchemy 抹平方言**——它按目標資料庫生成正確語法,CRUD 不必碰這些差異。
+2. **寫原生 SQL、除錯、看別人程式碼時,知道熱區在哪**——這章就是那張熱區地圖+各家 CLI 速查(psql/mysql/sqlite3/mongosh)。
+
 ## Why(為什麼)
 
 「我會 SQL 就會所有資料庫」是危險的半真半假:

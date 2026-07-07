@@ -4,6 +4,33 @@
 
 > 🧪 範例用 stdlib `sqlite3` 示範「概念相通、SQLite 也支援」的功能(JSON 查詢、`ON CONFLICT` UPSERT、`RETURNING`、部分索引、`EXPLAIN`),**真正 PostgreSQL 專屬**的(JSONB 二進位型別、陣列、GIN/GiST)以 SQL **示意**呈現並標註。原理承接 [ch04 儲存](04-storage-engine.md)、[ch05 索引](05-index-internals.md)、[ch06 優化器](06-query-processing.md)。
 
+## 💡 白話導讀(建議先讀)
+
+[選型章](10-nosql-selection.md)說「PostgreSQL 是最安全的預設」——這章看它憑什麼:那些讓人選它的獨門功能。
+
+**JSONB——表單裡夾一頁自由筆記。**
+訂單的固定欄位(金額、日期)用正規欄位,那包「每家廠商不一樣的 metadata」塞 JSONB——**關聯式的嚴謹+文件庫的彈性,同一張表兼得**,而且 JSONB 能建索引(GIN)、能用 `@>` 查詢——不必為了一點彈性另架 MongoDB。
+
+**UPSERT——「有就更新、沒有就插入」一句搞定。**
+
+```sql
+INSERT INTO stats (key, count) VALUES ('page', 1)
+ON CONFLICT (key) DO UPDATE SET count = stats.count + 1;
+```
+
+自己寫「先 SELECT 再決定」有併發競態;這一句是**原子**的。
+
+**RETURNING——寫完立刻拿回結果**(`INSERT ... RETURNING id`),省一次來回。
+
+**部分索引——只索引熱區。**
+九成查詢只查 `status='active'`?那就只為 active 的列建索引——索引小、寫入負擔輕:
+
+```sql
+CREATE INDEX ON orders (created_at) WHERE status = 'active';
+```
+
+這章用 SQLite 相容語法示範概念(它抄了不少 PG 語法),PG 專屬的(JSONB/GIN)以真實 SQL 呈現。
+
 ## Why(為什麼)
 
 「關聯式資料庫只能存規規矩矩的表格」是過時印象。PostgreSQL 打破它:

@@ -2,6 +2,25 @@
 
 > 直接寫 SQL 字串容易出錯、綁死特定資料庫；ORM 又有時太重、藏太多魔法。SQLAlchemy Core 是中間層——用 Python 表達式建構 SQL，型別安全、跨資料庫、但仍貼近 SQL，讓你完全掌控查詢。
 
+## 💡 白話導讀（建議先讀）
+
+手寫 SQL 字串的兩個痛：拼字打錯要跑起來才知道、換資料庫方言就得改字串。
+
+SQLAlchemy 的解法分**兩層蛋糕**，這章先吃下層：
+
+- **Core（本章）**：用 **Python 積木拼 SQL**——`select(users).where(users.c.age > 18)`。你想的還是「表、欄、查詢」這些 SQL 概念，只是用物件表達。
+- **ORM（下章）**：蓋在 Core 上，把「資料列」直接變「Python 物件」——抽象更高、藏更多。
+
+用積木拼而不是寫字串，三個立即好處：
+
+1. **自動參數化**——值永遠走綁定參數，[SQL injection](11-db-api.md) 天生免疫。
+2. **跨方言**——同一段積木，編譯成 PostgreSQL 或 SQLite 的方言（[ch23](23-multi-db-guide.md) 的痛它幫你擋）。
+3. **可組合**——查詢是物件，能按條件動態拼裝（`if 有篩選: stmt = stmt.where(...)`）——字串拼接做這件事又醜又危險。
+
+定位一句話：**比手寫字串安全、比 ORM 透明**——重查詢、報表、ETL 這類「SQL 就是主角」的場景，Core 常是最佳選擇。
+
+三個核心零件先認識：**Engine**（連線工廠）、**Table/MetaData**（用 Python 描述 schema）、**select()/insert()**（查詢積木）——章內逐一上手。
+
 ## Why（為什麼）
 
 用原生 DB-API 寫 SQL 字串有兩個痛點：**易錯**（拼字、引號、方言差異）、**綁死資料庫**（PostgreSQL 和 MySQL 的 SQL 有差異）。全上 ORM（見 [SQLAlchemy ORM](14-sqlalchemy-orm.md)）又可能太重、藏太多細節、效能難掌控。**SQLAlchemy Core** 是理想的中間層：用 **Python 物件與表達式** 建構 SQL（`select(users).where(users.c.age > 18)`），編譯成對應資料庫的方言。你得到型別檢查、跨資料庫可攜、自動參數化（防注入），又保留對 SQL 的完整控制。對「重查詢、要效能、不想要 ORM 開銷」的場景（資料分析、報表、ETL），Core 常是最佳選擇。理解 Core 也讓你懂 ORM 底層——ORM 就是建在 Core 之上。

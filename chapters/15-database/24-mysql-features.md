@@ -4,6 +4,24 @@
 
 > 🧪 範例用**純 Python 模擬** MySQL 特有的引擎行為(InnoDB 聚簇索引的兩次查找、utf8mb4 位元組檢查、AUTO_INCREMENT 跳號),CI 可驗證、不需 MySQL。原理承接 [ch04 儲存](04-storage-engine.md)、[ch05 索引](05-index-internals.md)、[ch07 交易](07-transactions-concurrency.md)、[ch09 複製](09-replication-sharding.md)。
 
+## 💡 白話導讀(建議先讀)
+
+MySQL 是存量之王(WordPress、無數老系統)——你遲早會碰。它和 PostgreSQL 的差異裡,三個最會咬人:
+
+**1. InnoDB 的「兩次查找」。**
+PostgreSQL 查次要索引:索引 → 直接指到資料列(一跳)。
+MySQL InnoDB:**表本身按主鍵排成一棵樹(聚簇)**,次要索引的葉子存的是「**主鍵值**」——查到後**還要拿主鍵再查一次**(兩跳,叫「回表」)。
+兩個推論:**主鍵要小且遞增**(每個次要索引都背著主鍵;隨機 UUID 會讓樹亂分裂);**覆蓋索引特別划算**(免第二跳)。
+
+**2. utf8 陷阱——存 emoji 就爆。**
+MySQL 歷史上的「utf8」其實只有 3 bytes(utf8mb3)——**存不了 emoji**(4 bytes),報 `Incorrect string value`。
+「使用者暱稱打個 😀 就 500」的經典事故。解法一律:**用 utf8mb4**。
+
+**3. 語法自成一派。**
+UPSERT 是 `ON DUPLICATE KEY UPDATE`(不是 ON CONFLICT);字串比較**預設不分大小寫**;`AUTO_INCREMENT` 會**跳號不回收**(rollback 過的號碼永遠空著——別拿 id 連續性做文章)。
+
+加映一個架構題:MySQL 有**兩本日誌**——redo log(引擎層,管崩潰恢復)與 binlog(伺服器層,管複製/CDC)——別混為一談。
+
 ## Why(為什麼)
 
 即使新專案多選 PostgreSQL([前面聊過](10-nosql-selection.md)),MySQL 的**存量巨大**、你遲早會碰——而它的幾個特性正是真實事故的來源:

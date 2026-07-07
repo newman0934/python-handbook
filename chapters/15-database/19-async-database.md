@@ -2,6 +2,30 @@
 
 > async Web（FastAPI）要一路 async 到底——但同步的 DB 查詢會卡住整個 event loop。async 資料庫驅動（asyncpg、SQLAlchemy async）讓資料庫 I/O 也非阻塞，一個 worker 就能並發處理大量查詢。這章講 async DB 的用法與陷阱。
 
+## 💡 白話導讀（建議先讀）
+
+[Part 14](../14-web/12-async-web-background.md) 立過鐵律：async 端點裡不能有阻塞。而**最容易被忽略的阻塞源,就是資料庫查詢**。
+
+`cursor.execute(...)` 是同步的——執行緒站在原地等 DB 回應（幾十毫秒）。
+放進 async 端點 = [服務生僵住](../09-concurrency/11-blocking-in-async.md)——**整個 event loop 凍結,所有請求陪葬**。
+
+解法:**一路 async 到底**——換 async 版的 DB 工具鏈:
+
+```python
+engine = create_async_engine("postgresql+asyncpg://...")   # asyncpg 驅動
+
+async with AsyncSession(engine) as session:
+    result = await session.execute(select(User))    # 等 DB 時,服務生去忙別桌
+```
+
+`await` 的瞬間控制權交還 event loop——一個 worker 能同時「掛著」大量進行中的查詢。
+
+async ORM 有一個新地雷必須知道:**lazy loading 直接爆炸**。
+同步世界裡 `user.orders` 會「偷偷」發查詢;但 async 裡 I/O 必須顯式 await,**屬性存取沒法 await**——存取未載入的關聯直接拋 `MissingGreenlet`。
+
+因禍得福:**async 強迫你用 eager loading**（`selectinload` 預先載入)——正好躲開 [N+1](20-n-plus-1.md)。
+連線池、交易的 async 版寫法,章內對照同步版逐一給。
+
 ## Why（為什麼）
 
 FastAPI 的高並發來自 async（見 [async Web](../14-web/12-async-web-background.md)、[asyncio](../09-concurrency/07-asyncio-basics.md)）——一個 worker 在等 I/O 時處理別的請求。但**資料庫查詢也是 I/O**（等網路、等 DB 運算）。如果你在 `async def` 端點裡用**同步**的 DB 驅動（`psycopg2`、同步 SQLAlchemy），查詢會**阻塞整個 event loop**——所有並發請求停擺，async 的好處全毀。**async 資料庫驅動**（`asyncpg`、`aiomysql`、SQLAlchemy 的 `AsyncSession`）讓資料庫 I/O 也 `await`（非阻塞），等查詢時 event loop 能處理別的請求。這是「一路 async 到底」的最後一塊拼圖。理解何時該用 async DB、它的陷阱（session 不能共用等），是寫高並發 FastAPI 服務的關鍵。
