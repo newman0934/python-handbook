@@ -2,19 +2,49 @@
 
 > `pyproject.toml` 是現代 Python 專案的單一設定中心——專案元資料、相依、建置系統、以及 ruff/mypy/pytest 等工具的設定全放這一個檔。理解它的各區段，就掌握了現代專案的骨架。
 
+## 💡 白話導讀（建議先讀）
+
+老 Python 專案的根目錄很熱鬧:setup.py、setup.cfg、requirements.txt、.flake8、mypy.ini、pytest.ini⋯⋯**每個工具一張自己的登記表**。
+
+現代答案:**一張身分證管一切——`pyproject.toml`**。
+
+三大區段,各管一事：
+
+```toml
+[project]                    # ① 我是誰:名稱、版本、依賴(PEP 621 標準格式)
+name = "myapp"
+dependencies = ["requests>=2.31"]
+
+[build-system]               # ② 我怎麼被建置:用哪個工具打包
+requires = ["setuptools>=68"]
+
+[tool.ruff]                  # ③ 各工具的設定,全部集中掛在 [tool.*] 底下
+line-length = 100
+[tool.mypy]
+strict = true
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+```
+
+價值一句話:**新人打開專案,一個檔案看懂全部**——依賴是什麼、怎麼測、風格規則、怎麼打包,不用在七八個散檔間考古。
+
+本書專案本身就是活例子——打開根目錄的 [pyproject.toml](../../pyproject.toml),對照這章逐段讀,馬上有感。
+
+（格式是 [Part 11 講過的 TOML](../11-stdlib/13-csv-config-tomllib.md)——支援註解、型別清楚,當設定檔的現代標準。）
+
 ## Why（為什麼）
 
 以前 Python 專案設定散落在 `setup.py`、`setup.cfg`、`requirements.txt`、各工具的 `.ini`/`.cfg`——雜亂難管。**`pyproject.toml`（PEP 518/621）** 統一了這一切：一個 TOML 檔（見 [tomllib](../11-stdlib/13-csv-config-tomllib.md)）放專案元資料、相依、建置系統、與所有工具設定。理解它的各區段，你就能讀懂、設定任何現代 Python 專案（包括本手冊自己的 pyproject.toml）。這是現代 Python 工程化的核心檔案。
 
 ## Theory（理論：統一的設定中心）
 
-`pyproject.toml` 用 TOML 格式，分成幾個標準區段：
+`pyproject.toml` 用 TOML 格式——一張身分證管一切，分三個標準區段：
 
-- **`[project]`**（PEP 621）：專案元資料——名稱、版本、相依、Python 需求、作者等。**標準格式**，各工具通用。
-- **`[build-system]`**（PEP 518）：用什麼工具建置這個專案（setuptools/hatchling/poetry-core…）。
-- **`[tool.*]`**：各工具的設定——`[tool.ruff]`、`[tool.mypy]`、`[tool.pytest.ini_options]` 等。
+- **`[project]`**（PEP 621）：專案元資料——名稱、版本、相依、Python 需求、作者。**標準格式**，各工具通用（「我是誰」）。
+- **`[build-system]`**（PEP 518）：用什麼工具建置這個專案（setuptools/hatchling/poetry-core⋯⋯）（「我怎麼被建置」）。
+- **`[tool.*]`**：各工具的設定——`[tool.ruff]`、`[tool.mypy]`、`[tool.pytest.ini_options]` 等（工具設定集中掛靠）。
 
-一個檔管一切——這是它取代 setup.py + setup.cfg + 各種 .ini 的價值。
+一個檔管一切——這是它取代 setup.py + setup.cfg + 各種 .ini 散檔的價值。
 
 ## Specification（規範：完整結構）
 

@@ -2,18 +2,41 @@
 
 > ruff 用 Rust 寫成，一個工具同時做 lint（抓問題）與 format（排版），速度快數十倍，正在取代 flake8 + black + isort 的組合。理解 linter 與 formatter 的分工，讓程式碼風格自動一致。
 
+## 💡 白話導讀（建議先讀）
+
+[Part 1 的出版社比喻](../01-getting-started/11-editor-and-tooling-setup.md)還記得嗎？這章專講其中兩個部門,以及一場正在發生的政權更迭。
+
+先分清兩個部門的職權——**這是本章的核心概念**：
+
+- **formatter（排版師）**:只管**長相**——縮排、空格、換行、引號。**絕不改變程式邏輯**。代表:black、`ruff format`。
+- **linter（挑錯編輯）**:抓**可疑內容**——沒用到的變數、忘了刪的 import、可疑的比較、過深的巢狀。代表:flake8、pylint、`ruff check`。
+
+排版師的價值常被誤解——它不是「幫你變漂亮」,是**終結排版爭論**:等號旁要不要空格?單引號雙引號?——排版師說了算,團隊再也不用在 code review 吵這些（black 的哲學就叫「不妥協」）。
+
+政權更迭:傳統要僱三個人（flake8 挑錯 + black 排版 + isort 排 import）——**ruff 一人全兼,還快幾十倍**（Rust 寫的）。生態已大規模遷移,本書專案也是 ruff 全家桶：
+
+```bash
+ruff format .        # 排版(取代 black + isort)
+ruff check .         # 挑錯(取代 flake8 + 一大票外掛)
+ruff check --fix .   # 能自動修的直接修
+```
+
+設定就寫在 [pyproject.toml](04-pyproject-toml.md) 的 `[tool.ruff]`——上一章的身分證又派上用場。
+
 ## Why（為什麼）
 
 程式碼風格（排版、命名、import 順序）該一致，但靠人腦記與手動調很浪費生命且會爭論。工具能自動化：**formatter（格式化器）** 自動排版、**linter（檢查器）** 抓可疑寫法與潛在 bug。以前用 black（format）+ isort（排 import）+ flake8（lint）三個工具；**ruff**（Rust 寫）把這些整合成一個、快數十倍——正成為新標準。這章講清楚 linter/formatter 的分工與 ruff 的用法，讓程式風格自動一致（呼應 [PEP 8](../01-getting-started/08-pep8-and-style.md)、[編輯器設定](../01-getting-started/11-editor-and-tooling-setup.md)）。
 
 ## Theory（理論：linter vs formatter）
 
-兩類工具，職責不同：
+兩類工具，職責不同——排版師與挑錯編輯：
 
-- **formatter（格式化器）**：只管**排版**——縮排、空格、換行、引號、行長。**不改變程式邏輯**，只改「長相」。black、`ruff format`。
-- **linter（檢查器）**：抓**可疑寫法與潛在 bug**——未用變數、未用 import、可疑比較、風格問題、複雜度。**指出問題**（有些可自動修）。flake8、pylint、`ruff check`。
+- **formatter（格式化器/排版師）**：只管**排版**——縮排、空格、換行、引號、行長。**不改變程式邏輯**，只改長相。代表：black、`ruff format`。
+- **linter（檢查器/挑錯編輯）**：抓**可疑寫法與潛在 bug**——未用變數、未用 import、可疑比較、風格問題、複雜度。**指出問題**（部分可自動修）。代表：flake8、pylint、`ruff check`。
 
-**分工**：formatter 統一排版（消除排版爭論）、linter 抓問題（提升品質）。兩者互補。**ruff 同時做這兩件事**（`ruff format` + `ruff check`）。
+**分工**：formatter 統一排版（終結排版爭論）、linter 抓問題（提升品質）——互補。
+
+**ruff 一人兼兩職**（`ruff format` + `ruff check`），Rust 寫成、快數十倍——正在取代 flake8 + black + isort 的組合。
 
 ## Specification（規範：ruff 用法）
 

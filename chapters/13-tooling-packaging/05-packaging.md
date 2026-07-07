@@ -2,28 +2,62 @@
 
 > 把你的套件打包成 wheel、上傳到 PyPI，讓全世界 `pip install` 它。流程：`build` 產生發佈物 → `twine`（或 uv/poetry）上傳 → 別人安裝。理解 sdist vs wheel、語意化版本、與發佈流程。
 
+## 💡 白話導讀（建議先讀）
+
+你每天 `pip install` 別人的套件——這章教你站到**另一邊**:把自己的套件上架,讓全世界裝你的。
+
+流程像出版一本書：
+
+```text
+書稿(src/mypackage/)
+   ↓ build          —— 排版印刷
+成書(dist/)
+   ├── mypackage-0.1.0-py3-none-any.whl   ← wheel:印好的精裝書
+   └── mypackage-0.1.0.tar.gz             ← sdist:原稿(對方自己印)
+   ↓ twine upload(或 uv publish)          —— 送上書店
+PyPI(全球書店)
+   ↓ pip install mypackage                —— 讀者下單
+```
+
+兩種「成書」格式,一句話分清：
+
+- **wheel（.whl）**——**印好的書**:預先建置,裝的人直接上架,快。主要格式。
+- **sdist（.tar.gz）**——**原稿**:含原始碼,對方安裝時可能要自己「印」（建置）。當 wheel 的後備。
+
+實際指令少得出奇：
+
+```bash
+python -m build        # 排版印刷 → dist/ 出現兩個檔案
+twine upload dist/*    # 上架 PyPI(要先註冊帳號 + API token)
+```
+
+（元資料——書名、版本、作者——全來自上一章的 pyproject.toml,環環相扣。）
+
+建議第一次先傳 **TestPyPI**（練習用書店）走完全流程,再上正式站。版本號的語意（SemVer:major.minor.patch）章內講。
+
 ## Why（為什麼）
 
 寫了一個好用的函式庫，想分享給別人？把它**發佈到 PyPI**（Python Package Index），任何人就能 `pip install your-package`。這需要「打包（packaging）」——把原始碼變成標準的發佈格式（wheel/sdist），上傳到 PyPI。理解打包流程、發佈物格式、版本管理，是「從寫程式到分享程式」的一步。這章講清楚打包發佈的完整流程與關鍵概念。
 
 ## Theory（理論：從原始碼到可安裝套件）
 
-打包發佈的流程：
+打包發佈的流程——出版一本書：
 
 ```text
 原始碼（src/mypackage/）
-    ↓  build（用 build backend 建置）
+    ↓  build（用 build backend 建置——排版印刷）
 發佈物（dist/）
-    ├── mypackage-0.1.0-py3-none-any.whl   ← wheel（二進位發佈）
-    └── mypackage-0.1.0.tar.gz             ← sdist（原始碼發佈）
-    ↓  twine upload（或 uv/poetry publish）
-PyPI
+    ├── mypackage-0.1.0-py3-none-any.whl   ← wheel（印好的精裝書）
+    └── mypackage-0.1.0.tar.gz             ← sdist（原稿）
+    ↓  twine upload（或 uv/poetry publish——上架）
+PyPI（全球書店）
     ↓  pip install
 使用者的環境
 ```
 
 兩種發佈物：
-- **wheel（`.whl`）**：**預先建置**的發佈格式——安裝快（不必建置）、是主要格式。
+
+- **wheel（`.whl`）**：**預先建置**的發佈格式——安裝快（不必建置），主要格式。
 - **sdist（`.tar.gz`）**：**原始碼發佈**——含原始碼，安裝時可能要建置；作為 wheel 的後備。
 
 ## Specification（規範：打包發佈指令）

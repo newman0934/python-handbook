@@ -2,17 +2,50 @@
 
 > pre-commit 在你 `git commit` 前自動跑 ruff、mypy、格式檢查——不合格就擋下提交。它把「品質檢查」自動化到 commit 這一刻，讓爛程式碼進不了版控，也讓 CI 少紅燈。
 
+## 💡 白話導讀（建議先讀）
+
+團隊約定好了「commit 前要跑 ruff 和 mypy」——然後呢？靠自覺。而自覺的下場大家都知道。
+
+**pre-commit 把自覺換成閘門**：在你 `git commit` 的瞬間,自動執行約定的檢查——**沒過,commit 直接被擋下**。不合格的程式碼**進不了版控**,一行都進不了。
+
+機制分兩層,名字容易混,拆開講：
+
+1. **git hook（機制）**:git 原生功能——在特定事件（commit、push）時自動跑腳本。pre-commit hook = 「建 commit 之前」跑的那支。
+2. **pre-commit（同名框架）**:管理這些 hook 的工具——你用一個 YAML 宣告「要跑哪些檢查」,它負責安裝、更新、執行:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    hooks:
+      - id: ruff          # 挑錯
+      - id: ruff-format   # 排版
+```
+
+```bash
+pre-commit install    # 裝上閘門(每人 clone 後做一次)
+git commit ...        # 從此每次 commit 自動過檢
+```
+
+價值排序:**即時回饋**（幾秒內知道,不用等 CI 十分鐘）>**團隊一致**（每個人的閘門長一樣,新人 clone 完就自動合規）> 省 CI 資源。
+
+跟 CI 的關係是**兩道防線**:pre-commit 攔在本機（快、可被 --no-verify 繞過）,CI 攔在遠端（慢、繞不過）——都要有。
+
 ## Why（為什麼）
 
 前面各章的工具（ruff、mypy、pytest）要「有人記得跑」才有用——但人會忘記，於是不合格的程式碼進了版控、CI 才紅燈、來回浪費時間。**pre-commit** 把這些檢查掛到 git 的 **commit 前**——每次 commit 自動跑 ruff/mypy/格式檢查，不通過就擋下提交。這讓「品質檢查」變成無法繞過的自動關卡，程式碼在進版控前就被把關。這是團隊協作、保持程式碼品質的關鍵工具，也是本 Part 各工具的整合點。
 
 ## Theory（理論：git hook 自動化）
 
-**git hook** 是 git 在特定事件（commit、push…）時自動執行的腳本。**pre-commit hook** 在「建立 commit 之前」執行——若它失敗，commit 被取消。
+**git hook** 是 git 在特定事件（commit、push⋯⋯）時自動執行的腳本。**pre-commit hook** 在「建立 commit 之前」執行——失敗則 commit 被取消（閘門）。
 
-**pre-commit（同名的框架）** 讓管理這些 hook 變簡單——用一個 YAML 檔宣告要跑哪些檢查（ruff、mypy、格式化…），它自動安裝、管理、執行這些工具。
+**pre-commit（同名框架）** 讓管理這些 hook 變簡單——一個 YAML 宣告要跑哪些檢查（ruff、mypy、格式化⋯⋯），它自動安裝、管理、執行。
 
-價值：**把品質檢查自動化到 commit 這一刻**——不合格的程式碼**進不了版控**，開發者立即得到回饋（不必等 CI），且團隊每個人都自動遵守同一套標準。
+價值：
+
+> **把品質檢查自動化到 commit 這一刻**——不合格的程式碼**進不了版控**；開發者幾秒內得到回饋（不必等 CI）；團隊每個人自動遵守同一套標準（新人 clone 完就合規）。
+
+與 CI 是兩道防線：本機閘門快但可繞過（`--no-verify`）、CI 慢但繞不過——都要有。
 
 ## Specification（規範：pre-commit 用法）
 

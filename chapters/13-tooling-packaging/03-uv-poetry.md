@@ -2,13 +2,40 @@
 
 > uv（Rust 寫的，極快）與 poetry 把「環境 + 套件 + lock + 打包」整合成一個工具，取代「pip + venv + requirements」的手動組合。uv 是近年最受矚目的新工具，速度快數十倍。
 
+## 💡 白話導讀（建議先讀）
+
+盤點一下傳統 Python 專案要拼幾個工具：venv 開環境、pip 裝套件、requirements 鎖版本、build/twine 打包——**四五件工具,各有指令、各有脾氣**。
+
+現代整合工具的主張:**一把瑞士刀全包**。兩位主角:
+
+**uv**——新霸主,Rust 寫的：
+
+```bash
+uv init myproject       # 建專案(含 pyproject.toml)
+uv add requests         # 裝套件 + 自動更新 lock 檔
+uv run python main.py   # 在專案環境裡跑(連 venv 都不用手動啟用!)
+uv python install 3.12  # 連 Python 版本都幫你管
+```
+
+賣點一個字:**快**——比 pip 快 10~100 倍(裝一票套件從分鐘變秒),且把「版本管理+環境+套件+lock+打包」全整合。近兩年整個生態圈迅速倒向它。
+
+**poetry**——前輩,成熟穩定:以 pyproject.toml 為中心、自動 lock、能打包發佈——理念相同,速度普通,存量專案很多。
+
+選型口訣：
+
+> **新專案 → uv**(快、整合、發展最猛);
+> 接手 poetry 專案 → 照用,別硬遷;
+> 小腳本/函式庫 → pip + pyproject 也完全夠。
+
+不管用哪個,底層概念不變——**pyproject.toml 宣告意圖、lock 檔釘死版本**(上一章的食譜與採購清單),工具只是把流程變順。
+
 ## Why（為什麼）
 
 傳統 Python 工作流要手動組合多個工具：venv 建環境、pip 裝套件、requirements 記相依、setuptools 打包。步驟繁瑣、易出錯、且 pip 慢。**現代整合工具**——**poetry**（成熟、pyproject 導向）與 **uv**（Rust 寫、極快、近年爆紅）——把這些整合成單一工具，並自動管理 lock 檔（可重現）。理解它們（尤其 uv）能大幅簡化你的工作流。這章講清楚兩者的定位與用法。
 
 ## Theory（理論：整合工具的價值）
 
-現代整合工具解決「工具碎片化」：
+現代整合工具解決「工具碎片化」——一把瑞士刀取代四五件散裝工具：
 
 | 傳統（多工具） | 整合工具（一個） |
 |----------------|------------------|
@@ -16,12 +43,12 @@
 | pip（套件） | ✅ |
 | requirements（相依） | ✅ 自動 lock |
 | setuptools/build（打包） | ✅ |
-| （手動組合） | 一個工具全包 |
+| pyenv（Python 版本） | ✅（uv） |
 
-**poetry**：成熟、以 pyproject.toml 為中心、自動 lock、能打包發佈。
-**uv**：Rust 寫、**極快（比 pip 快 10-100 倍）**、能管 Python 版本、API 類似 pip、近年迅速普及。
+- **poetry**：成熟、以 pyproject.toml 為中心、自動 lock、能打包發佈。
+- **uv**：Rust 寫、**極快（比 pip 快 10-100 倍）**、能管 Python 版本、近年迅速普及。
 
-**準則**：**新專案優先考慮 uv**（快、整合、活躍發展）；poetry 也是好選擇（成熟穩定）；小專案或函式庫用 pip + pyproject 也行。
+**準則**：新專案優先考慮 **uv**；poetry 也是好選擇（成熟穩定）；小專案或函式庫用 pip + pyproject 也行。
 
 ## Specification（規範：uv 與 poetry 指令對照）
 
