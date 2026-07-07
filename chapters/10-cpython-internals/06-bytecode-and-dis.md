@@ -2,19 +2,45 @@
 
 > 你寫的 Python 原始碼會被編譯成 bytecode——一串給虛擬機執行的低階指令。`dis` 模組讓你看見它，是理解「Python 底層在做什麼」「兩種寫法哪個快」的最佳工具。
 
+## 💡 白話導讀（建議先讀）
+
+[Part 1 說過](../01-getting-started/12-how-python-runs.md)：CPython 先把你的程式改寫成「速記稿」（bytecode），再照稿執行。
+這章拿出放大鏡——**`dis` 模組,把速記稿攤開來看**：
+
+```pycon
+>>> import dis
+>>> dis.dis(lambda a, b: a + b)
+    LOAD_FAST  a        # 把 a 推上堆疊
+    LOAD_FAST  b        # 把 b 推上堆疊
+    BINARY_OP  +        # 彈出兩個,相加,結果推回
+    RETURN_VALUE        # 彈出堆疊頂,回傳
+```
+
+讀懂它只需要一個模型——**疊盤子**。bytecode 是「堆疊導向」的：
+
+- 大多數指令圍繞一個「**求值堆疊**」工作:把值**疊上去**(LOAD)、**取下來運算、結果疊回去**(BINARY_OP)。
+- `a + b` 於是變成:疊 a、疊 b、取兩盤合成一盤放回——四條指令。
+
+會看速記稿,你就有了一件神器:**「兩種寫法哪個快」不用猜,攤開比**——
+誰的指令少、誰在迴圈裡多做了重複工作,一目瞭然。之後 [Part 18 效能](../18-performance/README.md)的很多結論,都能用 dis 親手驗證。
+
+順帶收編幾個熟面孔:速記稿存放在 `function.__code__`(code object)裡;import 時快取成 `.pyc`——[Part 1 的 `__pycache__`](../01-getting-started/12-how-python-runs.md) 謎底完全揭曉。
+
 ## Why（為什麼）
 
 [Python 如何執行](../01-getting-started/12-how-python-runs.md) 提過 CPython 先把原始碼編成 bytecode。這章深入：bytecode 長什麼樣、如何用 `dis` 反組譯查看、以及它能回答什麼實際問題——「`a += 1` 底層是幾步？」「這兩種寫法為什麼一個快一個慢？」「`.pyc` 裡存的是什麼？」會讀 bytecode，你就能從「猜」變成「看」底層行為，是效能分析（見 [Part 18](../18-performance/README.md)）與深入理解 Python 的利器。
 
 ## Theory（理論：bytecode 是中間指令）
 
-**bytecode（位元組碼）** 是 CPython 把原始碼編譯後產生的**低階指令序列**——介於「人寫的原始碼」與「機器執行」之間的中間表示。它：
+**bytecode（位元組碼）** 是 CPython 把原始碼編譯後產生的**低階指令序列**——那份「速記稿」，介於「人寫的原始碼」與「機器執行」之間的中間表示。它：
 
 - 存在 **code object**（`function.__code__`）裡。
 - 由 **PVM（Python 虛擬機，見 [PVM](07-pvm.md)）** 逐條執行。
-- 被快取成 **`.pyc`** 檔（見 [如何執行](../01-getting-started/12-how-python-runs.md)）加速 import。
+- 被快取成 **`.pyc`** 檔（見[如何執行](../01-getting-started/12-how-python-runs.md)）加速 import。
 
-bytecode 是**堆疊導向的**——大部分指令操作一個「求值堆疊（evaluation stack）」：把值推上堆疊、彈出來運算、把結果推回。理解這點，讀 bytecode 就不難。
+bytecode 是**堆疊導向的**——疊盤子模型：大部分指令操作一個「求值堆疊（evaluation stack）」——把值推上堆疊、彈出來運算、把結果推回。
+
+理解「疊盤子」，讀任何 bytecode 都不難。
 
 ## Specification（規範：dis 模組）
 

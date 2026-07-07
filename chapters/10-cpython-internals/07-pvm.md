@@ -2,13 +2,38 @@
 
 > PVM 是 CPython 的心臟——一個「取指令、執行、重複」的巨大迴圈，用求值堆疊逐條執行 bytecode。理解它，就理解了 Python 為何比 C 慢，以及「直譯」的本質。
 
+## 💡 白話導讀（建議先讀）
+
+速記稿（bytecode）看過了。這章見**照稿執行的口譯員本人——PVM（Python 虛擬機）**。
+
+他的工作,拆到底就是一個永不停歇的迴圈：
+
+```text
+while 稿子還沒念完:
+    看下一條指令   (fetch)
+    理解它         (decode)
+    照做           (execute —— 對那疊盤子推推彈彈)
+```
+
+**取指令-執行迴圈（fetch-execute loop）**——CPython 原始碼裡它是一個巨大的 C 函式,你所有的 Python 程式最終都在這個迴圈裡被逐條消化。
+
+這也正面回答了「**Python 為什麼比 C 慢**」——不是玄學,是結構：
+
+- **C**:出發前把整篇講稿**翻成母語**（編譯成機器碼）,上台直接念——零翻譯開銷。
+- **Python**:口譯員**每一條**都要「看-理解-做」——就算同一條指令在迴圈裡跑一百萬次,這三步固定開銷照付一百萬次。
+
+再加上每個值都是[有戶口的物件](01-everything-is-object.md)（連 1+1 都要經過物件協定）,慢的來源就齊了。
+
+但也別急著嫌棄:這個「逐條照稿」的結構,正是 Python **動態能力**的來源——執行到一半改型別、動態生成程式碼都行,因為沒有什麼是事先鎖死的。
+而且口譯員最近變聰明了——[3.11 的適應性直譯器](11-adaptive-interpreter.md)讓他學會抄捷徑,本 Part 最後一章揭曉。
+
 ## Why（為什麼）
 
 上一章看了 bytecode 長什麼樣，這章看**是誰執行它**——PVM（Python Virtual Machine，Python 虛擬機）。理解 PVM 能回答 Python 最根本的效能問題：「為什麼 Python 比 C 慢？」（每條 bytecode 都經過這層直譯迴圈的開銷）。也能理解「堆疊機器」的執行模型、frame（呼叫堆疊）的角色，以及 GIL 為何在這一層運作。這是把前面所有 CPython 內部知識（物件、bytecode）串起來的執行引擎。
 
 ## Theory（理論：取指令-執行的迴圈）
 
-**PVM 是一個 bytecode 直譯器**——本質是一個巨大的迴圈（在 CPython 原始碼中稱為求值迴圈 `_PyEval_EvalFrameDefault`），不斷做：
+**PVM 是一個 bytecode 直譯器**——照速記稿念的口譯員。本質是一個巨大的迴圈（CPython 原始碼中的求值迴圈 `_PyEval_EvalFrameDefault`），不斷做：
 
 ```text
 while 還有 bytecode:
@@ -18,9 +43,12 @@ while 還有 bytecode:
     4. 回到迴圈
 ```
 
-這叫**取指令-執行迴圈（fetch-execute loop）**。PVM 是**堆疊機器（stack machine）**——它用一個**求值堆疊**存中間值，指令從堆疊推/彈值（見 [bytecode](06-bytecode-and-dis.md)）。
+這叫**取指令-執行迴圈（fetch-execute loop）**。PVM 是**堆疊機器（stack machine）**——用求值堆疊存中間值，指令從堆疊推/彈值（見 [bytecode](06-bytecode-and-dis.md) 的疊盤子）。
 
-「直譯」的本質就在這裡：PVM **在執行期逐條讀 bytecode 並執行**，而不是像編譯語言那樣事先把整支程式翻成機器碼一次跑完。每條 bytecode 都要經過「取指令、解碼、分派到對應的 C 處理程式」的開銷——這是 Python 相對慢的根源。
+「直譯」的本質就在這裡：
+
+> PVM **在執行期逐條讀 bytecode 並執行**，而不是像編譯語言事先把整支程式翻成機器碼。
+> 每條 bytecode 都付一次「取指令、解碼、分派到 C 處理程式」的固定開銷——這是 Python 相對慢的結構性根源。
 
 ## Specification（規範：執行的組成）
 
