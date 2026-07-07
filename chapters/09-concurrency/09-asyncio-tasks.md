@@ -2,18 +2,55 @@
 
 > `await coro` 是序列的；要真正並發，得把協程包成 **Task** 排入 event loop。`gather`、`wait_for`（逾時）、`Task.cancel`（取消）是控制多個並發協程的核心工具。
 
+## 💡 白話導讀（建議先讀）
+
+先看一個新手必犯的「假並發」：
+
+```python
+await fetch(url1)    # 等第一單完成……
+await fetch(url2)    # ……才開始第二單。這是「排隊」,不是並發!
+```
+
+`await coro` 的語意是「**現在就等它做完**」——兩單接力,總時間相加,跟同步沒兩樣。
+
+要真並發,得換個動作——**把單子交給系統,立刻開始做,你先忙別的**：
+
+```python
+t1 = asyncio.create_task(fetch(url1))   # 交單,立刻開工
+t2 = asyncio.create_task(fetch(url2))   # 這單也開工了——兩單同時進行中!
+r1 = await t1                            # 之後才憑單取餐
+r2 = await t2
+```
+
+**Task** 就是「已交給服務生排程、正在進行中的工作」——`create_task` 的瞬間它就開始跑,不必等你 await。
+
+一次交一批的簡便寫法,日常最常用：
+
+```python
+results = await asyncio.gather(fetch(u1), fetch(u2), fetch(u3))
+# 三單同時進行,全部完成後按「原順序」給你結果
+```
+
+再配兩個實用件：`asyncio.wait_for(coro, timeout=5)`（**限時**,超時拋 TimeoutError）、`task.cancel()`（撤單）。
+
+口訣帶走：**await＝站著等一單;create_task/gather＝同時開工**。分不清這兩者,寫出來的 asyncio 全是白搭。
+
 ## Why（為什麼）
 
 上一章強調「`await a(); await b()` 是序列」。那怎麼讓多個協程**真正並發**？答案是 **Task**——把協程「排程」到 event loop，讓它們同時進行。加上併發控制工具（`gather` 收集結果、`wait_for` 設逾時、`cancel` 取消、`Semaphore` 限流），你才能寫出實用的非同步程式：並發抓取、逾時保護、優雅取消。這是 asyncio 從「會用」到「用好」的關鍵。
 
 ## Theory（理論：Task vs 協程）
 
-- **協程物件**：`async def` 呼叫的結果，「還沒排程」——直到你 await 它（序列）或包成 Task。
-- **Task**：把協程「**排入 event loop、立刻開始並發執行**」的包裝。`asyncio.create_task(coro)` 建立並排程一個 Task——它馬上開始跑（在下一個 await 點），不必等你 await 它。
+- **協程物件**：`async def` 呼叫的結果——「還沒排程」的流程單。直到你 await 它（序列、站著等）或包成 Task。
+- **Task**：把協程「**排入 event loop、立刻開始並發執行**」的包裝——已交給服務生、正在進行中的工作。
+  `asyncio.create_task(coro)` 建立並排程——它馬上開始跑（在下一個 await 點），不必等你 await 它。
 
-關鍵差異：`await coro` 是「現在就等它完成」（序列）；`create_task(coro)` 是「排程它、讓它在背景跑」（並發），之後再 await Task 取結果。
+關鍵差異一句話：
 
-**Future** 是更低階的「未來結果」物件；Task 是 Future 的子類。日常用 Task/gather，很少直接碰 Future。
+> `await coro`＝「現在就等它完成」（**序列**）；
+> `create_task(coro)`＝「排程它、讓它在背景跑」（**並發**），之後再 await Task 取結果。
+
+**Future** 是更低階的「未來結果」物件；Task 是 Future 的子類。日常用 Task/`gather`，很少直接碰 Future。
 
 ## Specification（規範：Task 與控制工具）
 

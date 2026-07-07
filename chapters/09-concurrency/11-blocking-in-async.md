@@ -2,28 +2,54 @@
 
 > asyncio 最大的地雷：一個阻塞操作卡住整個 event loop，所有協程都動不了。解法是把阻塞/CPU 工作丟到執行緒或行程池——`asyncio.to_thread` 是最簡單的方式。
 
+## 💡 白話導讀（建議先讀）
+
+asyncio 的頭號地雷,一個畫面就懂：
+
+全餐廳只有一位服務生。他走到某一桌,**站在原地盯著爐子看了 5 秒**——
+
+這 5 秒裡:沒人點餐、沒人上菜、沒人結帳。**全餐廳凍結。**
+
+```python
+async def bad():
+    time.sleep(5)        # ❌ 服務生站住 5 秒 —— 整個 event loop 凍結
+    requests.get(url)    # ❌ 同罪:同步 HTTP 也是站住不動
+```
+
+原因回到[第 7 章](07-asyncio-basics.md)的機制:asyncio 靠協程**在 await 點主動讓位**——阻塞呼叫**不讓位**,單執行緒裡沒有任何人能接手。
+最陰的是:**程式不報錯**,只是所有並發默默失效——你以為在服務 50 桌,實際上一次只服務一桌。
+
+守則與解法,三條：
+
+1. **用 async 版的庫**:`asyncio.sleep` 不是 `time.sleep`、`httpx.AsyncClient` 不是 `requests`——讓每一次「等」都是 await。
+2. **沒有 async 版的阻塞 I/O**（老的 DB 驅動、檔案操作）→ **外包給幫手**:
+   `await asyncio.to_thread(blocking_func, args)`——丟給執行緒去顧爐子,服務生繼續巡場。
+3. **CPU 密集的重活**（揉麵 10 秒）→ 執行緒幫不了（[刀](02-gil.md)還是一把）→ 外包給**分店**:`run_in_executor(ProcessPoolExecutor(), ...)`。
+
+口訣:**async 世界裡,任何會「站住」的事,要嘛換 async 版,要嘛外包出去。**
+
 ## Why（為什麼）
 
 asyncio 是**單執行緒**的（見 [asyncio 基礎](07-asyncio-basics.md)）。這意味著：**任何一個協程裡的阻塞操作——同步 I/O（`requests`、`open`）、`time.sleep`、重 CPU 運算——都會凍結整個 event loop**，讓所有其他協程停擺。但現實中你常需要用「只有同步版的函式庫」或做點 CPU 運算。解法是把這些阻塞工作**丟到另一個執行緒或行程**，讓 event loop 繼續轉。`asyncio.to_thread`（3.9+）與 `run_in_executor` 就是做這件事的橋樑。這是寫實用 asyncio 程式繞不開的一課。
 
 ## Theory（理論：為何阻塞會毀掉 event loop）
 
-event loop 在單執行緒裡輪流跑協程，靠協程在 `await` 點**主動讓出**。若一個協程執行**阻塞操作**（不讓出、佔著執行緒不放）：
+event loop 在單執行緒裡輪流跑協程，靠協程在 `await` 點**主動讓出**。若一個協程執行**阻塞操作**（站住不讓位）：
 
 ```python
 async def bad():
-    time.sleep(5)          # ❌ 阻塞 5 秒，這期間 event loop 完全凍結
-    # 其他所有協程都動不了！
+    time.sleep(5)          # ❌ 阻塞 5 秒，event loop 完全凍結
+    # 這期間其他所有協程都動不了！
 ```
 
-整個 loop 卡 5 秒——期間沒有任何協程能推進，等於整個服務停擺。這是 asyncio 最嚴重的效能殺手。
+整個 loop 卡 5 秒——沒有任何協程能推進，等於整個服務停擺（全餐廳凍結）。這是 asyncio 最嚴重的效能殺手，且**不會報錯**、只是並發默默失效。
 
-**解法**：把阻塞工作**移出 event loop 執行緒**，丟到：
+**解法**：把阻塞工作**移出 event loop 執行緒**（外包）：
 
-- **執行緒池**（`to_thread` / `run_in_executor` + ThreadPoolExecutor）：適合**阻塞 I/O**（同步 HTTP、檔案、DB 驅動）——執行緒等 I/O 時釋放 GIL，event loop 能繼續。
-- **行程池**（`run_in_executor` + ProcessPoolExecutor）：適合 **CPU 密集**——繞過 GIL 真正並行。
+- **執行緒池**（`asyncio.to_thread` / `run_in_executor` + ThreadPoolExecutor）：適合**阻塞 I/O**（同步 HTTP、檔案、DB 驅動）——執行緒等 I/O 時釋放 GIL，event loop 繼續巡場。
+- **行程池**（`run_in_executor` + ProcessPoolExecutor）：適合 **CPU 密集**——繞過 GIL 真正並行（外包給分店）。
 
-event loop 用 `await` 等這個「外包出去的工作」完成，期間能繼續跑別的協程——loop 不再被卡。
+event loop 用 `await` 等「外包出去的工作」完成，期間繼續跑別的協程——loop 不再被卡。
 
 ## Specification（規範：to_thread 與 run_in_executor）
 

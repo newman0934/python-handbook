@@ -2,20 +2,49 @@
 
 > `concurrent.futures` 用同一套 API 統一了執行緒池與行程池——`ThreadPoolExecutor`（I/O）和 `ProcessPoolExecutor`（CPU）。它比手動管理 Thread/Process 簡潔太多，是實務上多數並發任務的首選。
 
+## 💡 白話導讀（建議先讀）
+
+前兩章的 threading 和 multiprocessing 各有一套囉嗦的手動流程（建立、啟動、join⋯⋯）。
+`concurrent.futures` 把它們統一成一個優雅的介面：**派工櫃檯**。
+
+流程三步：
+
+1. **把工作單丟給櫃檯**：`executor.submit(工作, 參數)`。
+2. **立刻拿到一張取貨單（Future）**——工作還沒做完,但單子先給你。
+3. **憑單取貨**：`future.result()`——好了就拿到結果,還沒好就等。
+
+櫃檯後面接哪個團隊,由你挑——**流程完全一樣**：
+
+```python
+with ThreadPoolExecutor() as ex:    # 後面是店員團隊(執行緒池) → I/O 密集
+with ProcessPoolExecutor() as ex:   # 後面是分店團隊(行程池)   → CPU 密集
+```
+
+**換一行字,就從執行緒切到行程**——這就是統一 API 的價值:先用[第 1 章的判斷](01-concurrency-vs-parallelism.md)分清 I/O 還是 CPU,再挑櫃檯後面的團隊,程式碼不用重寫。
+
+批量派工的兩個常用姿勢：
+
+- `executor.map(func, items)`——整批丟進去,**按原順序**拿結果（[之前練習題](../../exercises/part09/)寫過的那個）。
+- `as_completed(futures)`——**誰先做完先拿誰**,適合逐一處理完成品。
+
+實務上,**這章的 API 是多數人日常該用的**——比手動管 Thread/Process 乾淨得多。
+
 ## Why（為什麼）
 
 前面手動建立 Thread/Process 又要 `start`、`join`、還要自己收集結果與例外，繁瑣易錯。`concurrent.futures` 提供**高階、統一**的介面：建一個「執行器（Executor）」、丟工作進去、拿回 `Future`（代表未來的結果）。最棒的是——**切換執行緒池和行程池只要改一個類別名**（`ThreadPoolExecutor` ↔ `ProcessPoolExecutor`）。這是實務上做並發的推薦工具，比裸 threading/multiprocessing 好用得多。
 
 ## Theory（理論：Executor 與 Future）
 
-兩個核心概念：
+兩個核心概念——派工櫃檯與取貨單：
 
-- **Executor（執行器）**：管理一個「工作者池」（執行緒或行程），你把工作丟進去，它負責調度。兩種：
-  - **`ThreadPoolExecutor`**：執行緒池 → **I/O 密集**。
-  - **`ProcessPoolExecutor`**：行程池 → **CPU 密集**（繞過 GIL）。
-- **Future（未來物件）**：代表「一個尚未完成的工作的結果」——你提交工作後立刻拿到一個 Future，之後可以 `.result()` 取結果（阻塞直到完成）或查詢狀態。
+- **Executor（執行器）**：管理一個「工作者池」（執行緒或行程）的櫃檯——你把工作丟進去，它負責調度。兩種：
+  - **`ThreadPoolExecutor`**：執行緒池（店員團隊）→ **I/O 密集**。
+  - **`ProcessPoolExecutor`**：行程池（分店團隊）→ **CPU 密集**（繞過 GIL）。
+- **Future（未來物件）**：「一個尚未完成的工作的結果」——取貨單。提交工作立刻拿到 Future，之後 `.result()` 取結果（阻塞直到完成）或查詢狀態。
 
-統一 API 的價值：**同樣的程式碼，換個 Executor 就從執行緒切換到行程**——先判斷 I/O 還是 CPU 密集（見 [並發 vs 並行](01-concurrency-vs-parallelism.md)），選對應的 Executor 即可。
+統一 API 的價值：
+
+> **同樣的程式碼，換個 Executor 就從執行緒切換到行程**——先判斷 I/O 還是 CPU 密集（見[並發 vs 並行](01-concurrency-vs-parallelism.md)），選對應的櫃檯即可。
 
 ## Specification（規範：兩種提交方式）
 

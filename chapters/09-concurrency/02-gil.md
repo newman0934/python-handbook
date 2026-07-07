@@ -2,20 +2,43 @@
 
 > GIL 是 CPython 的一把大鎖，保證「同一時刻只有一個執行緒執行 Python bytecode」。它讓 CPython 的記憶體管理簡單安全，代價是多執行緒無法並行 CPU 運算。理解它是理解 Python 並發的核心。
 
+## 💡 白話導讀（建議先讀）
+
+Python 併發最有名的問題：「我開了 8 條執行緒，為什麼沒有變快？」——答案是一把刀。
+
+想像這間餐廳有個奇怪的規定：**整間廚房只有一把菜刀（GIL）**。
+
+- 你可以請 8 位廚師（開 8 條執行緒）——沒問題。
+- 但**同一時刻，只有拿到刀的那位能切菜**（執行 Python bytecode）。其他 7 位站著等刀。
+
+所以：
+
+- **切菜型工作（CPU 密集,純計算）**：8 位廚師輪流用一把刀——**跟一位廚師一樣快**,甚至因為搶刀更慢。多執行緒無效。
+- **等食材型工作（I/O 密集,等網路/磁碟）**：廚師 A 等外送時**會把刀放下**（等 I/O 時釋放 GIL）,B 接手用刀。8 位廚師交錯等貨、交錯切菜——**整體真的變快**。多執行緒有效!
+
+一句口訣：**GIL 卡計算,不卡等待。**
+
+那為什麼要有這把刀？不是設計者笨——廚房有一本**庫存帳**（每個物件的[引用計數](../10-cpython-internals/03-reference-counting.md)）,兩位廚師**同時改同一行帳**會把帳改壞（記憶體損毀）。
+與其每行帳都配一把小鎖（慢、複雜）,CPython 選擇「一次只讓一人動手」——簡單、單執行緒超快、C 擴充好寫。這是**取捨**,不是缺陷。
+
+最後畫重點：GIL 是 **CPython 這個實作**的細節,不是 Python 語言規範——而且 [3.13 開始有實驗性的「無刀廚房」](12-free-threaded-python.md)。
+
 ## Why（為什麼）
 
 「Python 的多執行緒為什麼跑 CPU 密集任務不會變快？」這個所有 Python 工程師都會遇到的困惑，答案就是 **GIL（Global Interpreter Lock，全域直譯器鎖）**。它是 Python 最常被討論、最常被誤解的機制。理解 GIL 是什麼、為什麼存在、如何影響並發，你才能解釋 threading 的行為、知道何時該用 multiprocessing、並看懂 Python 3.13 「去 GIL」的意義（見 [free-threaded](12-free-threaded-python.md)）。這是並發章的理論核心，也是面試必考。
 
 ## Theory（理論：什麼是 GIL）
 
-**GIL 是 CPython 直譯器的一把互斥鎖，保證同一時刻只有一個執行緒能執行 Python bytecode。**
+**GIL 是 CPython 直譯器的一把互斥鎖，保證同一時刻只有一個執行緒能執行 Python bytecode**——廚房裡唯一的那把菜刀。
 
-關鍵釐清：
+兩個關鍵釐清：
 
-- **GIL 是 CPython 的實作細節，不是 Python 語言規範**——Jython、IronPython 沒有 GIL；PyPy 有（見 [為什麼是 Python](../01-getting-started/01-why-python.md)）。談 GIL 就是談 CPython。
-- **它保護的是直譯器的內部狀態**——尤其是**引用計數**（見 [引用計數](../10-cpython-internals/03-reference-counting.md)）。每個物件的引用計數在多執行緒下若不加鎖地增減，會產生競態、導致記憶體損毀。GIL 用「一次只讓一個執行緒跑」來簡單地避免這個問題。
+- **GIL 是 CPython 的實作細節，不是 Python 語言規範**——Jython、IronPython 沒有 GIL；PyPy 有。談 GIL 就是談 CPython。
+- **它保護的是直譯器的內部狀態**——尤其是**引用計數**（廚房的庫存帳，見[引用計數](../10-cpython-internals/03-reference-counting.md)）。多執行緒不加鎖地增減引用計數會產生競態、導致記憶體損毀。GIL 用「一次只讓一個執行緒跑」簡單地避免這個問題。
 
-所以 GIL 的存在是一個**取捨**：用「犧牲多執行緒 CPU 並行」換取「單執行緒高效 + 記憶體管理簡單安全 + C 擴充容易寫」。
+所以 GIL 的存在是一個**取捨**：
+
+> 用「犧牲多執行緒 CPU 並行」換取「單執行緒高效 + 記憶體管理簡單安全 + C 擴充容易寫」。
 
 ## Specification（規範：GIL 的行為）
 

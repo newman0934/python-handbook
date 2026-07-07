@@ -2,19 +2,46 @@
 
 > Python 3.11 的 `TaskGroup` 帶來「結構化並發」——一組任務要嘛全部成功、要嘛一起取消，錯誤自動打包成 ExceptionGroup。加上 `async with`、`async for`，你能寫出更安全、更清楚的非同步程式。
 
+## 💡 白話導讀（建議先讀）
+
+`gather` 開了很多並發任務之後,新問題浮現:**誰對這群任務的「善後」負責?**
+
+一個任務失敗了,其他還在跑——它們變成**沒人管的散客**:結果沒人收、錯誤可能被吞、資源掛著不放。
+
+Python 3.11 的 **`TaskGroup`** 用「**旅行團**」模式解決——結構化並發：
+
+```python
+async with asyncio.TaskGroup() as tg:      # 旅行團集合
+    tg.create_task(fetch(u1))               # 團員一
+    tg.create_task(fetch(u2))               # 團員二
+# 離開這個區塊 = 全員到齊才出發回家 —— 保證沒有失蹤人口
+```
+
+旅行團的三條團規：
+
+1. **出入有邊界**：離開 `async with` 區塊時,**所有任務保證已完成或已取消**——不存在「還在外面飄的任務」。
+2. **一人出事,全團帶回**：任一任務拋例外 → **其餘任務自動取消**——不會有「隊友失敗了我還在傻跑」。
+3. **事故打包成報告**：多個錯誤裝進 [ExceptionGroup](../06-error-handling/11-exception-groups.md),用 `except*` 分科處理——正好是 Part 6 那個「整箱上報」的主場。
+
+「結構化並發」的精神跟 `with` 管檔案一模一樣：**併發任務的生命週期,應該被程式碼的區塊結構框住**——看縮排就知道任務活到哪。
+
+實務建議:**3.11+ 的新程式碼,預設用 TaskGroup 取代 gather**——gather 留給「簡單、不在乎精細錯誤處理」的場合。
+
 ## Why（為什麼）
 
 `gather` 有幾個痛點：一個任務失敗時其他不會自動取消（除非設定）、錯誤處理笨拙、任務生命週期不明確。Python **3.11 的 `TaskGroup`（PEP 654 相關）** 引入**結構化並發（structured concurrency）**——把一組任務的生命週期綁在一個明確的區塊裡，全部完成才離開、任一失敗則全體取消。加上非同步的 context manager（`async with`）與迭代（`async for`），這章補齊現代 asyncio 的進階工具，讓非同步程式更健壯。
 
 ## Theory（理論：結構化並發）
 
-**結構化並發** 的核心理念：**並發任務的生命週期應該有明確的邊界**——就像 `with` 區塊保證資源釋放，`TaskGroup` 保證「離開區塊時，所有任務都已完成或取消」。
+**結構化並發**的核心理念：
 
-`asyncio.TaskGroup`（3.11+）提供這個：
+> **並發任務的生命週期應該有明確的邊界**——就像 `with` 區塊保證資源釋放，`TaskGroup` 保證「離開區塊時，所有任務都已完成或取消」。（旅行團：出入有邊界，沒有失蹤人口。）
+
+`asyncio.TaskGroup`（3.11+）的三條規則：
 
 - 在 `async with asyncio.TaskGroup() as tg:` 區塊內用 `tg.create_task()` 建任務。
 - **離開區塊時，等待所有任務完成**。
-- **任一任務失敗 → 其餘任務自動取消**，錯誤打包成 `ExceptionGroup`（見 [ExceptionGroup](../06-error-handling/11-exception-groups.md)）用 `except*` 處理。
+- **任一任務失敗 → 其餘任務自動取消**，錯誤打包成 `ExceptionGroup`（見 [ExceptionGroup](../06-error-handling/11-exception-groups.md)），用 `except*` 處理。
 
 這比 `gather` 更安全——沒有「一個失敗了但其他還在跑」的懸空任務，錯誤也不會遺漏。
 

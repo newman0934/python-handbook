@@ -2,6 +2,35 @@
 
 > `async def` 定義協程、`await` 等待另一個協程或 awaitable。這兩個關鍵字是 asyncio 的語法核心——搞懂「await 只能在 async 裡、await 誰、什麼是 awaitable」，就掌握了非同步程式的骨架。
 
+## 💡 白話導讀（建議先讀）
+
+asyncio 的兩個關鍵字,各一句話：
+
+**`async def`＝把函式標記成「可暫停的服務流程」（協程函式）。**
+
+一個大坑立刻要拆：**呼叫協程函式,不會執行它**——
+
+```python
+async def serve(): ...
+
+serve()          # ⚠️ 什麼都沒發生!只是拿到一張「服務流程單」(協程物件)
+await serve()    # ✓ 這才是「開始執行,做完為止」
+```
+
+（似曾相識?[生成器](../07-iterators-generators/03-generator.md)也是「呼叫不執行,只是請到說書人」——不是巧合,協程正是從生成器演化來的。）
+
+**`await`＝「等這件事完成——等的期間,讓位」。**
+
+兩層意思缺一不可：拿到結果之後才繼續往下（像同步呼叫一樣好讀）;但**等待期間控制權交還給服務生**,他能去忙別桌。
+
+兩條語法鐵律,背起來省很多錯：
+
+1. **`await` 只能寫在 `async def` 裡**（普通函式裡用=語法錯誤）。
+2. **能被 await 的東西叫 awaitable**,就三種:協程、Task（[下一章](09-asyncio-tasks.md)）、Future。
+   ——`await time.sleep(1)` 錯（那不是 awaitable）,`await asyncio.sleep(1)` 對。
+
+最後,整個程式的入口:`asyncio.run(main())`——「開店,讓服務生開始巡場,從 main 這桌服務起」。
+
 ## Why（為什麼）
 
 上一章講了 event loop 的概念，這章聚焦 `async`/`await` 這兩個關鍵字的**語法規則與語意**。新手最卡的問題：`await` 能放哪裡？await 誰？為什麼有些函式要 `await` 有些不用？「coroutine was never awaited」是什麼警告？把這些規則講清楚，你才能正確地組織非同步程式碼，避免最常見的 async 錯誤。
@@ -10,10 +39,11 @@
 
 兩個關鍵字：
 
-- **`async def`**：定義一個**協程函式（coroutine function）**。呼叫它回傳**協程物件（coroutine object）**——一個「可被 await 的東西」，但**還沒執行**。
-- **`await`**：**只能用在 `async def` 裡**，用來「等待一個 awaitable 完成並取得結果」——同時**讓出控制權**給 event loop。
+- **`async def`**：定義**協程函式（coroutine function）**——可暫停的服務流程。
+  呼叫它回傳**協程物件（coroutine object）**——一張「還沒開始執行」的流程單（呼叫≠執行，同生成器）。
+- **`await`**：**只能用在 `async def` 裡**。「等待一個 awaitable 完成並取得結果」——同時**讓出控制權**給 event loop（等的期間服務生去忙別桌）。
 
-**awaitable（可等待物件）** 是「能被 await 的東西」，三種：
+**awaitable（可等待物件）**——能被 await 的東西，三種：
 
 1. **協程（coroutine）**：`async def` 呼叫的結果。
 2. **Task**：包裝協程、排入 event loop 的物件（見 [Task](09-asyncio-tasks.md)）。
