@@ -2,18 +2,41 @@
 
 > 當你在處理一個例外時拋出另一個，`raise NewError from original` 把「原因」串起來——保留完整的錯誤脈絡，讓 traceback 顯示「因為 A，所以 B」，除錯時追得到根源。
 
+## 💡 白話導讀（建議先讀）
+
+事故調查報告都有一欄「**肇因**」：B 事故是 A 引起的，報告必須寫明因果，否則查案的人只看到 B、永遠不知道根源是 A。
+
+例外也一樣。常見劇情：底層拋了 `ConnectionTimeout`（事故 A），你在 except 裡把它轉成呼叫端聽得懂的 `PaymentError`（事故 B）。
+如果 A 的資訊丟了，之後查 log 的人只看到「付款失敗」，**永遠不知道其實是網路逾時**——除錯線索斷頭。
+
+Python 的例外鏈就是那欄「肇因」，有兩種記法：
+
+**1. 顯式（你主動寫）：`raise PaymentError(...) from e`**
+正式記載「B 的**直接肇因**是 A」。traceback 會印：
+> The above exception was the **direct cause** of the following exception
+
+**2. 隱式（Python 自動）**：在 except 裡拋新例外、沒寫 from——Python 自動註記「處理 A 的**途中**又發生了 B」：
+> **During handling** of the above exception, another exception occurred
+
+兩者的差別是**語氣**：`from` 說「我是故意轉換的，因果明確」；沒寫 from 讀起來像「處理時又出了意外」。
+所以守則一句話：**故意轉換例外，就寫 `from`**——把因果寫進正式報告，而不是留給讀者猜。
+
 ## Why（為什麼）
 
 常見場景：底層拋出技術性例外（`KeyError`、`JSONDecodeError`），你想轉換成領域例外（`ConfigError`）拋給上層——但若直接 `raise ConfigError(...)`，原始的 `KeyError` 資訊就**遺失**了，除錯時看不到「真正的根源」。**例外鏈（exception chaining，PEP 3134）** 用 `raise ... from` 保留原因，traceback 會顯示完整的因果鏈。這是「轉換例外」時保留除錯資訊的正確做法。
 
 ## Theory（理論：兩種鏈接）
 
-Python 的例外鏈有兩種，反映在 traceback 的不同措辭：
+Python 的例外鏈有兩種——「肇因欄」的兩種記法，反映在 traceback 的不同措辭：
 
-- **隱式鏈（implicit）**：在 `except` 區塊裡拋出新例外時，Python **自動**把當前例外設為新例外的 `__context__`。traceback 顯示「During handling of the above exception, another exception occurred」。
-- **顯式鏈（explicit）**：用 `raise NewError from original`，明確設定 `__cause__`。traceback 顯示「The above exception was the direct cause of the following exception」。
+- **隱式鏈（implicit）**：在 `except` 區塊裡拋新例外時，Python **自動**把當前例外設為新例外的 `__context__`。
+  traceback 措辭：「During handling of the above exception, another exception occurred」——處理途中又出事。
+- **顯式鏈（explicit）**：用 `raise NewError from original`，明確設定 `__cause__`。
+  traceback 措辭：「The above exception was the direct cause of the following exception」——正式記載直接肇因。
 
-差別在**意圖**：顯式 `from` 表達「我是**故意**把 A 轉成 B」（清楚的因果）；隱式則是「處理 A 時**碰巧**又出了 B」。轉換例外時應**明確用 `from`**。
+差別在**意圖**：顯式 `from` 表達「我是**故意**把 A 轉成 B」（因果明確）；隱式則是「處理 A 時**碰巧**又出了 B」。
+
+守則：**轉換例外時，明確用 `from`**。
 
 ## Specification（規範：語法）
 

@@ -2,17 +2,42 @@
 
 > 當內建例外不夠精確表達你的領域錯誤時，定義自己的例外類別。一個好的自訂例外階層讓呼叫端能「接得精準」，也讓錯誤在你的程式碼庫裡有清楚的語意。
 
+## 💡 白話導讀（建議先讀）
+
+內建警報只有通用款：`ValueError`（值不對）、`KeyError`（鍵不在）⋯⋯
+但你的應用有自己的事故類型：「餘額不足」「訂單已關閉」「庫存不夠」——用 `ValueError` 一概而論，接的人分不出是哪種事。
+
+**自訂例外**就是為你的領域**印製專屬警報**。做法簡單到只有一行起跳：
+
+```python
+class AppError(Exception): ...          # 我家所有警報的「總開關」
+
+class InsufficientFundsError(AppError): # 具體事故一：餘額不足
+    def __init__(self, balance, amount):
+        super().__init__(f"餘額 {balance} 不足以支付 {amount}")
+        self.balance = balance          # 警報可以夾帶「事故現場資料」
+        self.amount = amount
+```
+
+兩個設計重點都在上面了：
+
+1. **先建一個「家族基底」**（`AppError`），所有自家例外都繼承它。
+   好處是呼叫端有了選擇權：`except InsufficientFundsError:` 精準接一種、或 `except AppError:` **一網打盡你家所有的錯**（但不會誤接別人家的）。
+2. **警報能帶附件**：把事故現場的資料（balance、amount）掛在例外物件上,接到的人能拿來做決策或顯示,不用去解析錯誤訊息字串。
+
+一句話:**自訂例外 = 給錯誤取個有意義的名字 + 掛上現場資料**——成本一行,換來整個程式碼庫的錯誤語意清晰。
+
 ## Why（為什麼）
 
 內建例外（`ValueError`、`KeyError`）表達的是「通用的錯」。但你的應用有自己的領域錯誤：`InsufficientFundsError`（餘額不足）、`UserNotFoundError`（找不到使用者）、`InvalidConfigError`（設定錯誤）。用內建的 `ValueError` 表達這些會很模糊——呼叫端無法區分「餘額不足」和「其他 ValueError」。**自訂例外**讓錯誤有清楚的語意與型別，呼叫端能精準接住並分別處理。這是設計函式庫/應用錯誤介面的核心。
 
 ## Theory（理論：繼承 Exception 建立語意）
 
-自訂例外就是**繼承 `Exception`（或其子類別）的類別**。關鍵設計：
+自訂例外就是**繼承 `Exception`（或其子類別）的類別**——印製自家專屬警報。三個關鍵設計：
 
-- **繼承 `Exception`**（不是 `BaseException`，見 [例外階層](10-exception-hierarchy.md)）。
-- **建立一個「基底例外」代表你的模組/應用**，其他具體例外都繼承它——這樣呼叫端能「一次接住你所有的錯」或「精準接特定的」。
-- **可攜帶額外資料**（如 `InsufficientFundsError` 帶 `balance`、`amount`），供處理時使用。
+- **繼承 `Exception`**，不是 `BaseException`（那是保留給系統級訊號的，見[例外階層](10-exception-hierarchy.md)）。
+- **建立一個「基底例外」代表你的模組/應用**（家族總開關），其他具體例外都繼承它——呼叫端因此能「一次接住你所有的錯」或「精準接特定的」。
+- **可攜帶額外資料**（如 `InsufficientFundsError` 帶 `balance`、`amount`）——警報夾帶事故現場資料，供處理時使用。
 
 ## Specification（規範：定義自訂例外）
 

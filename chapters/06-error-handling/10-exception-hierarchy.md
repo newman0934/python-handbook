@@ -2,13 +2,41 @@
 
 > 所有例外都在一棵繼承樹上，樹根是 `BaseException`。搞懂這棵樹——尤其「`Exception` vs `BaseException`」和「`except` 會接住子類別」——你才知道該接什麼、不該接什麼。
 
+## 💡 白話導讀（建議先讀）
+
+所有例外組成一棵**家族樹**。看懂這棵樹，`except` 的行為就全部可預測。
+
+最重要的規則一句話：
+
+> **`except 某類別` 會連它的子孫一起接住。**
+
+`except LookupError:` 同時接住 `KeyError` 和 `IndexError`（它們是 LookupError 的孩子）；
+`except Exception:` 接住幾乎所有一般錯誤（都是它的後代）。
+
+那為什麼說「幾乎」？這就是本章第二個重點——**有三位特殊人物，刻意不住在 Exception 家裡**：
+
+```text
+BaseException（真正的樹根）
+├── SystemExit          ← sys.exit()：「程式要正常退出了」
+├── KeyboardInterrupt   ← Ctrl-C：「使用者要求停止」
+├── GeneratorExit       ← generator 收尾訊號
+└── Exception           ← 一般錯誤都住這裡（你該接的都在這下面）
+    ├── ValueError、TypeError、KeyError、OSError ⋯⋯
+    └── 你的自訂例外
+```
+
+為什麼把他們隔開？因為這三個不是「錯誤」,是「**程式該停下來**」的訊號。
+如果他們住在 Exception 底下,你寫的 `except Exception:` 就會**把 Ctrl-C 也接住**——使用者狂按 Ctrl-C 程式卻不死,就是這樣來的。
+
+兩條守則帶走：**日常接 Exception 以下的具體類別;永遠不要 `except BaseException`（或裸 except——等價）**。
+
 ## Why（為什麼）
 
 `except OSError` 為什麼能接住 `FileNotFoundError`？裸 `except:` 為什麼會害你 Ctrl-C 停不下來？自訂例外該繼承誰？這些問題的答案都在**例外階層**——Python 所有例外構成的繼承樹。理解這棵樹的結構與「捕捉一個類別會連同捕捉其所有子類別」的規則，你才能精準決定捕捉範圍，也才懂為什麼有些例外「不該接」。
 
 ## Theory（理論：一棵繼承樹）
 
-Python 所有例外都繼承自 **`BaseException`**（樹根）。關鍵分野：
+Python 所有例外都繼承自 **`BaseException`**（樹根）。全貌：
 
 ```text
 BaseException                    ← 所有例外的根
@@ -30,7 +58,9 @@ BaseException                    ← 所有例外的根
     └── ...（以及你的自訂例外）
 ```
 
-**最重要的分野**：`SystemExit`、`KeyboardInterrupt`、`GeneratorExit` **直接繼承 `BaseException`，不在 `Exception` 底下**——這是刻意設計：這三個代表「程式該退出/中斷」的訊號，不該被一般的 `except Exception` 接住。
+**最重要的分野**：`SystemExit`、`KeyboardInterrupt`、`GeneratorExit` **直接掛在 `BaseException` 下，不在 `Exception` 底下**。
+
+這是刻意設計：這三位是「程式該退出/中斷」的**訊號**，不是錯誤——不該被一般的 `except Exception` 接住（否則 Ctrl-C 按不死程式）。
 
 ## Specification（規範：捕捉規則）
 

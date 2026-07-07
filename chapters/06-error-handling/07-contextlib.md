@@ -2,19 +2,48 @@
 
 > 手寫 `__enter__`/`__exit__` 一整個類別很囉嗦。`contextlib.contextmanager` 讓你用一個 generator 寫出 context manager——`yield` 之前是 enter、之後是 exit。加上 `suppress`、`closing`、`ExitStack` 等工具，資源管理變得又短又強。
 
+## 💡 白話導讀（建議先讀）
+
+上一章自己實作 context manager 要寫一整個類別（`__init__`、`__enter__`、`__exit__`）——為了「借與還」兩個動作蓋一棟樓，小題大作。
+
+`contextlib` 提供捷徑：**用一個 generator 函式，三行寫完**：
+
+```python
+from contextlib import contextmanager
+
+@contextmanager
+def open_db():
+    conn = connect()      # yield 之前 = 「借」（__enter__ 的工作）
+    try:
+        yield conn        # yield 本人 = 把資源交給 with 區塊用
+    finally:
+        conn.close()      # yield 之後 = 「還」（__exit__ 的工作）
+```
+
+讀法像一條流水線：**「準備 → yield 交出去 → 收尾」**，從上往下一氣呵成——比類別版的三個方法拼裝直觀得多。
+
+`yield` 是分水嶺：with 區塊執行時，函式**停在 yield 那裡等**；區塊結束（或爆炸），才繼續往下跑清理。
+（generator 的暫停機制 [Part 7](../07-iterators-generators/03-generator.md) 詳講，這裡會用即可。）
+
+一個必守的細節已寫在上面：**用 try/finally 包住 yield**——不包的話，with 區塊裡一爆炸，清理程式碼就被跳過了,前功盡棄。
+
+這章還附幾件 contextlib 的現成小工具（`suppress`、`closing`、`ExitStack`），順手好用。
+
 ## Why（為什麼）
 
 上一章的 context manager 要寫一整個類別、兩個 dunder。對簡單的「進入做 A、離開做 B」場景太重。`contextlib` 模組提供工具讓 context manager 更好寫：`@contextmanager` 用 generator 一個函式搞定、`suppress` 優雅忽略特定例外、`ExitStack` 動態管理不定數量的資源。這些是日常寫資源管理與清理邏輯的利器。
 
 ## Theory（理論：generator 即 context manager）
 
-`@contextlib.contextmanager` 把一個 **generator 函式**（見 [生成器](../07-iterators-generators/03-generator.md)）變成 context manager：
+`@contextlib.contextmanager` 把一個 **generator 函式**（見[生成器](../07-iterators-generators/03-generator.md)）變成 context manager——「準備 → 交出 → 收尾」的流水線：
 
-- **`yield` 之前**的程式碼 = `__enter__`（取得資源）。
-- **`yield` 的值** = `__enter__` 的回傳值（綁給 `as`）。
-- **`yield` 之後**的程式碼 = `__exit__`（清理）。
+- **`yield` 之前**的程式碼 ＝ `__enter__`（取得資源）。
+- **`yield` 的值** ＝ `__enter__` 的回傳值（綁給 `as`）。
+- **`yield` 之後**的程式碼 ＝ `__exit__`（清理）。
 
-用 `try/finally` 包住 `yield`，就能保證清理在例外時也執行。這比寫類別直觀許多——「設定 → yield → 清理」線性讀下來。
+必守細節：**用 `try/finally` 包住 `yield`**——才能保證 with 區塊拋例外時，清理仍會執行。
+
+比起寫類別，這個寫法「設定 → yield → 清理」線性讀下來，直觀許多。
 
 ## Specification（規範：contextlib 常用工具）
 
