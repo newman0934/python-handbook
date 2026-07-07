@@ -2,20 +2,48 @@
 
 > `for x in something` 能運作，是因為 `something` 遵守「迭代協定」。搞懂 iterable（可被遍歷）與 iterator（實際產出元素）的差別，你就理解了 Python 一切迴圈、推導式、`in` 的底層。
 
+## 💡 白話導讀（建議先讀）
+
+[Part 2 說過](../02-fundamentals/06-control-flow.md)：`for` 是「從籃子逐一取物」。這章打開引擎蓋，看「取物」到底怎麼運作。
+
+場景換成**自助餐**，兩個角色分清楚：
+
+- **iterable（可迭代物件）＝菜檯**：擺著菜、可以「開始取餐」的東西——list、str、dict 都是菜檯。
+- **iterator（迭代器）＝派給你的服務生**：拿著夾子、**記得夾到第幾道**的人——真正逐一遞菜給你的是他。
+
+`for` 迴圈的內幕就三步：
+
+1. 對菜檯喊 `iter()`——「**派一位服務生來**」。
+2. 反覆對服務生喊 `next()`——「**下一道**」。
+3. 菜上完了，服務生喊 `StopIteration`——for 安靜收工（你永遠看不到這個例外，for 幫你接了）。
+
+一個超重要的行為差異，用這個畫面秒懂：
+
+- **菜檯（list）可以重複遍歷**——每次 `for` 都派一位**新的**服務生，從頭夾起。
+- **服務生本人（iterator、生成器）只能走一輪**——他夾完就下班了，再喊 next 也沒菜。
+  （[Part 3 的「點餐券用過作廢」](../03-data-structures/10-builtin-functions.md)，謎底就是：那些函式回傳的是服務生，不是菜檯。）
+
+分清「菜檯 vs 服務生」，這個 Part 的每一章都建立在這對概念上。
+
 ## Why（為什麼）
 
 `for` 迴圈、推導式、`in`、`zip`、`map`、拆包（`a, b = ...`）——這些無所不在的操作背後是同一套機制：**迭代協定（iterator protocol）**。理解它能解答很多疑問：為什麼有些東西能遍歷兩次、有些只能一次？為什麼生成器用完就空了？為什麼 `iter()` 和 `next()` 這樣運作？這是理解生成器、惰性求值、乃至整個 Python 資料流的基礎。
 
 ## Theory（理論：iterable vs iterator）
 
-兩個容易混淆但關鍵不同的概念：
+兩個容易混淆但關鍵不同的概念（菜檯 vs 服務生）：
 
-- **iterable（可迭代物件）**：能「被遍歷」的東西——實作了 `__iter__()`，呼叫它會回傳一個 iterator。list、tuple、str、dict、set 都是 iterable。
-- **iterator（迭代器）**：實際「產出元素」的東西——實作了 `__next__()`（每次回下一個元素）**和** `__iter__()`（回傳自己）。
+- **iterable（可迭代物件）**：能「被遍歷」的東西——實作了 `__iter__()`，呼叫它會回傳一個 iterator。list、tuple、str、dict、set 都是 iterable（菜檯）。
+- **iterator（迭代器）**：實際「產出元素」的東西——實作了 `__next__()`（每次回下一個元素）**和** `__iter__()`（回傳自己）。（服務生——記得進度的人。）
 
-關係：**iterable 是「可以要一個 iterator 的東西」，iterator 是「真正逐一吐元素的東西」**。`for` 迴圈做的事：先對 iterable 呼叫 `iter()` 拿到 iterator，再反覆呼叫 `next()` 取元素，直到 `StopIteration`。
+關係一句話：**iterable 是「可以要一個 iterator 的東西」，iterator 是「真正逐一吐元素的東西」**。
 
-一個關鍵區別：**iterable 可以重複遍歷**（每次 `iter()` 給一個新 iterator，如 list），**iterator 通常只能遍歷一次**（用完就耗盡，如生成器）。
+`for` 迴圈的內幕：先對 iterable 呼叫 `iter()` 拿到 iterator，再反覆呼叫 `next()` 取元素，直到 `StopIteration`。
+
+關鍵行為差異：
+
+- **iterable 可以重複遍歷**——每次 `iter()` 給一個**新** iterator（如 list，每輪派新服務生）。
+- **iterator 通常只能遍歷一次**——用完就耗盡（如生成器，服務生下班就沒了）。
 
 ## Specification（規範：協定與內建函式）
 

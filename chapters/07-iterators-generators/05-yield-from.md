@@ -2,16 +2,45 @@
 
 > `yield from iterable` 把「一個生成器委派給另一個」——不用寫 `for x in sub: yield x`，一行搞定。它還能扁平化巢狀結構、串接生成器，並在協程中透傳 send/throw。
 
+## 💡 白話導讀（建議先讀）
+
+主持節目時要播來賓的完整發言，兩種做法：
+
+**笨方法——逐句復述**：來賓說一句，你跟著重講一句：
+
+```python
+def show():
+    for x in guest():      # 來賓的每句話……
+        yield x            # ……我復述一遍
+```
+
+**聰明做法——把麥克風整段交出去**：
+
+```python
+def show():
+    yield from guest()     # 「接下來的時間交給來賓」
+```
+
+`yield from` 讀作「**以下內容由它代播**」：把子迭代物件的所有值逐一 yield 出去，就像是你自己產出的一樣。
+
+對「單純轉發」而言兩種寫法等價，`yield from` 只是更短。但它多做了一件將來很重要的事：
+
+> **建立「觀眾 ↔ 來賓」的直通通道**——觀眾的提問（`send()`）、抗議（`throw()`）會**穿過主持人直達來賓**,來賓的閉幕詞（return 值）也拿得到。
+
+這個「透明通道」在[生成器當協程用](08-generator-as-coroutine.md)時是關鍵——事實上 `yield from` 正是 `await` 語法的前身。
+
+日常用途先記兩個:**攤平巢狀結構**（遞迴 yield from 子樹）、**串接多個生成器**。
+
 ## Why（為什麼）
 
 常見需求：一個生成器想「產出另一個可迭代物件的所有值」。手寫是 `for x in sub: yield x`——可行但囉嗦，尤其在委派給子生成器、扁平化巢狀結構、或組合多個生成器時。**`yield from`（PEP 380，3.3+）** 把這個模式縮成一行，還多了幾個手寫做不到的能力（透傳 send/throw、取得子生成器的回傳值）。它是寫「生成器組合」與遞迴生成器的利器。
 
 ## Theory（理論：委派給子可迭代物件）
 
-`yield from iterable` 的意思是：**把 `iterable` 的所有值，逐一 yield 出去**，就像它們是當前生成器產出的一樣。
+`yield from iterable` 的意思：**把 `iterable` 的所有值逐一 yield 出去**，就像它們是當前生成器產出的一樣——「麥克風交給來賓」。
 
 ```python
-# 手寫委派
+# 手寫委派（逐句復述）
 def gen():
     for x in sub_iterable:
         yield x
@@ -21,7 +50,11 @@ def gen():
     yield from sub_iterable
 ```
 
-對「單純轉發值」而言兩者等價。但 `yield from` 額外做了：**建立當前生成器與子生成器之間的透明通道**——`send()`、`throw()` 會透傳給子生成器，子生成器的 `return` 值也能被取得（見 [協程](08-generator-as-coroutine.md)）。這在協程場景很重要。
+對「單純轉發值」兩者等價。但 `yield from` 額外做了：
+
+> **建立當前生成器與子生成器之間的透明通道**——`send()`、`throw()` 會透傳給子生成器，子生成器的 `return` 值也能被取得（見[協程](08-generator-as-coroutine.md)）。
+
+這個通道在協程場景至關重要——`yield from` 正是 `await` 的前身。
 
 ## Specification（規範：語法與用途）
 

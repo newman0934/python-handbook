@@ -2,19 +2,44 @@
 
 > `itertools` 是一整箱高效、惰性的迭代工具——`chain`、`islice`、`groupby`、`product`、`combinations`、`count`、`cycle`…。它們用 C 實作、記憶體恆定，是處理序列與組合問題的標準庫利器。
 
+## 💡 白話導讀（建議先讀）
+
+`itertools` 是標準庫送你的一整箱**迭代積木**——處理序列的常見花式，別人都做好了，而且**全部是惰性的**（回傳[點餐券](../03-data-structures/10-builtin-functions.md)，不是成品）。
+
+箱子裡分三個抽屜：
+
+**抽屜一：無限供應機。**
+`count(1)` 從 1 數到天荒地老、`cycle("AB")` 是 ABABAB 永動輪播、`repeat(x)` 無限複讀。
+（無限的東西怎麼用？搭配抽屜二的 `islice` 剪一段下來——這是慣用組合。）
+
+**抽屜二：加工站**（吃一個序列,吐一個加工過的序列）：
+
+```python
+chain(a, b)          # 把幾條序列頭尾接起來
+islice(g, 10)        # 對「生成器」做切片(生成器不能 g[:10],用它)
+pairwise(xs)         # 相鄰兩兩配對 (a,b), (b,c), ...
+groupby(xs, key)     # 連續相同者分組(⚠️ 要先排序,經典陷阱)
+accumulate(xs)       # 累計和(或累計任何運算)
+```
+
+**抽屜三：排列組合產生器**——數學課那些,一行取得：
+`product`（笛卡兒積,巢狀迴圈的替代品）、`permutations`（排列）、`combinations`（組合）。
+
+用法心態:**先想「這個花式八成有現成積木」再自己寫**。這章就是那份積木目錄——不用背,知道抽屜裡有什麼、用時翻得到,就夠了。
+
 ## Why（為什麼）
 
 很多迭代任務有現成的最佳解，卻常被重造輪子：串接多個序列、取無限生成器的前 N 個、分組、產生排列組合、累加、滑動配對。`itertools` 提供這些工具，全部**惰性（回傳 iterator）**、**用 C 實作（快）**、**記憶體效率高**。會用它們，很多手寫迴圈就消失了，程式更短更快。這也是面試/刷題常用的工具箱。
 
 ## Theory（理論：三類迭代工具）
 
-`itertools` 的函式大致分三類：
+`itertools` 的函式分三類——三個抽屜：
 
-- **無限迭代器**：`count`（無限計數）、`cycle`（無限循環）、`repeat`（重複）——配 `islice`/`takewhile` 取有限。
-- **終止型迭代器**：`chain`（串接）、`islice`（切片）、`compress`、`takewhile`/`dropwhile`、`accumulate`（累加）、`groupby`（分組）、`pairwise`（相鄰配對）、`starmap`、`zip_longest`。
-- **組合型迭代器**：`product`（笛卡兒積）、`permutations`（排列）、`combinations`（組合）、`combinations_with_replacement`。
+- **無限迭代器**（無限供應機）：`count`（無限計數）、`cycle`（無限循環）、`repeat`（重複）——配 `islice`/`takewhile` 取有限。
+- **終止型迭代器**（加工站）：`chain`（串接）、`islice`（切片）、`compress`、`takewhile`/`dropwhile`、`accumulate`（累加）、`groupby`（分組，**要先排序**）、`pairwise`（相鄰配對）、`starmap`、`zip_longest`。
+- **組合型迭代器**（排列組合產生器）：`product`（笛卡兒積）、`permutations`（排列）、`combinations`（組合）、`combinations_with_replacement`。
 
-全部回傳惰性 iterator，通常要 `list()` 才看得到內容。
+共同性質：**全部回傳惰性 iterator**（點餐券）——通常要 `list()` 才看得到內容、且只能走一輪。
 
 ## Specification（規範：常用工具速覽）
 
