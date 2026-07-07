@@ -2,20 +2,49 @@
 
 > `unittest` 是標準庫的測試框架——xUnit 風格、類別導向、`assertEqual`/`setUp`/`tearDown`。雖然實務上多用 pytest，但理解 unittest 有助於讀既有程式碼、也是「不想裝套件」時的選擇。
 
+## 💡 白話導讀（建議先讀）
+
+`unittest` 是標準庫自帶的測試框架——一套**老派但正式的制服**,源自 Java 世家的 xUnit 傳統：
+
+```python
+import unittest
+
+class TestMath(unittest.TestCase):          # 測試要穿「類別」這件外套
+    def setUp(self):                        # 每題考前的準備動作
+        self.data = [1, 2, 3]
+
+    def test_sum(self):                     # 測試方法以 test_ 開頭
+        self.assertEqual(sum(self.data), 6) # 斷言要用專屬方法,不能裸 assert
+```
+
+規矩不少:要開類別、要繼承 TestCase、斷言要背一族方法（assertEqual、assertTrue、assertRaises⋯⋯）。
+
+**那為什麼還要學它？**兩個現實理由：
+
+1. **存量龐大**——無數專案、公司程式碼庫用它寫的,你會讀到。
+2. **零依賴**——標準庫內建,不能裝套件的環境它是唯一選擇。
+
+但先講結論,免得走錯路：
+
+> **新程式碼用 pytest**（下一章）——它把這套制服全部簡化掉了。
+> 這章的目標是「**看得懂** unittest」,不是「愛上它」。
+
+（好消息:pytest 能直接執行 unittest 寫的測試——兩個世界相容,遷移不痛。）
+
 ## Why（為什麼）
 
 `unittest` 是 Python 內建的測試框架（無需安裝），源自 Java 的 JUnit（xUnit 家族）。雖然社群已大量轉向 pytest（更簡潔，見 [pytest 基礎](03-pytest-basics.md)），但你仍會在既有專案、標準庫測試、或「不想裝第三方套件」的場景遇到 unittest。理解它的 xUnit 風格（測試類別、assert 方法、setUp/tearDown）能讓你讀懂這些程式，也理解「pytest 改善了什麼」。這章講 unittest 的核心，並對比 pytest。
 
 ## Theory（理論：xUnit 風格）
 
-`unittest` 採 **xUnit 風格**——測試組織成**類別**，每個測試是類別的方法：
+`unittest` 採 **xUnit 風格**（源自 Java 世家的老派制服）——測試組織成**類別**，每個測試是類別的方法：
 
 - **測試類別**繼承 `unittest.TestCase`。
 - **測試方法**以 `test_` 開頭。
-- **斷言**用 `self.assertEqual`、`self.assertTrue` 等方法（不是裸 `assert`）。
+- **斷言**用 `self.assertEqual`、`self.assertTrue` 等專屬方法（不是裸 `assert`）。
 - **`setUp`/`tearDown`**：每個測試前/後執行（準備/清理）。
 
-這種類別導向、方法斷言的風格較「重」——這正是 pytest 用簡潔的裸 `assert` 與函式改善的地方。
+這種類別導向、方法斷言的風格較「重」——這正是 pytest 用裸 `assert` 與普通函式改善的地方。
 
 ## Specification（規範：unittest 結構）
 

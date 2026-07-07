@@ -2,19 +2,60 @@
 
 > 用同一段測試邏輯跑多組輸入輸出，別複製貼上五個幾乎一樣的測試——`@pytest.mark.parametrize` 讓一個測試函式自動展開成多個測試案例，每組獨立回報。
 
+## 💡 白話導讀（建議先讀）
+
+寫測試常遇到這種場面：同一個函式,想測五組輸入——難道複製貼上五個幾乎一樣的測試？
+
+```python
+def test_upper_hello(): assert upper("hello") == "HELLO"
+def test_upper_world(): assert upper("world") == "WORLD"
+def test_upper_empty(): ...   # 複製地獄,改一處要改五處
+```
+
+`parametrize` 的思路：**考卷同一題型,只換數字**——邏輯寫一次,資料列成表：
+
+```python
+import pytest
+
+@pytest.mark.parametrize("word, expected", [
+    ("hello", "HELLO"),
+    ("world", "WORLD"),
+    ("", ""),              # 邊界案例加一行就好
+    ("Abc", "ABC"),
+])
+def test_upper(word, expected):
+    assert upper(word) == expected
+```
+
+pytest 把它**自動展開成四個獨立的測試**——各自執行、各自計分：
+
+```text
+test_upper[hello-HELLO] PASSED
+test_upper[-]           PASSED
+test_upper[Abc-ABC]     FAILED    ← 清楚指出是「哪組資料」掛了
+```
+
+三個好處齊了：**一組失敗不牽連其他**、**失敗訊息自帶資料**、**加案例=加一行**（於是你更願意補邊界案例——測試品質悄悄上升）。
+
+這就是「資料驅動測試」——本書 examples/ 裡到處是它的身影,你早就見過。
+
 ## Why（為什麼）
 
 測試常需要「用不同輸入驗證同一邏輯」——分級函式測 A/B/C/D/F、驗證函式測各種合法/非法輸入。若每組寫一個測試函式，會有五個幾乎一樣的 `test_grade_a`、`test_grade_b`……重複又難維護。**`@pytest.mark.parametrize`** 讓你把「測試邏輯」寫一次、「測試資料」列成多組，pytest 自動展開成多個獨立測試案例。這大幅減少重複、讓「加一組案例」變成「加一行」，是寫全面測試的利器。
 
 ## Theory（理論：資料驅動測試）
 
-**參數化（parametrize）** 是**資料驅動測試**——把「測試邏輯」與「測試資料」分離：
+**參數化（parametrize）** 是**資料驅動測試**——把「測試邏輯」與「測試資料」分離（同一題型、只換數字）：
 
 - **邏輯**：一個測試函式（Arrange-Act-Assert）。
-- **資料**：多組「輸入 → 預期輸出」。
+- **資料**：多組「輸入 → 預期輸出」的表。
 - pytest 為**每組資料**產生一個獨立的測試案例——各自執行、各自回報 pass/fail。
 
-好處：一個失敗不影響其他（每組獨立）、失敗時清楚顯示是「哪組資料」出錯、加案例只需加一行。
+三個好處：
+
+1. 一組失敗不影響其他（各自獨立計分）。
+2. 失敗時清楚顯示是「哪組資料」出錯。
+3. 加案例只需加一行——於是更願意補邊界案例。
 
 ## Specification（規範：parametrize 語法）
 

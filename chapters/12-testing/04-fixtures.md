@@ -2,13 +2,42 @@
 
 > fixture 是 pytest 的「測試前置準備」機制——用 `@pytest.fixture` 定義，測試函式用參數名「請求」它。它比 setUp/tearDown 更彈性：可組合、可設定作用域、用 `yield` 做清理。
 
+## 💡 白話導讀（建議先讀）
+
+很多測試需要「前置準備」：一份範例資料、一個暫存資料庫、一個登入好的 client。
+
+pytest 的解法優雅得像**餐廳的擺桌服務**：
+
+```python
+import pytest
+
+@pytest.fixture                    # 向餐廳登記一項服務:「擺好範例資料桌」
+def sample_data():
+    return [1, 2, 3]
+
+def test_sum(sample_data):         # 測試在「參數欄」點餐:我要那張桌
+    assert sum(sample_data) == 6   # 入座時桌已擺好
+```
+
+機制一句話：**測試函式的參數名 = fixture 名**——pytest 看到你點了 `sample_data`,自動執行同名 fixture、把回傳值端上來。（這正是[依賴注入](../16-architecture/03-dependency-injection.md):宣告需要什麼,由框架提供。）
+
+比老派 setUp 高明在哪？**要什麼點什麼**——setUp 是「全班統一便當」（整個類別共用一套準備）;fixture 是單點,每個測試只拿自己需要的,依賴一目瞭然。
+
+三個進階能力,先混臉熟：
+
+1. **要收拾的服務用 yield**:yield 前=擺桌、yield 後=收桌（[Part 6 的流水線](../06-error-handling/07-contextlib.md)同款);開檔、開 DB 連線用這招。
+2. **scope**:桌子擺一次用多久?`function`(每題重擺,預設)/`module`/`session`(全場共用一張——貴的資源如 DB 連線)。
+3. **conftest.py**:登記在這裡的服務,**整個目錄的測試都點得到**——共用 fixture 的家。
+
 ## Why（為什麼）
 
 測試常需要「準備好的東西」——一個資料庫連線、一個測試檔案、一個已登入的使用者、一份範例資料。多個測試共用這些準備，若每個測試都重寫一遍很囉嗦。pytest 的 **fixture** 讓你把「準備 + 清理」抽成可重用的元件，測試函式**用參數名「請求」它**。fixture 比 unittest 的 setUp/tearDown（見 [unittest](02-unittest.md)）彈性太多——可組合、可控制作用域、可參數化。這是寫可維護測試的關鍵機制。
 
 ## Theory（理論：依賴注入式的前置準備）
 
-**fixture** 是「提供測試所需資源」的函式，用 `@pytest.fixture` 標記。核心機制是**依賴注入**——測試函式的**參數名**對應到 fixture 名，pytest 自動呼叫該 fixture 並把回傳值注入：
+**fixture** 是「提供測試所需資源」的函式，用 `@pytest.fixture` 標記——餐廳的擺桌服務。
+
+核心機制是**依賴注入**：測試函式的**參數名**對應 fixture 名，pytest 自動呼叫該 fixture 並注入回傳值：
 
 ```python
 import pytest
@@ -17,11 +46,13 @@ import pytest
 def sample_data():
     return [1, 2, 3]
 
-def test_sum(sample_data):        # 參數名 = fixture 名 → 自動注入
+def test_sum(sample_data):        # 參數名 = fixture 名 → 自動注入(點餐)
     assert sum(sample_data) == 6
 ```
 
-pytest 看到 `test_sum` 需要 `sample_data`，就找同名 fixture、呼叫它、把回傳值傳入。這種「宣告需要什麼、pytest 提供」的模式（依賴注入，見 [DI](../16-architecture/03-dependency-injection.md)）讓測試乾淨、fixture 可重用。
+pytest 看到 `test_sum` 需要 `sample_data` → 找同名 fixture → 呼叫 → 傳入。
+
+「宣告需要什麼、pytest 提供」（見 [DI](../16-architecture/03-dependency-injection.md)）讓測試乾淨、fixture 可重用——且**要什麼點什麼**（對比 setUp 的全班統一便當）。
 
 ## Specification（規範：fixture 語法）
 

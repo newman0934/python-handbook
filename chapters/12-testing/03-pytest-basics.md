@@ -2,20 +2,58 @@
 
 > pytest 用「裸 `assert` + 函式」讓測試極簡——不必記斷言方法、不必開類別。加上智慧的失敗輸出、自動發現、豐富外掛，它是 Python 測試的社群標準。
 
+## 💡 白話導讀（建議先讀）
+
+看完上一章的制服，pytest 是一場**便服革命**——同一個測試,兩種寫法：
+
+```python
+# unittest:類別 + 專屬斷言方法
+class TestMath(unittest.TestCase):
+    def test_sum(self):
+        self.assertEqual(sum([1, 2, 3]), 6)
+
+# pytest:就是一個普通函式 + 裸 assert
+def test_sum():
+    assert sum([1, 2, 3]) == 6
+```
+
+沒有類別、沒有繼承、不用背斷言方法——**會寫函式和 assert,就會寫 pytest 測試**。
+
+你可能想問:裸 `assert` 失敗時不是只會冷冷地說 AssertionError 嗎?
+這正是 pytest 的招牌魔法——**斷言內省（assertion introspection）**:
+
+```text
+def test_sum():
+>       assert sum([1, 2, 3]) == 7
+E       assert 6 == 7          ← 自動告訴你兩邊的實際值!
+```
+
+它重寫了 assert,失敗時把**左右兩邊的值攤開給你看**——除錯資訊直接到位。
+
+日常操作三件事就夠上工：
+
+```bash
+pytest                  # 自動找所有 test_*.py 裡的 test_* 函式,全部跑
+pytest -k "sum"         # 只跑名字含 sum 的
+pytest -x               # 遇到第一個失敗就停
+```
+
+pytest 是 Python 測試的社群標準（本書全部測試都用它）——這章開始,它是你的主力武器。
+
 ## Why（為什麼）
 
 pytest 是現代 Python 測試的**事實標準**——比 unittest（見 [unittest](02-unittest.md)）簡潔太多：測試就是普通函式、斷言就用裸 `assert`（pytest 讓它失敗時顯示詳細值）、無需繼承類別或記斷言方法。加上自動發現測試、清楚的失敗輸出、fixture、參數化、龐大的外掛生態——寫測試變得輕鬆。這章講 pytest 的核心用法，是後面 fixture、參數化、mock 各章的基礎。
 
 ## Theory（理論：極簡的測試）
 
-pytest 的設計哲學是**極簡**：
+pytest 的設計哲學是**極簡**——便服革命：
 
 - **測試 = 普通函式**（`def test_xxx():`），不必開類別。
-- **斷言 = 裸 `assert`**——pytest 用 **assertion introspection（斷言內省）** 讓 `assert a == b` 失敗時顯示 a、b 的實際值（不像普通 assert 只說「AssertionError」）。
-- **自動發現**：pytest 自動找 `test_*.py` 檔裡的 `test_*` 函式。
+- **斷言 = 裸 `assert`**——靠 **assertion introspection（斷言內省）**，`assert a == b` 失敗時自動顯示 a、b 的實際值（不像普通 assert 只說 AssertionError）。
+- **自動發現**：自動找 `test_*.py` 檔裡的 `test_*` 函式。
 - **豐富的失敗報告**：清楚顯示哪裡、為什麼失敗。
 
-這讓「寫測試」的門檻極低——會寫函式和 `assert` 就會寫 pytest 測試。
+寫測試的門檻於是降到最低——會寫函式和 `assert` 就會寫 pytest 測試。
 
 ## Specification（規範：pytest 基本）
 

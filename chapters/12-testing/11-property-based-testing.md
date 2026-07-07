@@ -2,6 +2,35 @@
 
 > 傳統測試你手寫幾個例子：`add(2, 3) == 5`。但你想得到所有邊界嗎？空字串、負數、超大值、Unicode、None？**屬性測試（property-based testing）** 反過來——你描述「**應該永遠成立的性質**」，讓工具（Hypothesis）自動生成成百上千組輸入去**試圖推翻**它，還會把失敗案例**縮到最小**。這章講這個強大的測試範式。
 
+## 💡 白話導讀（建議先讀）
+
+傳統測試是**舉例**：`add(2, 3) == 5`、`add(-1, 1) == 0`⋯⋯但你舉得完嗎？空字串、負數、超大值、詭異的 Unicode——邊界永遠比想像多。
+
+**屬性測試（property-based testing）** 換一個層次——從「舉例」升級到「**立法**」：
+
+> 不再說「這個輸入該得這個輸出」,改宣告「**對任何輸入,這條性質都成立**」。
+
+然後讓工具（**hypothesis** 套件）當一個**瘋狂測試員**:自動生成幾百組刁鑽輸入（空的、巨大的、負的、奇形怪狀的 Unicode）狂轟你的函式——找到反例,還會**自動縮小**成最簡單的失敗案例給你看。
+
+```python
+from hypothesis import given, strategies as st
+
+@given(st.lists(st.integers()))          # 「給我任何整數 list」
+def test_sorted_is_ordered(xs):
+    result = sorted(xs)
+    assert all(a <= b for a, b in zip(result, result[1:]))   # 立法:結果必遞增
+```
+
+難的不是寫法,是**想出好性質**。五個現成的立法模板：
+
+1. **往返**:`decode(encode(x)) == x`——編解碼/序列化的必測。
+2. **不變量**:`sorted(xs)` 必遞增、`abs(x) >= 0`。
+3. **冪等**:做一次和做兩次一樣——`normalize(normalize(x)) == normalize(x)`。
+4. **對照參考版**:優化版結果 == 樸素版結果。
+5. **代數律**:`add(a,b) == add(b,a)`。
+
+定位:屬性測試**補充**而非取代例子測試——例子管「具體行為對不對」,性質管「**你沒想到的輸入**會不會炸」。純邏輯函式(解析、轉換、計算)上它價值最高。
+
 ## Why（為什麼）
 
 傳統的**範例測試（example-based testing）**（見 [pytest](03-pytest-basics.md)）你手動挑幾個輸入、寫出預期輸出：
@@ -21,23 +50,17 @@ Python 的 **Hypothesis** 是這領域的主流工具，還有一個殺手級功
 
 ## Theory（理論：找性質而非找例子）
 
-**核心轉變：從「這個輸入 → 這個輸出」到「任何輸入 → 這個性質成立」。**
+**核心轉變：從「這個輸入 → 這個輸出」（舉例）到「任何輸入 → 這個性質成立」（立法）。**
 
-難的是**想出好的性質**。常見的性質類型（pattern）：
+難的是**想出好的性質**。常見模板：
 
-- **往返 / 反函式（round-trip）**：`decode(encode(x)) == x`、`parse(serialize(x)) == x`、`decompress(compress(x)) == x`。編解碼、序列化最適用。
-- **不變量（invariant）**：結果永遠滿足某條件。`sorted(xs)` 的結果永遠是遞增的、`clamp(x, lo, hi)` 的結果永遠在 `[lo, hi]`、`abs(x) >= 0`。
-- **冪等（idempotent）**：做一次和做多次一樣。`sorted(sorted(xs)) == sorted(xs)`、`normalize(normalize(x)) == normalize(x)`。
-- **與參考實作/簡單實作對比（oracle）**：你的優化版結果 == 樸素版結果。`fast_sort(xs) == sorted(xs)`。
-- **交換 / 結合律等代數性質**：`add(a, b) == add(b, a)`。
-- **元件關係**：`len(a + b) == len(a) + len(b)`、`x in (list + [x])`。
+- **往返 / 反函式（round-trip）**：`decode(encode(x)) == x`、`parse(serialize(x)) == x`——編解碼、序列化最適用。
+- **不變量（invariant）**：結果永遠滿足某條件——`sorted(xs)` 永遠遞增、`clamp(x, lo, hi)` 永遠在 `[lo, hi]`、`abs(x) >= 0`。
+- **冪等（idempotent）**：做一次和做多次一樣——`sorted(sorted(xs)) == sorted(xs)`、`normalize(normalize(x)) == normalize(x)`。
+- **對照參考實作（oracle）**：優化版結果 == 樸素版結果——`fast_sort(xs) == sorted(xs)`。
+- **代數性質**：交換律 `add(a, b) == add(b, a)`、`len(a + b) == len(a) + len(b)` 等。
 
-**Hypothesis 的運作**：
-
-1. 你用 `@given(策略)` 宣告「輸入怎麼生成」（`st.integers()`、`st.text()`、`st.lists(...)`）。
-2. Hypothesis 生成**大量**（預設 100，可調）隨機輸入，每組都執行你的測試函式。
-3. 若某組讓斷言失敗 → **收縮（shrink）**：自動嘗試更小/更簡單的輸入，找出**能重現失敗的最小案例**。
-4. 回報這個最小反例（`Falsifying example`），且**記住它**（下次優先重試，避免迴歸）。
+工具（hypothesis）自動生成大量刁鑽輸入驗證性質，找到反例還會**自動縮小**成最簡失敗案例。
 
 ## Specification（規範：Hypothesis 用法）
 
