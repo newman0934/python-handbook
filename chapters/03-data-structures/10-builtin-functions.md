@@ -2,15 +2,46 @@
 
 > `enumerate`、`zip`、`map`、`filter`、`any`、`all`、`sum`、`sorted`、`reversed`——這些不用 import 的內建函式，是寫出簡潔 Pythonic 程式的關鍵詞彙。多數還是惰性的，順手就省了記憶體。
 
+## 💡 白話導讀（建議先讀）
+
+這章是一批「不用 import、隨手可得」的內建函式。它們住在 [LEGB 的最外層](../02-fundamentals/11-scope-legb.md)——巷口便利商店，永遠營業。
+
+先給幾個立即提升程式碼品質的替換：
+
+```python
+for i, item in enumerate(items):      # 要索引又要元素 → enumerate（別再 range(len())）
+for name, score in zip(names, scores): # 兩條序列並排走 → zip（像拉拉鍊）
+if any(x > 10 for x in nums):          # 「有沒有任何一個…」→ any
+if all(x > 0 for x in nums):           # 「是不是每一個都…」→ all
+```
+
+這章有一個貫穿的重要概念：**惰性（lazy）**。
+
+`enumerate`、`zip`、`map`、`filter`、`range` 這些函式回傳的**不是算好的清單**，而是一張「**點餐券**」——
+拿到時什麼都還沒做，**你迭代到哪、它才現做到哪**。
+
+好處：不佔記憶體（一百萬筆也不怕）、甚至能處理無限序列。
+兩個代價要記牢：
+
+1. **點餐券用過一次就作廢**——迭代完就空了，想再看一遍得重新拿券。
+2. **想直接看內容要先兌現**——`print(map(...))` 印出來是券不是菜，要 `list(...)` 才看到結果。
+
+「惰性」這個概念之後在[生成器](../07-iterators-generators/README.md)會全面展開,這裡先混個臉熟。
+
 ## Why（為什麼）
 
 Python 有一組「隨手可用、不用 import」的內建函式（builtins），它們封裝了最常見的序列操作。用好它們，很多迴圈就消失了——`for i in range(len(x))` 變 `enumerate`、手動累加變 `sum`、手寫「是否全部符合」變 `all`。不知道它們的存在，就會重造輪子、寫出冗長又易錯的程式。這章整理最常用的一批，並點出惰性求值這個容易忽略的特性。
 
 ## Theory（理論：內建函式與惰性）
 
-**內建函式（built-in functions）** 位於 LEGB 的 B 層（見 [作用域](../02-fundamentals/11-scope-legb.md)），永遠可用、不需 import。
+**內建函式（built-in functions）** 位於 LEGB 的 B 層（見[作用域](../02-fundamentals/11-scope-legb.md)）——巷口便利商店，永遠可用、不需 import。
 
-一個貫穿多數序列內建的關鍵特性：**惰性求值（lazy evaluation）**。`enumerate`、`zip`、`map`、`filter`、`reversed`、`range` 都不立刻算出全部結果，而是回傳一個**迭代器**，一次產一個（見 [iterable 與 iterator](../07-iterators-generators/01-iterable-iterator.md)）。好處是省記憶體、可處理無限序列；代價是它們**只能遍歷一次**，且要看內容得先 `list(...)`。
+貫穿多數序列內建的關鍵特性：**惰性求值（lazy evaluation）**。
+
+`enumerate`、`zip`、`map`、`filter`、`reversed`、`range` 都不立刻算出全部結果，而是回傳一個**迭代器**（那張「點餐券」），一次產一個（見 [iterable 與 iterator](../07-iterators-generators/01-iterable-iterator.md)）。
+
+- **好處**：省記憶體、可處理無限序列。
+- **代價**：**只能遍歷一次**（券用過作廢）；要看內容得先 `list(...)`（兌現）。
 
 ## Specification（規範：常用內建速覽）
 

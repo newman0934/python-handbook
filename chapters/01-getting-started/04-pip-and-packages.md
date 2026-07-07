@@ -2,6 +2,31 @@
 
 > pip 是 Python 的套件安裝器，從 PyPI 下載別人寫好的程式碼；而 `python -m pip` 這個寫法，能幫你避開新手最常踩的「裝到別的 Python」大坑。
 
+## 💡 白話導讀（建議先讀）
+
+寫程式最划算的一件事：**別人寫好的輪子，直接拿來用**。
+
+這件事需要三個角色，先分清楚：
+
+- **package（套件）**：包裝好、可以下載安裝的一包程式碼——「商品」。
+- **PyPI**：全世界 Python 套件的集散地——「網購平台」。
+- **pip**：幫你下單、收貨、上架的工具——「購物 App + 物流」。
+
+你打 `pip install requests`，pip 做的事是：去 PyPI 找到 requests → 下載 → 發現它還依賴其他套件就一併下載 → 全部放進一個叫 **site-packages** 的資料夾。
+
+**site-packages 就是「收貨地址」**——這是本章最重要的概念。
+
+還記得上一章說電腦裡常有好幾份 Python 嗎？**每一份都有自己的收貨地址**。
+「裝了卻 import 不到」的真相就是：**寄錯地址了**——pip 把貨送到 A 份 Python 的家，你卻在 B 份 Python 裡找。
+
+所以本章要教一個保命寫法：
+
+```bash
+python -m pip install requests    # 而不是直接打 pip install
+```
+
+意思是「用**我現在這個** python 自帶的 pip 來裝」——保證貨送到你正在用的那份 Python 家裡，地址絕不會錯。
+
 ## Why（為什麼）
 
 Python 的殺手級優勢之一是它龐大的**第三方套件生態**：requests（HTTP）、numpy（數值）、fastapi（Web）……幾乎任何需求都有現成輪子。這些輪子放在 **PyPI（Python Package Index）**，而 **pip** 就是把它們抓下來、裝進你環境的工具。
@@ -10,15 +35,20 @@ Python 的殺手級優勢之一是它龐大的**第三方套件生態**：reques
 
 ## Theory（理論：套件、PyPI、pip 的關係）
 
-先厘清三個名詞：
+先釐清三個名詞（導讀的「商品、平台、物流」）：
 
 - **module（模組）**：單一 `.py` 檔（見 [模組與 import](06-modules-and-import.md)）。
-- **package（套件）**：一組相關模組打包在一起，可發佈、可安裝的單位（如 `requests`）。
-- **PyPI**：官方的套件倉庫（[pypi.org](https://pypi.org)），全世界的人把 package 上傳到這裡。
+- **package（套件）**：一組相關模組打包在一起、可發佈可安裝的單位（如 `requests`）——商品。
+- **PyPI**：官方套件倉庫（[pypi.org](https://pypi.org)），全世界的人把 package 上傳到這裡——平台。
 
-pip 做的事：**去 PyPI 找到你要的 package → 下載 → 解析它自己還需要哪些其他 package（相依）→ 一併裝進「當前 Python 的 site-packages 目錄」。**
+pip（物流）做的事，一條龍：
 
-關鍵字是 **site-packages**：這是「第三方套件被裝進去的地方」。每個 Python 安裝、每個虛擬環境，都有**各自獨立**的 site-packages。這就是為什麼「裝到哪個 Python」如此重要。
+> 去 PyPI 找到你要的 package → 下載 → 解析它還需要哪些其他 package（相依）→ 一併裝進「**當前 Python 的 site-packages 目錄**」。
+
+關鍵字是 **site-packages**——「收貨地址」，第三方套件被裝進去的地方。
+
+每個 Python 安裝、每個虛擬環境，都有**各自獨立**的 site-packages。
+這就是「裝到哪個 Python」如此重要的原因：寄錯地址，人在 B 家收不到 A 家的貨。
 
 ## Specification（規範：常用 pip 指令）
 

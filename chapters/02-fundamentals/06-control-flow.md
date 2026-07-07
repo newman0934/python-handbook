@@ -2,20 +2,45 @@
 
 > Python 的流程控制有兩個別的語言少見的設計：`for` 是「遍歷可迭代物件」而非計數迴圈，以及 `for/while` 竟然可以帶 `else`——搞懂它們，迴圈才寫得 Pythonic。
 
+## 💡 白話導讀（建議先讀）
+
+Python 的 `if`/`while` 和別的語言大同小異，但 `for` 有一個根本的不同，先校正：
+
+**Python 的 `for` 不是「數數」，是「逐一取出」。**
+
+別的語言的 for 是計數器（i 從 0 數到 9）；Python 的 for 是**從籃子裡逐一拿東西**：
+
+```python
+for item in ["蘋果", "香蕉", "橘子"]:   # 直接拿到東西本身
+    print(item)                          # 不是拿到 0、1、2
+```
+
+`range(10)` 呢？它只是一種「裝著 0~9 的籃子」——`for i in range(10)` 依然是「從籃子逐一取出」，不是特殊語法。
+
+校正之後，你就懂為什麼 `for i in range(len(xs))` 再用 `xs[i]` 取值是「外國口音」——籃子裡的東西直接拿就好，繞去拿編號再換東西是多此一舉。（真需要編號＋東西？用 `enumerate`。）
+
+第二個少見設計：**迴圈可以接 `else`**。
+
+`for...else` 的 else 讀作「**沒有中途 break 的話**」——最典型的用途是搜尋：找到就 break，`else` 區塊就是「整圈找完都沒找到」的處理。名字取得爛（跟 if 的 else 無關），但用對地方很優雅。
+
 ## Why（為什麼）
 
 流程控制是程式的骨架。多數語言的 `for` 是「計數器從 0 跑到 n」，但 Python 的 `for` 根本不是這樣——它是**遍歷（iterate）** 一個序列或任何可迭代物件。用 C 的心態寫 Python 的 `for`（`for i in range(len(xs)): xs[i]`）不但囉嗦，還錯過了語言的設計意圖。這章講清楚三種流程控制、`break`/`continue`、以及冷門但實用的 `for...else`。
 
 ## Theory（理論：for 是遍歷，不是計數）
 
-Python 的 `for` 語意是：**依序取出「可迭代物件（iterable）」的每個元素**。它背後是迭代器協定（見 [iterable 與 iterator](../07-iterators-generators/01-iterable-iterator.md)），任何能被 `for` 遍歷的東西（list、str、dict、range、生成器…）都是可迭代物件。
+Python 的 `for` 語意是：**依序取出「可迭代物件（iterable）」的每個元素**——從籃子裡逐一拿東西。
+
+背後是迭代器協定（見 [iterable 與 iterator](../07-iterators-generators/01-iterable-iterator.md)）：任何能被 `for` 遍歷的東西（list、str、dict、range、生成器⋯⋯）都是可迭代物件。
 
 ```python
 for item in [10, 20, 30]:   # 直接拿到元素，不是索引
     print(item)             # 10, 20, 30
 ```
 
-`range(n)` 只是「產生 0..n-1 的可迭代物件」的一種特例；`for` 本身跟「計數」無關。理解這點，就不會再寫 `for i in range(len(xs))` 去繞圈取元素。
+`range(n)` 只是「產生 0..n-1 的可迭代物件」的**一種籃子**；`for` 本身跟「計數」無關。
+
+理解這點，就不會再寫 `for i in range(len(xs))` 繞圈取元素——元素直接拿，要索引配元素用 `enumerate(xs)`。
 
 ## Specification（規範：三種流程控制語法）
 

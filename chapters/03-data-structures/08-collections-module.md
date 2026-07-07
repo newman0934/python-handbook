@@ -2,13 +2,28 @@
 
 > 標準庫的 `collections` 提供了幾個「比內建型別更適合特定工作」的容器：計數用 Counter、分組用 defaultdict、雙端佇列用 deque、具名紀錄用 namedtuple——會用它們，程式短一半。
 
+## 💡 白話導讀（建議先讀）
+
+內建的 list/dict/tuple 是「萬用工具」；`collections` 模組是**專用工具抽屜**——每一件都在解決一個「內建型別做得到、但很囉嗦」的日常痛：
+
+| 你正在做的事 | 囉嗦寫法 | 專用工具 |
+|--------------|----------|----------|
+| 數東西出現幾次 | `d[k] = d.get(k, 0) + 1` | **`Counter`**：`Counter(words)` 一行,附贈 `.most_common(n)` 排行榜 |
+| 分組收集 | 每次先檢查 key 在不在 | **`defaultdict(list)`**：缺 key 自動給空 list,直接 append |
+| 佇列（頭尾進出） | list 頭部操作 O(n) 很慢 | **`deque`**：兩端進出都 O(1) |
+| 想給 tuple 的欄位取名字 | `row[2]` 是什麼鬼 | **`namedtuple`**：`p.email` 見名知意 |
+
+使用時機的判斷很簡單：**當你發現自己在為 dict/list 寫「樣板前置動作」（先檢查、先初始化、先搬移），停下來——抽屜裡八成有現成的**。
+
+（另外兩件較少用的：`OrderedDict` 大多被 3.7 的保序 dict 取代、`ChainMap` 做多層設定疊加——知道存在即可。）
+
 ## Why（為什麼）
 
 很多時候你會用內建 dict/list 硬做某件事：寫迴圈計數、`setdefault` 分組、`list.pop(0)` 當佇列（O(n) 陷阱）、用 `t[0]/t[1]` 記不住欄位。`collections` 針對這些場景提供了現成、更快、更清楚的工具。它們是 Python 工程師的日常配備，面試也常考「你會用哪個」。
 
 ## Theory（理論：專用容器補內建型別的不足）
 
-`collections` 的核心成員各補一個內建型別的短板：
+`collections` 的核心成員，各補一個內建型別的短板——每件工具對應一個日常痛：
 
 | 工具 | 補足什麼 | 一句話 |
 |------|----------|--------|
@@ -16,7 +31,7 @@
 | `defaultdict` | dict 缺 key 要先建的麻煩 | 缺 key 自動給預設 |
 | `deque` | list 頭部進出 O(n) | 兩端 O(1) 的雙端佇列 |
 | `namedtuple` | tuple 只能用索引取 | 有欄位名的 tuple |
-| `OrderedDict` | (3.7 前)dict 無序 | 有序 dict + move_to_end |
+| `OrderedDict` | （3.7 前）dict 無序 | 有序 dict + move_to_end |
 | `ChainMap` | 多個 dict 疊加查找 | 串起多層 dict |
 
 ## Specification（規範：各工具速覽）

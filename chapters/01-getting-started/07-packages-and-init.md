@@ -2,6 +2,26 @@
 
 > 當模組多到需要分資料夾管理，就需要 package——而 `__init__.py`、絕對 vs 相對 import，正是把資料夾變成「可 import 的套件」的關鍵。
 
+## 💡 白話導讀（建議先讀）
+
+模組是單一檔案。檔案一多，自然想**分資料夾**整理——分了資料夾的模組集合，就叫 **package（套件）**。
+
+對應關係直白到可以直接翻譯：
+
+```python
+import myapp.services.user
+#      資料夾 . 資料夾 . user.py —— 每個「.」就是下一層資料夾
+```
+
+好處和整理檔案一樣：`myapp.services.user` 和 `myapp.api.user` 是兩個不同的模組——路徑不同，同名也不撞。
+
+那 `__init__.py` 是什麼？把它想成**資料夾的「門牌＋接待處」**：
+
+- **門牌**：告訴 Python「這個資料夾是一個 package，可以被 import」。（空檔案就夠了，這是它最常見的樣子。）
+- **接待處**（進階）：你也可以在裡面寫程式碼——import 這個 package 時會先執行它，常用來把深處的東西「擺到門口」，讓使用者寫 `from myapp import User` 而不用知道內部結構。
+
+這章還會處理一個經典困惑：**絕對 import vs 相對 import**（`from myapp.models import x` vs `from ..models import x`）——先給結論：**平常用絕對的**，清楚不出錯;相對的知道怎麼讀即可。
+
 ## Why（為什麼）
 
 上一章的模組是單一 `.py` 檔。但真實專案有幾十上百個模組，全平鋪在一個資料夾裡會亂成一團。你會想用資料夾把相關模組歸類：`models/`、`services/`、`api/`……
@@ -17,12 +37,13 @@ import myapp.services.user       # myapp 資料夾 / services 資料夾 / user.p
 from myapp.models import User    # myapp/models.py 裡的 User
 ```
 
-每一層用 `.` 分隔，對應一層資料夾。這讓命名空間有了階層結構：`myapp.services.user` 和 `myapp.api.user` 是兩個不同模組，清楚不撞名。
+每一層用 `.` 分隔，對應一層資料夾。
+命名空間因此有了階層：`myapp.services.user` 和 `myapp.api.user` 是兩個不同模組——路徑不同，同名不撞。
 
 package 有兩種：
 
-- **regular package（一般套件）**：資料夾裡有 `__init__.py`。這是絕大多數情況該用的。
-- **namespace package（命名空間套件）**：沒有 `__init__.py`（Python 3.3+ 支援），用於把分散在多處的同名 package 合併——進階需求，初學先用 regular package。
+- **regular package（一般套件）**：資料夾裡有 `__init__.py`（那張「門牌」）。**絕大多數情況用這種。**
+- **namespace package（命名空間套件）**：沒有 `__init__.py`（3.3+ 支援），用於把分散多處的同名 package 合併——進階需求，初學先用 regular package。
 
 ## Specification（規範：package 結構）
 

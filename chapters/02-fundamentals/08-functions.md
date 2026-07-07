@@ -2,13 +2,38 @@
 
 > 函式在 Python 裡是「一等公民物件」——可以被賦值、傳遞、回傳；而它「傳的是物件參照」的呼叫語意，是理解「函式會不會改到我的資料」的關鍵。
 
+## 💡 白話導讀（建議先讀）
+
+這章要建立的觀念只有一個，但它是後面裝飾器、回呼、函數式風格的地基：
+
+> **函式是一張「食譜卡」——一個可以被拿在手上傳來傳去的物件。**
+
+`def greet(...)` 做了兩件事：寫好一張食譜卡，然後貼上便利貼 `greet`（[第 1 章](01-dynamic-typing.md)的便利貼，對，函式也是物件）。
+
+於是有一個關鍵區分——**加不加括號，天差地別**：
+
+- `greet`（不加括號）＝**遞出食譜卡本身**。可以交給別人、放進 dict、再貼一張便利貼。
+- `greet("Alice")`（加括號）＝**照食譜做菜**——執行它。
+
+食譜卡能傳遞，開啟了一整個世界：
+
+```python
+sorted(words, key=len)        # 把 len 這張食譜卡交給 sorted：「照這個規則排」
+handlers = {"start": start_game, "quit": quit_game}   # 食譜卡收進字典
+```
+
+這個性質的正式名稱是「函式是**一等公民**」。
+
+這章的第二個重點是**呼叫時傳了什麼**：Python 傳的是「物件的參照」——把便利貼遞進函式。
+後果：函式裡**改動可變物件**（如對傳入的 list append），外面看得到。這是「函式會不會改到我的資料」問題的根源，章內講透。
+
 ## Why（為什麼）
 
 函式是組織程式、避免重複的基本單位。但 Python 的函式有兩個超越「一段可重用程式碼」的特性，值得一開始就建立正確認知：其一，函式本身就是**物件**，能像資料一樣傳來傳去（這是裝飾器、回呼、函數式風格的基礎）；其二，Python 的參數傳遞方式常被誤解為「傳值」或「傳參照」，其實兩者都不完全對。搞懂這兩點，你才不會在「函式改到外部 list」時一頭霧水。
 
 ## Theory（理論：函式是一等公民物件）
 
-在 Python，`def` 建立的函式是一個**物件**，和 int、str 一樣可以：
+在 Python，`def` 建立的函式是一個**物件**（一張食譜卡），和 int、str 一樣可以：
 
 - 綁定到變數：`f = my_func`
 - 當參數傳給別的函式：`sorted(xs, key=my_func)`
@@ -18,14 +43,14 @@
 ```pycon
 >>> def greet(name):
 ...     return f"Hi {name}"
->>> f = greet          # 不加括號 = 指向函式物件本身
->>> f("Alice")
+>>> f = greet          # 不加括號 = 遞出食譜卡本身
+>>> f("Alice")         # 加括號 = 照食譜做菜
 'Hi Alice'
 >>> type(greet)
 <class 'function'>
 ```
 
-這種「函式可被當作值操作」的性質稱為**一等公民（first-class）**，是 [裝飾器](../08-functional-decorators/03-decorator-basics.md) 與 [高階函式](../08-functional-decorators/02-higher-order-functions.md) 的地基。
+這種「函式可被當作值操作」的性質稱為**一等公民（first-class）**——是[裝飾器](../08-functional-decorators/03-decorator-basics.md)與[高階函式](../08-functional-decorators/02-higher-order-functions.md)的地基。
 
 ## Specification（規範：函式的組成）
 
