@@ -2,6 +2,37 @@
 
 > FastAPI 用型別註記做一切——自動驗證輸入、自動產生 API 文件、原生支援 async。它把 Python 的型別系統（pydantic）與 ASGI 的非同步結合，是現代 Python API 的首選框架。
 
+## 💡 白話導讀（建議先讀）
+
+FastAPI 的核心點子聰明到讓人嫉妒：
+
+> **你反正都要寫型別註記（[Part 5](../05-typing/README.md) 練的）——那就讓型別註記自動幹三件事。**
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    price: float
+
+@app.post("/items/{item_id}")
+async def create(item_id: int, item: Item):
+    return {"id": item_id, "item": item}
+```
+
+就這樣,你**免費**得到：
+
+1. **自動驗證**:`item_id: int`——URL 抓下來自動轉 int,不是數字直接回 422 錯誤(附詳細原因),你的函式**保證**拿到乾淨資料。
+2. **自動文件**:打開 `/docs`——一份**互動式 API 文件**(Swagger UI)已經生成好了,能直接在網頁上試打 API。寫文件這件事,消失了。
+3. **原生 async**:`async def` 端點直接跑在 [ASGI/event loop](01-wsgi-asgi.md) 上——海量並發 I/O 的正解。
+
+一句話總結它的哲學:**一份型別,三種用途(驗證規則+API 文件+編輯器提示)**——你寫得更少,得到更多。
+
+這就是為什麼 FastAPI 成為 Python 現代後端的預設選擇,也是本書 [task-api 實戰專案](../../project/)的底座。
+
 ## Why（為什麼）
 
 FastAPI 是近年最受歡迎的 Python Web 框架——因為它把幾件麻煩事**自動化**：用 pydantic 型別註記（見 [pydantic](06-pydantic-validation.md)）**自動驗證**請求資料、**自動產生** OpenAPI 文件（互動式 API 文件）、原生 **async**（ASGI，見 [WSGI/ASGI](01-wsgi-asgi.md)）帶來高並發。你只要寫帶型別註記的函式，FastAPI 就處理驗證、序列化、文件、錯誤。這章講 FastAPI 的核心，理解它為何是現代 Python API 的首選。
@@ -11,11 +42,13 @@ FastAPI 是近年最受歡迎的 Python Web 框架——因為它把幾件麻煩
 FastAPI 的核心設計——**用 Python 型別註記驅動一切**（見 [Part 5](../05-typing/README.md)）：
 
 - **參數型別 → 自動解析與驗證**：`user_id: int` 自動從 URL 抓並轉型/驗證。
-- **pydantic 模型 → 請求/回應驗證**：body 對應一個 pydantic 模型，自動驗證。
-- **型別 → 自動文件**：從型別產生 OpenAPI schema，提供互動式文件（Swagger UI）。
+- **pydantic 模型 → 請求/回應驗證**：body 對應 pydantic 模型，自動驗證。
+- **型別 → 自動文件**：從型別產生 OpenAPI schema，提供互動式文件（Swagger UI，`/docs`）。
 - **async def → 非同步處理**：原生支援 async（ASGI）。
 
-「你寫的型別註記」= 「驗證規則」= 「API 文件」——一份型別多用途。這是 FastAPI 省事的核心。
+一句話：
+
+> 「你寫的型別註記」＝「驗證規則」＝「API 文件」——一份型別多用途，這是 FastAPI 省事的核心。
 
 ## Specification（規範：FastAPI 基本）
 

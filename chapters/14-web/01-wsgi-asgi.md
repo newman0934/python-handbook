@@ -2,6 +2,26 @@
 
 > WSGI/ASGI 是「Web 伺服器」與「Python 應用」之間的標準介面——WSGI 是同步時代的標準（Flask/Django），ASGI 是非同步時代的標準（FastAPI）。理解它們，才懂 Python Web 框架的底層架構。
 
+## 💡 白話導讀（建議先讀）
+
+一個 Web 請求從瀏覽器到你的 Python 程式，中間隔著幾層。先畫清楚：
+
+```text
+瀏覽器 → nginx(門口接待) → gunicorn/uvicorn(應用伺服器) → 你的 Flask/FastAPI
+                                        ↑ 這中間的「交接規格」= WSGI/ASGI
+```
+
+WSGI/ASGI 就是**「出菜口的規格」**——應用伺服器（外場）和你的應用（廚房）之間怎麼交接請求、怎麼收回應,有一套標準。
+
+有標準的好處,和[插座規格](../04-oop/08-dunder-methods.md)一樣：**任何符合 WSGI 的應用（Flask、Django）,能插上任何 WSGI 伺服器（gunicorn、uWSGI）**——框架與伺服器解耦,各自替換。
+
+兩代規格,一句話分：
+
+- **WSGI**——**同步時代**的規格:一個請求佔住一個 worker 直到做完（[Part 9 的店員模式](../09-concurrency/03-threading.md)）。Flask、Django 傳統模式。
+- **ASGI**——**async 時代**的規格:支援 async/await、WebSocket、海量並發連線（[單人服務生模式](../09-concurrency/07-asyncio-basics.md)）。FastAPI、現代 Django。
+
+配對背起來:**WSGI 配 gunicorn,ASGI 配 uvicorn**。之後每章講的 FastAPI,全部跑在 ASGI 上——這章是地基。
+
 ## Why（為什麼）
 
 你的 FastAPI/Flask 應用怎麼被 nginx/gunicorn 呼叫、怎麼收到 HTTP 請求？答案是 **WSGI/ASGI**——「Web 伺服器」與「Python 應用框架」之間的**標準介面**。理解它能解答：為什麼 Flask 要配 gunicorn、為什麼 FastAPI 要配 uvicorn、同步框架與非同步框架的根本差異、以及「為什麼 asyncio 在 Web 這麼重要」。這是 Python Web 生態的架構地基，也是理解後續框架章節的前提。
@@ -12,18 +32,19 @@ Web 請求的處理鏈：
 
 ```text
 使用者瀏覽器 → HTTP → Web 伺服器（nginx）→ 應用伺服器（gunicorn/uvicorn）
-                                                    ↓ WSGI/ASGI 介面
+                                                    ↓ WSGI/ASGI 介面（出菜口規格）
                                               你的 Python 應用（Flask/FastAPI）
 ```
 
-**WSGI/ASGI 是「應用伺服器」與「你的應用」之間的標準協定**——它定義「伺服器怎麼把請求交給應用、應用怎麼回傳回應」。有了這個標準：
+**WSGI/ASGI 是「應用伺服器」與「你的應用」之間的標準協定**——定義「伺服器怎麼把請求交給應用、應用怎麼回傳回應」。有了標準：
 
 - 任何 WSGI 應用（Flask、Django）可跑在任何 WSGI 伺服器（gunicorn、uWSGI）上。
-- 框架與伺服器**解耦**——你換框架不必換伺服器，反之亦然。
+- 框架與伺服器**解耦**——換框架不必換伺服器，反之亦然。
 
 兩個標準：
-- **WSGI（Web Server Gateway Interface）**：**同步**——一個請求佔一個 worker，處理完才接下一個。傳統標準（Flask、Django）。
-- **ASGI（Asynchronous Server Gateway Interface）**：**非同步**——支援 async/await、WebSocket、長連線。現代標準（FastAPI、Django 3+）。
+
+- **WSGI（Web Server Gateway Interface）**：**同步**——一個請求佔一個 worker 直到完成。
+- **ASGI（Asynchronous SGI）**：**非同步**——支援 async/await、WebSocket、長連線與海量並發。
 
 ## Specification（規範：介面形式）
 

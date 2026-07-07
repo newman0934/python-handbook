@@ -2,19 +2,52 @@
 
 > API 出錯時，該回什麼？隨便讓例外冒出成 500、還是回「乾淨、一致、對客戶端有用」的錯誤？FastAPI 的 `HTTPException` 與例外處理器讓你把錯誤變成結構化的 HTTP 回應——這是專業 API 的分水嶺。
 
+## 💡 白話導讀（建議先讀）
+
+[Part 6](../06-error-handling/README.md) 教了例外;Web 層多一個問題:**例外飛到頂,該變成什麼樣的 HTTP 回應?**
+
+放著不管的下場:任何例外都變成醜陋的 500 + 洩漏內部細節的 traceback——既不專業又不安全。
+
+FastAPI 給兩層工具：
+
+**1. `HTTPException`——端點裡直接說 HTTP 的語言:**
+
+```python
+raise HTTPException(status_code=404, detail="使用者不存在")
+# → 自動變成 404 + {"detail": "使用者不存在"}
+```
+
+**2. 例外處理器——領域例外的「翻譯官」(更漂亮的架構):**
+
+[Part 16 的分層](../16-architecture/01-layered-architecture.md)講究:**業務邏輯不該知道 HTTP**。
+所以 service 層拋乾淨的領域例外([Part 6 自訂例外](../06-error-handling/04-custom-exceptions.md)):`TaskNotFoundError`——它不知道什麼是 404。
+**翻譯發生在 Web 層**,登記一位翻譯官:
+
+```python
+@app.exception_handler(TaskNotFoundError)
+async def handle_not_found(request, exc):
+    return JSONResponse(status_code=404, content={"detail": str(exc)})
+```
+
+從此**所有端點**拋這個例外都自動翻成 404——翻譯規則一處集中。[task-api 的 main.py](../../project/) 正是這個寫法。
+
+兩條收尾守則:**錯誤格式全 API 一致**(客戶端好處理);**未預期例外回一般 500 + 細節進 log**——堆疊、內部路徑**絕不**回給客戶端([安全](../20-security-system-design/README.md))。
+
 ## Why（為什麼）
 
 API 一定會遇到錯誤：找不到資源、驗證失敗、沒權限、外部服務掛掉。**怎麼回應錯誤，決定 API 的專業程度**。糟糕的 API 讓例外直接冒出變成 `500 Internal Server Error`（洩漏堆疊、客戶端無從處理）；好的 API 回**結構化、一致、正確狀態碼**的錯誤回應（`404` + `{"detail": "找不到使用者"}`）。這章講清楚 FastAPI 的錯誤處理——`HTTPException`、自訂例外處理器、統一錯誤格式——把 [錯誤處理](../06-error-handling/01-exceptions.md) 的原則落實到 Web。
 
 ## Theory（理論：例外到 HTTP 回應的映射）
 
-Web API 的錯誤處理核心是：**把 Python 例外映射成正確的 HTTP 回應**。
+Web API 錯誤處理的核心：**把 Python 例外映射成正確的 HTTP 回應**——翻譯官。
 
-- **HTTP 狀態碼有語意**（見 [HTTP 基礎](02-http-basics.md)）：`400` 客戶端錯、`401` 未認證、`403` 未授權、`404` 找不到、`422` 驗證失敗、`500` 伺服器錯。錯誤要回**對的狀態碼**。
-- **FastAPI 的 `HTTPException`**：在端點裡 `raise HTTPException(404, "找不到")`，FastAPI 轉成 `404` 回應 + JSON body。
-- **例外處理器（exception handler）**：把「自訂領域例外」統一轉成 HTTP 回應——領域邏輯拋乾淨的例外（`UserNotFoundError`），處理器負責轉成 HTTP。
+- **HTTP 狀態碼有語意**（見 [HTTP 基礎](02-http-basics.md)）：400 客戶端錯、401 未認證、403 未授權、404 找不到、422 驗證失敗、500 伺服器錯——錯誤要回**對的狀態碼**。
+- **`HTTPException`**：端點裡 `raise HTTPException(404, "找不到")`——FastAPI 轉成 404 回應 + JSON body。
+- **例外處理器（exception handler）**：把「自訂領域例外」統一翻成 HTTP 回應——領域邏輯拋乾淨例外（`UserNotFoundError`），處理器負責翻譯。
 
-關鍵原則：**領域邏輯不該知道 HTTP**（見 [分層架構](../16-architecture/01-layered-architecture.md)）——它拋領域例外，Web 層的例外處理器負責映射成狀態碼。
+關鍵原則：
+
+> **領域邏輯不該知道 HTTP**（見[分層架構](../16-architecture/01-layered-architecture.md)）——翻譯集中在 Web 層的處理器。
 
 ## Specification（規範：HTTPException 與例外處理器）
 

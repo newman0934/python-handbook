@@ -2,20 +2,48 @@
 
 > 認證（authentication）是「你是誰」、授權（authorization）是「你能做什麼」——兩件不同的事。理解它們的區別、密碼雜湊、token 認證（JWT）與 session，是保護 Web 應用的基礎。
 
+## 💡 白話導讀（建議先讀）
+
+進一棟辦公大樓,門禁問你**兩個不同的問題**：
+
+1. **「你是誰?」**——刷卡驗身分 → **認證(Authentication / authn)**:登入、驗帳密、驗 token。
+2. **「你能進幾樓?」**——身分確認後查權限 → **授權(Authorization / authz)**:admin 才能刪、只能看自己的資料。
+
+順序永遠是**先認證、再授權**。兩個常考狀態碼正好對應：
+
+- **401 Unauthorized**——「你是誰都不知道」(沒登入/token 無效)。※名字取得爛,它其實是「未認證」
+- **403 Forbidden**——「知道你是誰,但你不准」(已登入,權限不夠)
+
+現代 API 的認證主流長這樣(章內逐一實作)：
+
+```text
+登入:帳密 → 驗過 → 簽發 token(如 JWT)
+之後每個請求:Authorization: Bearer <token> → 後端驗 token → 知道你是誰
+```
+
+(為什麼用 token 不用 session?呼應 [HTTP 無狀態](02-http-basics.md)與水平擴展——章內比較。)
+
+密碼儲存的鐵律,[練習題](../../exercises/part20/)做過的:**絕不存明文,存加鹽慢雜湊**(bcrypt/argon2/PBKDF2)——資料庫被拖走也反推不出密碼。
+
+FastAPI 落地:認證邏輯寫成 [Depends](11-fastapi-depends.md)(`get_current_user`),端點宣告即受保護——下下章的依賴注入在這裡大放異彩。
+
 ## Why（為什麼）
 
 幾乎每個 Web 應用都要「登入」與「權限控制」——這就是**認證與授權**。做錯會有嚴重安全後果：密碼明文儲存（外洩災難）、token 沒驗證（任何人可假冒）、權限沒檢查（越權存取）。理解「認證 vs 授權」的區別、密碼該怎麼存（雜湊）、token（JWT）與 session 的機制，是保護 Web 應用的核心安全知識。這章講清楚概念與實踐（實作細節見 [JWT](../20-security-system-design/04-jwt.md)、[認證授權](../20-security-system-design/03-authn-authz.md)、[密碼雜湊](../20-security-system-design/08-password-hashing.md)）。
 
 ## Theory（理論：認證 vs 授權）
 
-**兩個常被混淆但根本不同的概念**：
+門禁的兩個不同問題——**兩個常被混淆但根本不同的概念**：
 
-- **認證（Authentication，authn）**：「**你是誰**」——確認使用者身分（登入：驗證帳密、驗證 token）。
-- **授權（Authorization，authz）**：「**你能做什麼**」——確認已認證的使用者有沒有權限做某操作（admin 才能刪除、只能看自己的資料）。
+- **認證（Authentication，authn）**：「**你是誰**」——確認使用者身分（登入：驗證帳密、驗證 token）——刷卡。
+- **授權（Authorization，authz）**：「**你能做什麼**」——確認已認證的使用者有沒有權限做某操作（admin 才能刪除、只能看自己的資料）——查樓層權限。
 
-順序：**先認證（確認身分）→ 再授權（檢查權限）**。對應狀態碼（見 [HTTP 基礎](02-http-basics.md)）：
-- **401 Unauthorized**：未認證（你是誰？沒登入）。
-- **403 Forbidden**：已認證但未授權（你不能做這個）。
+順序：**先認證（確認身分）→ 再授權（檢查權限）**。
+
+對應狀態碼（見 [HTTP 基礎](02-http-basics.md)）：
+
+- **401 Unauthorized**：未認證（你是誰？沒登入）——名字誤導，實為「未認證」。
+- **403 Forbidden**：已認證但未授權（知道你是誰，但你不准）。
 
 ## Specification（規範：認證流程）
 

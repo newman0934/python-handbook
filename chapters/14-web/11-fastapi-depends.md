@@ -2,20 +2,51 @@
 
 > `Depends` 是 FastAPI 的依賴注入系統——把「共用邏輯」（DB 連線、當前使用者、分頁參數）抽成依賴，端點用 `Depends()` 宣告需要它。它讓共用邏輯集中、可重用、可測試，是 FastAPI 最強大的特性之一。
 
+## 💡 白話導讀（建議先讀）
+
+很多端點需要同樣的東西：DB 連線、「目前登入的使用者」、分頁參數。每個端點自己弄一遍？
+
+如果你讀過 [Part 12 的 fixture](../12-testing/04-fixtures.md),FastAPI 的 `Depends` 會非常眼熟——**同一招:參數宣告需要什麼,框架自動送上**：
+
+```python
+from fastapi import Depends
+
+async def get_current_user(token: str = Header()) -> User:
+    return decode_and_verify(token)          # 共用邏輯寫一次
+
+@app.get("/me")
+async def me(user: User = Depends(get_current_user)):   # 點餐:我要「當前使用者」
+    return user     # 進到這裡,user 已經驗好、拿好了
+
+@app.get("/orders")
+async def orders(user: User = Depends(get_current_user)):  # 另一個端點,同一道菜
+    ...
+```
+
+這就是[依賴注入](../16-architecture/03-dependency-injection.md)——「要什麼用宣告的,別自己動手拿」。四個紅利：
+
+1. **寫一次,處處用**——驗 token 的邏輯只有一份。
+2. **可巢狀**——依賴可以依賴別的依賴(get_current_user 依賴 get_db),FastAPI 遞迴解析。
+3. **測試可換菜**——`app.dependency_overrides[get_db] = fake_db`,測試時整鍋換成假的([第 15 章](15-testclient.md)的殺手鐧)。
+4. **需要收尾的用 yield**——yield 前開連線、yield 後關([Part 6 流水線](../06-error-handling/07-contextlib.md)又一次)。
+
+[task-api 的 deps.py](../../project/) 就是這章的實戰樣本。
+
 ## Why（為什麼）
 
 很多端點需要同樣的東西：一個 DB 連線、驗證過的當前使用者、共用的分頁參數。在每個端點重複這些邏輯很蠢，也難測試。**FastAPI 的 `Depends`（依賴注入）** 讓你把這些共用邏輯抽成「依賴」，端點只要宣告「我需要這個依賴」，FastAPI 自動提供。這是 FastAPI 最強大、最 Pythonic 的特性——把 [依賴注入](../16-architecture/03-dependency-injection.md) 的概念做成框架核心。理解它，你的 FastAPI 程式會乾淨、可重用、可測試。
 
 ## Theory（理論：依賴注入）
 
-**依賴注入（DI，Dependency Injection，見 [DI](../16-architecture/03-dependency-injection.md)）**：不是「函式自己去建立/取得它需要的東西」，而是「由外部提供（注入）」。
+**依賴注入（DI，見 [DI](../16-architecture/03-dependency-injection.md)）**：不是「函式自己去建立/取得需要的東西」，而是「宣告需要、由外部提供」——同 [pytest fixture](../12-testing/04-fixtures.md) 的點餐模式。
 
 FastAPI 的 `Depends`：
-- **定義依賴**：一個函式（或類別），回傳端點需要的東西（DB 連線、當前使用者…）。
-- **宣告需要**：端點參數用 `Depends(依賴函式)` 宣告——FastAPI 自動呼叫依賴、把結果注入。
-- **依賴可巢狀**：依賴可以有自己的依賴（FastAPI 遞迴解析，類似 [fixture](../12-testing/04-fixtures.md)）。
 
-好處：**共用邏輯集中（寫一次）、可重用（多端點共用）、可測試（測試時可覆寫依賴）、可組合（依賴用依賴）**。
+- **定義依賴**：一個函式（或類別），回傳端點需要的東西（DB 連線、當前使用者⋯⋯）——菜寫一次。
+- **宣告需要**：端點參數用 `Depends(依賴函式)`——FastAPI 自動呼叫依賴、注入結果。
+- **依賴可巢狀**：依賴可以有自己的依賴（FastAPI 遞迴解析）。
+
+好處：**共用邏輯集中（寫一次）、可重用（多端點共用）、可測試（`dependency_overrides` 換假的）、可組合（依賴用依賴）**。
 
 ## Specification（規範：Depends 用法）
 

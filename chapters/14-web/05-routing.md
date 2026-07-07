@@ -2,20 +2,47 @@
 
 > 路由把「HTTP 方法 + URL」對應到「處理函式」。FastAPI 用型別區分路徑參數、query 參數、body——搞懂它們怎麼判定、以及用 APIRouter 組織路由，是建結構化 API 的基礎。
 
+## 💡 白話導讀（建議先讀）
+
+FastAPI 端點的參數,資料可能來自三個地方——它怎麼知道去哪抓？
+
+**分揀規則**簡單到三行：
+
+```python
+@app.get("/users/{user_id}")
+async def get_user(
+    user_id: int,          # ① 名字出現在路徑 {} 裡 → 從「URL 路徑」抓
+    page: int = 1,         # ② 簡單型別、不在路徑裡 → 從「query string」抓(?page=2)
+    filters: FilterModel,  # ③ pydantic 模型 → 從「JSON body」抓
+): ...
+```
+
+背下來：**路徑裡的=路徑參數;pydantic=body;剩下的簡單型別=query**。
+
+三種參數的語意也有慣例:
+
+- **路徑參數**——資源的**身分**(`/users/42`:哪一個)
+- **query 參數**——**篩選與選項**(`?page=2&sort=name`:怎麼看)
+- **body**——**要提交的資料**(建立/修改的內容)
+
+其餘就是路由的日常件:HTTP 方法對應裝飾器(`@app.get/post/put/delete`)、`APIRouter` 把路由拆檔組織(大專案必用,[task-api](../../project/) 就這麼拆)、路徑參數帶驗證(`Path(gt=0)`)。
+
+一個排序陷阱先提:**固定路徑要放在動態路徑前面**——`/users/me` 若排在 `/users/{id}` 後面,me 會被當成 id 吃掉。
+
 ## Why（為什麼）
 
 一個 API 有很多端點（`GET /users`、`POST /users`、`GET /users/{id}`…）——**路由**決定「哪個請求對應哪個處理函式」。FastAPI 依型別註記自動判定「這個參數是路徑參數、query 參數、還是 body」。搞混會拿不到預期的資料。而大型 API 的路由要組織（別塞一個檔）——用 `APIRouter` 分模組。這章講清楚 FastAPI 的路由與請求處理細節，是 [FastAPI 基礎](04-fastapi-basics.md) 的深入。
 
 ## Theory（理論：參數的判定規則）
 
-FastAPI 依**參數的來源與型別**判定它是什麼：
+FastAPI 依**參數的來源與型別**分揀資料來源：
 
-1. **路徑參數**：出現在路徑 `{...}` 裡的 → 從 URL 路徑抓（`/users/{id}` 的 `id`）。
-2. **query 參數**：非路徑、非 pydantic 模型的簡單型別（str/int/bool…）→ 從 query string 抓（`?key=value`）。
-3. **請求 body**：pydantic 模型（見 [pydantic](06-pydantic-validation.md)）→ 從 JSON body 抓。
+1. **路徑參數**：名字出現在路徑 `{...}` 裡 → 從 URL 路徑抓（`/users/{id}` 的 `id`）——資源的身分。
+2. **query 參數**：非路徑、非 pydantic 模型的簡單型別（str/int/bool⋯⋯）→ 從 query string 抓（`?key=value`）——篩選與選項。
+3. **請求 body**：pydantic 模型（見 [pydantic](06-pydantic-validation.md)）→ 從 JSON body 抓——提交的資料。
 4. **特殊**：`Header`/`Cookie`/`Depends` 等明確宣告的來源。
 
-規則：**在路徑裡 = 路徑參數；pydantic 模型 = body；其餘簡單型別 = query 參數**。理解這個判定，就不會拿錯資料。
+口訣：**在路徑裡＝路徑參數；pydantic 模型＝body；其餘簡單型別＝query**。
 
 ## Specification（規範：各種參數）
 

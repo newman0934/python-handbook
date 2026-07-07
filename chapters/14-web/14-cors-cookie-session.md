@@ -2,19 +2,50 @@
 
 > CORS 是瀏覽器的跨域安全機制（前後端分離必碰）、cookie 是伺服器在瀏覽器存小資料、session 用 cookie 維持登入。搞懂它們，才能正確處理前後端分離的認證與跨域。
 
+## 💡 白話導讀（建議先讀）
+
+前後端分離的第一天,幾乎人人撞牆:本機前端呼叫後端 API,瀏覽器紅字:
+
+```text
+... has been blocked by CORS policy ...
+```
+
+這不是 bug,是瀏覽器的**保安**在執勤。三個角色一次講清：
+
+**1. 同源政策——瀏覽器的門禁。**
+瀏覽器規定:網頁**預設只能呼叫「同源」的 API**(源=協定+網域+埠,一字不差)。
+為什麼?防惡意網站:你開著銀行分頁,另一個惡意網站的 JS 若能隨意呼叫銀行 API(還自動帶上你的 cookie)——災難。門禁是保護**使用者**的。
+
+**2. CORS——後端簽發的放行名單。**
+前端 `app.com` 要打後端 `api.com`(跨源)——合法需求。
+**由後端**在回應標頭聲明「我允許 app.com 來訪」,瀏覽器就放行:
+
+```python
+app.add_middleware(CORSMiddleware, allow_origins=["https://app.com"], ...)
+```
+
+重點:CORS 是**後端設定、瀏覽器執行**;`allow_origins=["*"]` 等於拆門禁,上線別這樣。
+
+**3. cookie 與 session——無狀態世界的會員卡。**
+[HTTP 沒有記憶](02-http-basics.md),「保持登入」靠:伺服器發**會員卡**(Set-Cookie),瀏覽器**每次請求自動出示**;卡上只寫編號(session id),詳細資料在櫃檯的本子(伺服器 session)裡查。
+安全三旗標順手背:`HttpOnly`(JS 摸不到,防 XSS 偷卡)、`Secure`(只走 HTTPS)、`SameSite`(防 CSRF 冒用)。
+
 ## Why（為什麼）
 
 前後端分離（React 前端 + FastAPI 後端，不同網域）時，你一定會遇到 **CORS 錯誤**（瀏覽器擋跨域請求）。而登入狀態的維持靠 **cookie / session**。這三者是「前後端分離的 Web 應用」繞不開的：CORS 決定跨域能不能通、cookie 存狀態、session 維持登入。搞錯會導致「前端連不到後端」「登入狀態丟失」「安全漏洞（CSRF）」。這章講清楚三者的機制與正確設定。
 
 ## Theory（理論：同源政策與 CORS）
 
-**同源政策（Same-Origin Policy）** 是瀏覽器的安全機制——**預設禁止網頁向「不同源」發送請求**（源 = 協定 + 網域 + 埠）。這防止惡意網站偷你的資料。
+**同源政策（Same-Origin Policy）** 是瀏覽器的安全門禁——**預設禁止網頁向「不同源」發送請求**（源 = 協定 + 網域 + 埠）。這防止惡意網站借你的瀏覽器（連同 cookie）偷打別站 API——保護的是使用者。
 
-但前後端分離時，前端（`https://app.com`）要呼叫後端 API（`https://api.com`）——**跨源**，被同源政策擋。**CORS（Cross-Origin Resource Sharing）** 是「放行跨源請求」的機制——後端透過回應標頭**明確允許**特定來源存取。
+前後端分離時，前端（`https://app.com`）呼叫後端（`https://api.com`）——跨源，被擋。
 
-**cookie / session** 則是狀態維持：
-- **cookie**：伺服器透過 `Set-Cookie` 標頭在瀏覽器存小資料，瀏覽器**每次請求自動帶上**。
-- **session**：用 cookie 存 session id，伺服器據此查使用者狀態（見 [認證授權](09-auth.md)）。
+**CORS（Cross-Origin Resource Sharing）** 是「放行跨源請求」的機制——**後端**透過回應標頭**明確允許**特定來源存取（簽發放行名單），瀏覽器據此放行。
+
+**cookie / session**——無狀態世界的會員卡：
+
+- **cookie**：伺服器透過 `Set-Cookie` 在瀏覽器存小資料，瀏覽器**每次請求自動帶上**。
+- **session**：cookie 只存 session id（卡號），伺服器據此查使用者狀態（櫃檯的本子）（見[認證授權](09-auth.md)）。
 
 ## Specification（規範：CORS、cookie 設定）
 

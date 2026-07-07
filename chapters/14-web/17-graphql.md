@@ -2,6 +2,38 @@
 
 > REST 的痛：拿使用者資料要打 `/users/1`，拿他的貼文要再打 `/users/1/posts`，而且每個端點回傳固定欄位——你只要名字卻拿到一整包。**GraphQL** 換一種思路：**一個端點、由客戶端精確指定要哪些欄位（含巢狀關聯）**，一次拿齊、不多不少。這章講 GraphQL 的核心概念、與 REST 的取捨，以及 Python 實作。
 
+## 💡 白話導讀（建議先讀）
+
+REST 用久了會遇到兩個癢處(尤其行動端):
+
+1. **拿太多**:只要使用者名字,`/users/1` 卻回 20 個欄位(over-fetching)。
+2. **跑太多趟**:要「使用者+他的貼文+每篇的留言數」——打三次 API(under-fetching)。
+
+**GraphQL 把「固定套餐」換成「自助點菜單」**——客戶端精確勾選要什麼,一次上齊:
+
+```graphql
+query {
+  user(id: 1) {
+    name              # 只要名字
+    posts {           # 順便他的貼文
+      title           # 每篇只要標題
+    }
+  }
+}
+```
+
+回來的 JSON **形狀和點單一模一樣**——不多不少、一趟搞定。
+
+三個核心零件:**Schema**(菜單:有哪些型別、欄位、關聯——強型別契約)、**Query**(點單)、**Resolver**(廚房:每個欄位怎麼取到資料的函式)。
+Python 生態用 **strawberry**(型別註記風格,FastAPI 好搭)。
+
+但天下沒有免費的菜單,兩個代價要知道：
+
+1. **N+1 查詢**——GraphQL 的頭號陷阱:查 N 個使用者的貼文,resolver 天真實作=打 N+1 次資料庫([Part 15 的老朋友](../15-database/20-n-plus-1.md))。解法叫 **DataLoader**(批次+快取)。
+2. **快取變難**:全走 POST /graphql,HTTP 快取失靈。
+
+選型建議:**REST 是預設**(簡單、快取好、工具全);GraphQL 適合「多端消費、資料關聯深、欄位需求多變」的場景——別為了酷而上。
+
 ## Why（為什麼）
 
 [REST API](08-rest-api.md) 用「資源 + 端點」組織，簡單通用，但有兩個常見痛點：
@@ -21,45 +53,13 @@
 
 ## Theory（理論：schema、query、resolver）
 
-**GraphQL 的三個核心**：
+**GraphQL 的三個核心**——菜單、點單、廚房：
 
-- **Schema（結構描述）**：用型別系統定義「有哪些資料、欄位、關聯」。這是伺服器與客戶端之間的**強型別契約**：
+- **Schema（結構描述）**：用型別系統定義「有哪些資料、欄位、關聯」——伺服器與客戶端之間的**強型別契約**（菜單）。
+- **Query（查詢）**：客戶端寫的、**精確描述要什麼**的請求——形狀對應 schema，但**只列出想要的欄位**（點單）。回傳 JSON 的形狀與點單一致。
+- **Resolver（解析器）**：伺服器端「每個欄位怎麼取得資料」的函式（廚房）——GraphQL 引擎按 query 的形狀逐欄位呼叫 resolver 組裝結果。
 
-  ```graphql
-  type User {
-    id: ID!
-    name: String!
-    email: String!
-    posts: [Post!]!      # 關聯到 Post
-  }
-  type Post {
-    id: ID!
-    title: String!
-    body: String!
-  }
-  type Query {
-    user(id: ID!): User   # 進入點
-  }
-  ```
-
-- **Query（查詢）**：客戶端寫的、**精確描述要什麼**的請求。形狀對應 schema，但**只列出想要的欄位**：
-
-  ```graphql
-  query {
-    user(id: 1) {
-      name              # 只要 name
-      posts {           # 和貼文的...
-        title           # ...只要 title
-      }
-    }
-  }
-  ```
-
-  回傳的 JSON **形狀完全對應查詢**——只有 `name` 和 `posts[].title`，不多不少。
-
-- **Resolver（解析器）**：伺服器端，每個欄位對應一個**函式**，負責「怎麼取得這個欄位的值」。`user` resolver 去查使用者、`posts` resolver 去查該使用者的貼文。GraphQL 引擎依查詢**遞迴呼叫 resolver**、組裝出結果。
-
-**一句話**：schema 定義「能問什麼」、query 說「我要什麼」、resolver 決定「怎麼拿到」。
+這個設計正面解決 REST 的 over-fetching（拿太多）與 under-fetching（跑太多趟）——代價是 N+1 陷阱（需 DataLoader）與快取變難。
 
 ## Specification（規範：GraphQL 操作與 Python）
 

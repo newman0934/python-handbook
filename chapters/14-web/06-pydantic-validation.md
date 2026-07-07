@@ -2,18 +2,53 @@
 
 > pydantic 用型別註記做「執行期資料驗證」——定義模型、丟資料進去、自動驗證與轉換，不合法就拋清楚的錯誤。它補上了 mypy（靜態）的另一半：執行期驗證外部資料。是 FastAPI 的核心引擎。
 
+## 💡 白話導讀（建議先讀）
+
+[Part 5](../05-typing/07-mypy.md) 的 mypy 是「出發前的檢查員」——但它有個天生管不到的區域：
+
+> **執行期從外面飛進來的資料**——API 請求的 JSON、外部服務的回應——mypy 靜態分析看不到它們。
+
+型別註記說 `age: int`,但使用者送來 `"abc"`——mypy 沒轍(它不執行程式),爆炸發生在執行期。
+
+**pydantic 就是站在國境線上的海關**:
+
+```python
+from pydantic import BaseModel, Field
+
+class User(BaseModel):
+    name: str = Field(min_length=1)
+    age: int = Field(ge=0, le=150)
+
+User(name="Alice", age="30")     # "30" 自動轉成 30(合理轉換放行)
+User(name="", age=-5)            # ValidationError!附詳細清單:
+                                 #   name: 太短 / age: 必須 >= 0
+```
+
+分工至此完整——**同一套型別註記,兩位檢查員各守一邊**：
+
+- **mypy**:靜態,管**你自己寫的程式碼**(開發期)。
+- **pydantic**:執行期,管**外面來的資料**(國境線)。
+
+pydantic 的檢查風格很務實:**能合理轉換就轉**(字串 "30" → 30)、**不合法就拋 ValidationError**——而且錯誤清單詳細到能直接回給前端(FastAPI 的 422 就是這麼來的)。
+
+這章展開它的武器庫:Field 約束、自訂 validator、巢狀模型、`model_dump` 序列化——[task-api 的 models](../../project/) 全在用。
+
 ## Why（為什麼）
 
 外部資料（API 請求、設定檔、使用者輸入）不可信——你得驗證。手寫驗證（一堆 if 檢查型別、範圍、必填）又累又不全。**pydantic** 用型別註記（見 [Part 5](../05-typing/README.md)）**自動驗證與轉換**執行期資料：定義一個模型、丟資料進去、pydantic 驗證每個欄位、不合法拋詳細錯誤。它是 FastAPI 的驗證引擎（見 [FastAPI 基礎](04-fastapi-basics.md)），也可獨立用於任何「驗證外部資料」的場景。這章講清楚 pydantic 的核心。
 
 ## Theory（理論：執行期驗證，補 mypy 的另一半）
 
-回顧 [為什麼型別註記](../05-typing/01-why-type-hints.md)——mypy 是**靜態**檢查（不執行程式）。但**執行期的外部資料**（API 請求）mypy 管不到——那需要**執行期驗證**。**pydantic 補上這一半**：
+回顧[為什麼型別註記](../05-typing/01-why-type-hints.md)——mypy 是**靜態**檢查（不執行程式）。但**執行期的外部資料**（API 請求）mypy 管不到——需要**執行期驗證**。pydantic 補上這一半：
 
-- **mypy**：靜態檢查你的**程式碼**（開發期）。
-- **pydantic**：執行期驗證**外部資料**（執行期）。
+- **mypy**：靜態檢查你的**程式碼**（開發期的檢查員）。
+- **pydantic**：執行期驗證**外部資料**（國境線上的海關）。
 
-pydantic 的核心：**定義 `BaseModel`（用型別註記宣告欄位）→ 丟資料進去 → 自動驗證與轉換 → 不合法拋 `ValidationError`（含詳細訊息）**。型別註記既是宣告也是驗證規則——一份型別多用途。
+pydantic 的核心流程：
+
+> 定義 `BaseModel`（型別註記宣告欄位）→ 丟資料進去 → **自動驗證與轉換**（合理轉換放行，如 `"30"` → 30）→ 不合法拋 `ValidationError`（含詳細訊息，可直接回給客戶端）。
+
+型別註記既是宣告也是驗證規則——一份型別多用途。
 
 ## Specification（規範：pydantic 模型）
 

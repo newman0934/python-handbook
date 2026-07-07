@@ -2,19 +2,51 @@
 
 > FastAPI 的 `TestClient` 讓你像發真實 HTTP 請求一樣測試 API——但不必真的啟動伺服器。配合 pytest、依賴覆寫，你能快速、可靠地測試每個端點的行為。
 
+## 💡 白話導讀（建議先讀）
+
+API 寫好了怎麼測?難道要:啟動伺服器 → 開 Postman 手點 → 眼睛比對結果?
+
+FastAPI 的 `TestClient` 讓你**不開店就試菜**——請求直接在記憶體裡送進你的應用,不走網路、不起伺服器：
+
+```python
+from fastapi.testclient import TestClient
+from myapp.main import app
+
+client = TestClient(app)
+
+def test_create_user():
+    resp = client.post("/users", json={"name": "Alice"})   # 像真的發 HTTP
+    assert resp.status_code == 201
+    assert resp.json()["name"] == "Alice"
+```
+
+寫起來就是 [pytest](../12-testing/03-pytest-basics.md) + [httpx 語法](../11-stdlib/14-http-client.md)——你全都會了。
+
+它的珍貴在**快而且真**:不開網路所以飛快;但請求走的是**完整的真實流程**(middleware、驗證、路由、例外處理全過一遍)——測到的是真行為,不是 mock 拼裝。
+
+殺手鐧是和[依賴注入](11-fastapi-depends.md)的組合技——**dependency_overrides 換食材**:
+
+```python
+app.dependency_overrides[get_db] = lambda: fake_db          # DB 換成記憶體假貨
+app.dependency_overrides[get_current_user] = lambda: test_user  # 直接「已登入」
+```
+
+真 DB、真登入流程通通不用碰——這正是 [task-api 測試](../../project/)的寫法,端到端快又穩。
+(這也回答了為什麼架構要用 DI——**可測試性是設計出來的**,[Part 16](../16-architecture/03-dependency-injection.md) 收割。)
+
 ## Why（為什麼）
 
 Web API 也要測試（見 [為什麼測試](../12-testing/01-why-testing.md)）——確認端點回對的狀態碼、對的資料、正確處理錯誤與認證。但「真的啟動伺服器、發 HTTP 請求」慢又麻煩。FastAPI 的 **`TestClient`** 讓你**在測試裡直接呼叫 API**（不啟動伺服器、不開網路），像發真實請求一樣拿到回應。配合 pytest（見 [pytest 基礎](../12-testing/03-pytest-basics.md)）與依賴覆寫（見 [Depends](11-fastapi-depends.md)），能快速、可靠地測試 Web 應用。這章講清楚 Web 測試的實踐。
 
 ## Theory（理論：不啟動伺服器的 HTTP 測試）
 
-`TestClient`（基於 httpx）**在記憶體內**直接把請求送給你的 ASGI 應用——不經過真實網路、不啟動伺服器：
+`TestClient`（基於 httpx）**在記憶體內**直接把請求送給你的 ASGI 應用——不經過真實網路、不啟動伺服器（不開店試菜）：
 
-- **像發真實 HTTP**：`client.get("/users")`、`client.post("/users", json=...)`——語法像 httpx（見 [HTTP client](../11-stdlib/14-http-client.md)）。
-- **快**：不開網路、不啟動伺服器，測試跑得快。
-- **完整**：走完整的請求處理流程（middleware、驗證、路由）——測到真實行為。
+- **像發真實 HTTP**：`client.get("/users")`、`client.post("/users", json=...)`——語法同 httpx（見 [HTTP client](../11-stdlib/14-http-client.md)）。
+- **快**：不開網路、不啟動伺服器。
+- **完整**：走完整請求流程（middleware、驗證、路由、例外處理）——測到真實行為。
 
-配合依賴覆寫（`dependency_overrides`），能把 DB、認證換成 mock——測試不碰真實資源。
+配合依賴覆寫（`dependency_overrides`），能把 DB、認證換成假的——測試不碰真實資源（換食材）。
 
 ## Specification（規範：TestClient 用法）
 

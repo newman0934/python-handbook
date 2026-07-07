@@ -2,18 +2,53 @@
 
 > FastAPI 的 async 讓一個 worker 並發處理大量 I/O 請求——但前提是「一路 async 到底」，一個阻塞操作就毀掉整個 event loop。加上 background tasks 讓你「回應後才做慢工作」。這章講 async Web 的實踐與陷阱。
 
+## 💡 白話導讀（建議先讀）
+
+[Part 9 的餐廳](../09-concurrency/07-asyncio-basics.md)在這裡開成正式營業的 Web 服務。FastAPI 端點有兩種寫法,行為完全不同：
+
+- **`async def` 端點**——跑在**單人服務生（event loop）**手上:等 I/O 時去服務別桌,一個 worker 扛海量並發。
+- **`def` 端點**(同步)——FastAPI 很聰明:**自動把它外包到執行緒池**,不會卡住服務生。
+
+真正的殺手是**混搭錯誤**——[Part 9 的頭號地雷](../09-concurrency/11-blocking-in-async.md)在 Web 場景的樣子:
+
+```python
+@app.get("/bad")
+async def bad():
+    time.sleep(3)          # 🔴 async 端點裡放阻塞 —— 服務生僵住 3 秒
+    requests.get(url)      # 🔴 同罪 —— 整台伺服器的「所有」請求都卡住!
+```
+
+守則重申:**async 端點裡,每一次等待都必須是 await 得了的**(httpx 不是 requests、asyncpg 不是同步驅動);甩不掉的阻塞就 `await asyncio.to_thread(...)` 外包。
+拿不準時的保守解:**乾脆寫 `def`**——讓 FastAPI 自動外包,慢一點但不會炸全場。
+
+這章第二個主角:**BackgroundTasks**——「回應先送走,雜活背景做」:
+
+```python
+@app.post("/signup")
+async def signup(user: UserIn, bg: BackgroundTasks):
+    create_user(user)
+    bg.add_task(send_welcome_email, user.email)   # 寄信不擋回應
+    return {"ok": True}                            # 立刻回,信慢慢寄
+```
+
+(適合小雜活;重活/要重試的活交給任務佇列如 Celery——邊界章內談。)
+
 ## Why（為什麼）
 
 FastAPI 的高並發來自 async（見 [WSGI/ASGI](01-wsgi-asgi.md)、[asyncio](../09-concurrency/07-asyncio-basics.md)）——但用不好反而更慢：一個阻塞操作（同步 DB 查詢、`requests`、重 CPU）會**卡住整個 event loop**，所有並發請求停擺。同時，有些工作（發 email、寫 log、處理檔案）不該讓使用者等——用 **background tasks** 在回應後才做。理解 async Web 的正確用法與陷阱，是寫高效 FastAPI 服務的關鍵。
 
 ## Theory（理論：async 端點與阻塞陷阱）
 
-FastAPI 端點可以是 `async def`（非同步）或 `def`（同步）：
+FastAPI 端點兩種寫法：
 
-- **`async def` 端點**：在 event loop 執行——用於**非阻塞 I/O**（await async 操作）。多請求並發（等 I/O 時切換）。
-- **`def` 端點**：FastAPI **自動丟到執行緒池**執行——避免同步程式阻塞 loop。
+- **`async def` 端點**：在 event loop 執行（單人服務生）——用於**非阻塞 I/O**（await async 操作）。多請求並發（等 I/O 時切換）。
+- **`def` 端點**：FastAPI **自動丟到執行緒池**執行——避免同步程式卡住 loop。
 
-**關鍵陷阱**：**在 `async def` 端點裡做阻塞操作 = 卡住整個 event loop**（見 [to_thread](../09-concurrency/11-blocking-in-async.md)）——所有並發請求停擺。這是 async Web 最嚴重的效能殺手。
+**關鍵陷阱**：
+
+> **在 `async def` 端點裡做阻塞操作＝卡住整個 event loop**（見[阻塞地雷](../09-concurrency/11-blocking-in-async.md)）——整台伺服器所有並發請求停擺。這是 async Web 最嚴重的效能殺手。
+
+守則：async 端點裡每次等待都要 await 得了（httpx 而非 requests）；甩不掉的阻塞用 `asyncio.to_thread` 外包；拿不準就寫 `def` 讓框架自動外包。
 
 ## Specification（規範：async 端點與 background tasks）
 

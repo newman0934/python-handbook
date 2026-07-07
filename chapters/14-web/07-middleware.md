@@ -2,20 +2,54 @@
 
 > middleware 是「包在每個請求外圍」的程式——在請求進入路由前、回應送出後執行。用它做跨所有端點的橫切關注：日誌、計時、CORS、認證、錯誤處理。它是「洋蔥模型」的一層。
 
+## 💡 白話導讀（建議先讀）
+
+有些事「每個請求都要做」：記 log、計時、加安全標頭、驗 token——寫進每個端點？一百個端點寫一百遍？
+
+**middleware** 的答案:在請求的必經之路上設**關卡**——所有請求進出都要過:
+
+```text
+請求進來 →  [關卡A] → [關卡B] → 端點處理
+回應出去 ←  [關卡A] ← [關卡B] ←    ↓
+```
+
+注意路徑形狀:**進來穿過 A、B,出去反向再穿一次**——這叫**洋蔥模型**(一層包一層)。
+每個關卡有兩次出手機會:**去程**(記錄請求、驗身分、蓋時間戳)與**回程**(計算耗時、加標頭、統一格式)。
+
+FastAPI 寫法直白:
+
+```python
+@app.middleware("http")
+async def add_timing(request, call_next):
+    start = time.perf_counter()          # 去程:進端點前
+    response = await call_next(request)  # ← 往內走(下一層/端點)
+    response.headers["X-Time"] = f"{time.perf_counter()-start:.3f}"  # 回程
+    return response
+```
+
+`call_next` 就是「往洋蔥內層走」的門——它前面的程式碼是去程,後面是回程。
+
+定位一句話:**橫切所有端點的事放 middleware,單一端點的共用邏輯放 [Depends](11-fastapi-depends.md)**——兩者分工,端點函式保持乾淨。
+
 ## Why（為什麼）
 
 有些事情要對**每個請求**做：記錄請求、計時、加通用標頭、處理 CORS、統一錯誤格式。在每個路由函式重複這些很蠢。**middleware** 讓你把「跨所有端點的橫切關注」寫一次、套用到全部請求——它包在請求處理的外圍，請求進來時先經過它、回應出去時再經過它。理解 middleware 的「洋蔥模型」與用途，是建結構化 Web 應用的一環（呼應 [裝飾器](../08-functional-decorators/03-decorator-basics.md) 的橫切關注概念）。
 
 ## Theory（理論：洋蔥模型）
 
-**middleware** 是「包在請求-回應處理外圍」的程式碼。多個 middleware 形成**洋蔥模型（onion model）**——請求由外往內穿過每層 middleware 到達路由，回應由內往外穿回：
+**middleware** 是「包在請求-回應處理外圍」的關卡。多個 middleware 形成**洋蔥模型（onion model）**——請求由外往內穿過每層到達路由，回應由內往外穿回：
 
 ```text
 請求 →  [middleware A] → [middleware B] → 路由處理
 回應 ←  [middleware A] ← [middleware B] ← 路由處理
 ```
 
-每個 middleware 能在「請求往內」時做事（記錄、驗證、加東西到 request）、在「回應往外」時做事（加標頭、計時、統一格式）。這讓橫切關注集中在 middleware，路由函式保持乾淨。
+每個 middleware 有兩次出手機會：
+
+- **請求往內**時：記錄、驗證、往 request 加東西（去程）。
+- **回應往外**時：加標頭、計時、統一格式（回程）。
+
+橫切關注集中在 middleware，路由函式保持乾淨。
 
 ## Specification（規範：FastAPI middleware）
 

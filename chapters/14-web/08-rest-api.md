@@ -2,19 +2,51 @@
 
 > REST 是一套 API 設計慣例——用「資源（名詞）+ HTTP 方法（動詞）」組織 API，配對的狀態碼。遵循 REST 讓 API 可預測、易懂、好用。這章講清楚 REST 的原則與良好 API 設計的實踐。
 
+## 💡 白話導讀（建議先讀）
+
+API 端點的命名,新手常寫成這樣：
+
+```text
+/getUser?id=1   /createUser   /deleteUserById   /getUserOrders
+```
+
+每個 API 自創動詞,用的人得逐個背。REST 的洞見:**HTTP 早就自帶動詞了(GET/POST/PUT/DELETE),URL 只該放名詞**。
+
+文法一句話:**URL 是名詞(資源),動作交給 HTTP 方法**:
+
+```text
+GET    /users        列出使用者      POST   /users        建立使用者
+GET    /users/42     看 42 號        PATCH  /users/42     改 42 號
+DELETE /users/42     刪 42 號        GET    /users/42/orders   他的訂單(巢狀資源)
+```
+
+規律一出來,**不用文件都猜得到**——這就是 REST 的價值:可預測。
+
+搭配的慣例套餐：
+
+- **資源用複數名詞**(`/users` 不是 `/user`)
+- **狀態碼配對**([第 2 章](02-http-basics.md)的分類):POST 成功回 201、DELETE 成功回 204、找不到 404、驗證失敗 422
+- **`/getUser` 這類「動詞塞進 URL」是病句**——動作已經有 GET 表達了
+
+REST 是**慣例不是法律**——真實世界總有塞不進 CRUD 的動作(如「發布文章」),務實處理法(子資源、action 端點)章內討論。[task-api](../../project/) 的端點就是照這套文法設計的。
+
 ## Why（為什麼）
 
 同樣是「使用者管理 API」，好的設計（`GET /users/1`、`DELETE /users/1`）一看就懂、壞的設計（`GET /getUser?id=1`、`POST /removeUser`）雜亂難用。**REST（Representational State Transfer）** 是主流的 API 設計風格——用一致的慣例（資源、方法、狀態碼）讓 API 可預測。理解 REST 原則與良好設計實踐，你才能設計出「別人一看就會用」的 API。這章整合 [HTTP 基礎](02-http-basics.md) 的知識到 API 設計。
 
 ## Theory（理論：資源 + 方法）
 
-REST 的核心思想：**把 API 組織成「資源」，用 HTTP 方法操作它們**。
+REST 的核心思想：**把 API 組織成「資源」，用 HTTP 方法操作它們**——名詞+動詞的文法。
 
 - **資源（resource）**：用**名詞**（複數）表示——`/users`、`/orders`、`/products`。資源是「東西」。
 - **方法（method）**：用 HTTP **動詞**表示操作——GET（讀）、POST（建）、PUT/PATCH（改）、DELETE（刪）。
 - **狀態碼**：表示結果（見 [HTTP 基礎](02-http-basics.md)）。
 
-關鍵：**URL 用名詞（資源）、動作用 HTTP 方法**——別把動作放 URL（`/getUser`、`/deleteUser` 是反模式）。這讓一組資源的 CRUD 有一致、可預測的形式。
+關鍵文法：
+
+> **URL 用名詞（資源）、動作用 HTTP 方法**——別把動作放 URL（`/getUser`、`/deleteUser` 是病句）。
+
+這讓一組資源的 CRUD 有一致、可預測的形式——不用文件都猜得到。
 
 ## Specification（規範：RESTful 端點設計）
 
