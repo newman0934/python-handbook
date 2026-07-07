@@ -2,6 +2,41 @@
 
 > 裝飾器不只能裝飾函式——還能「裝飾類別」（修改整個類別），也能「用類別當裝飾器」（實例是可呼叫物件，能攜帶狀態）。`@dataclass` 就是最有名的類別裝飾器。
 
+## 💡 白話導讀（建議先讀）
+
+裝飾器的最後一章，講兩件**方向相反**的事——名字像，千萬別混：
+
+**第一件：裝飾「類別」（decorating a class）——膜貼在類別上。**
+
+裝飾器不只能收函式卡片,也能**收一個類別、回一個改造過的類別**：
+
+```python
+@dataclass           # ← 你早就見過!它收 Point 類別,自動幫它加 __init__/__repr__ 再還你
+class Point:
+    x: int
+    y: int
+```
+
+等式和以前一樣：`Point = dataclass(Point)`。用途:自動加方法、註冊到某處、檢查規格——[Part 4 的 dataclass](../04-oop/09-dataclass.md)、Enum 背後都是這類把戲。
+
+**第二件：拿「類別」當裝飾器（class as decorator）——膜本身是一個物件。**
+
+函式寫的膜（閉包）能記狀態,但記得彆扭。**改用類別當膜**,狀態就有正式的家：
+
+```python
+class CountCalls:
+    def __init__(self, func):        # 收函式 —— @CountCalls 時執行
+        self.func = func
+        self.count = 0               # 狀態住在實例屬性,清清楚楚
+    def __call__(self, *args, **kw): # 讓實例「可以被呼叫」(Part 4 的插座!)
+        self.count += 1
+        return self.func(*args, **kw)
+```
+
+`@CountCalls` 之後,`func` 變成 CountCalls 的**實例**——之所以還能像函式一樣呼叫,是因為它裝了 `__call__` 插座。
+
+分辨口訣：**看誰被裝飾、誰當裝飾**——類別被裝飾=改造類別;類別當裝飾=有狀態的膜。
+
 ## Why（為什麼）
 
 前面的裝飾器都作用在函式上。但「裝飾器」的概念更廣，有兩個延伸：
@@ -13,10 +48,13 @@
 
 ## Theory（理論：兩種「類別 + 裝飾器」）
 
-**要分清兩件不同的事**：
+**要分清兩件方向相反的事**：
 
-- **裝飾類別（decorating a class）**：裝飾器**接收類別、回傳類別**——`class Foo` 定義後，`Foo = decorator(Foo)`。用來為類別自動加方法、註冊、修改。
-- **類別作為裝飾器（class as decorator）**：**一個類別當裝飾器用**——`@MyDecorator` 放在函式上，`func = MyDecorator(func)`，於是 `func` 變成 `MyDecorator` 的實例；該實例實作 `__call__`（見 [魔術方法](../04-oop/08-dunder-methods.md)）所以「可呼叫」，呼叫時執行包裝邏輯。實例的屬性可保存狀態。
+- **裝飾類別（decorating a class）**：裝飾器**接收類別、回傳類別**——`class Foo` 定義後，`Foo = decorator(Foo)`（膜貼在類別上）。
+  用途：為類別自動加方法、註冊、修改。`@dataclass` 就是最有名的例子。
+
+- **類別作為裝飾器（class as decorator）**：**一個類別當裝飾器用**——`@MyDecorator` 放在函式上，`func = MyDecorator(func)`，於是 `func` 變成 `MyDecorator` 的**實例**。
+  該實例實作 `__call__`（見[魔術方法](../04-oop/08-dunder-methods.md)——「可呼叫」的插座），呼叫時執行包裝邏輯；**實例屬性可以正式地保存狀態**（比閉包的 nonlocal 清爽）。
 
 ## Specification（規範：兩種語法）
 

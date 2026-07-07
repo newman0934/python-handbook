@@ -2,13 +2,41 @@
 
 > `functools.partial` 把「先固定一部分參數」的函式做出來——`partial(int, base=2)` 就是「二進位版的 int」。它讓你從通用函式衍生出特化版本，是回呼與設定的利器。
 
+## 💡 白話導讀（建議先讀）
+
+想像一台**萬用咖啡機**，每次都要按齊全部設定：豆種、水溫、濃度⋯⋯
+但你每天早上都喝同一種。合理的做法：**存一個「我的常用鍵」**——把固定的設定鎖進去，之後一鍵搞定。
+
+`functools.partial` 就是幫函式做「常用鍵」：
+
+```python
+from functools import partial
+
+to_binary = partial(int, base=2)   # 把 int 的 base 參數「鎖定」成 2
+to_binary("1010")                  # 10 —— 等於 int("1010", base=2)
+```
+
+`to_binary` 是 `int` 的**特化版**：base 已預先綁好，用的時候只要給剩下的參數。
+這個動作的學名叫**偏函式應用（partial application）**——「先固定一部分參數,得到參數較少的新函式」。
+
+兩個典型戰場：
+
+1. **回呼要求「無參數」但你想帶設定**：
+   `button.on_click(partial(save, path="draft.txt"))`——把參數預綁進去,符合回呼簽章。
+2. **從通用函式衍生一組特化函式**：
+   `debug = partial(log, level="DEBUG")`、`warn = partial(log, level="WARN")`——一個通用 log,衍生全家族。
+
+跟 lambda 的取捨:`partial(f, x=1)` 和 `lambda ...: f(..., x=1)` 常可互換——partial 更宣告式、自帶可讀的 repr;複雜邏輯才用 lambda。
+
 ## Why（為什麼）
 
 常見需求：有個通用函式，但你想要「固定某些參數的特化版」。例如 `int(x, base=2)` 每次都寫 `base=2` 很煩，你想要一個「就是二進位」的 `to_binary`。或者傳回呼時想「預先綁好某些參數」。手寫一個 lambda 或 def 可以，但 `functools.partial` 更清楚、可內省、且是慣用做法。這章講 partial 的用法與它勝過 lambda 的地方。
 
 ## Theory（理論：偏函式應用）
 
-**偏函式應用（partial application）** 是「把一個多參數函式，透過固定部分參數，變成參數較少的新函式」。`functools.partial(func, *args, **kwargs)` 回傳一個新的可呼叫物件——呼叫它時，會用「預先固定的參數 + 新傳入的參數」去呼叫原 `func`。
+**偏函式應用（partial application）**：「把一個多參數函式，透過固定部分參數，變成參數較少的新函式」——幫函式做「常用鍵」。
+
+`functools.partial(func, *args, **kwargs)` 回傳一個新的可呼叫物件——呼叫它時，用「**預先固定的參數 + 新傳入的參數**」去呼叫原 `func`。
 
 ```python
 from functools import partial
@@ -17,7 +45,9 @@ to_binary = partial(int, base=2)     # 固定 base=2
 to_binary("1010")                    # = int("1010", base=2) = 10
 ```
 
-`to_binary` 是 `int` 的「特化版」——`base` 已被綁定，只需傳字串。這在需要「帶預設設定的函式」或「預綁參數的回呼」時很有用。
+`to_binary` 是 `int` 的「特化版」——`base` 已被綁定，只需傳字串。
+
+適用場景：需要「帶預設設定的函式」、或「預綁參數的回呼」時。
 
 ## Specification（規範：partial 語法）
 

@@ -2,13 +2,44 @@
 
 > 裝飾器是「接收一個函式、回傳一個包裝後的函式」——`@decorator` 只是語法糖。搞懂這個核心，你就能為函式加上日誌、計時、快取、驗證等橫切功能，而不改動函式本身。
 
+## 💡 白話導讀（建議先讀）
+
+裝飾器終於登場。先把「魔法感」拆掉——它只是前面兩塊積木的組合：
+
+> **裝飾器＝一個「收一張函式卡片、回一張加工過的卡片」的函式。**
+
+想像**手機貼膜**：手機（原函式）功能不變,包一層膜（包裝函式）之後——多了防刮功能,但用起來還是那支手機。
+
+```python
+def log_calls(func):                  # 收進原函式
+    def wrapper(*args, **kwargs):     # 做一個「包了膜」的新函式
+        print(f"呼叫 {func.__name__}")   # 膜的功能:先記個 log
+        return func(*args, **kwargs)  # 再照常執行原函式
+    return wrapper                    # 交出包好膜的版本
+```
+
+（眼熟嗎？`wrapper` 記得 `func`——這正是[閉包的外送員](../02-fundamentals/12-closures.md)。）
+
+而 `@` 符號**只是語法糖**,背後就一行等式：
+
+```python
+@log_calls
+def greet(): ...
+# 完全等於:
+greet = log_calls(greet)      # 把 greet 換成包過膜的版本
+```
+
+**看懂這行等式,裝飾器就沒有祕密了。**
+
+它解決什麼？日誌、計時、快取、權限檢查這些「**很多函式都要、但又不屬於任何函式本體**」的橫切需求——寫一次膜,誰需要就給誰貼,函式本體一行不改。
+
 ## Why（為什麼）
 
 你常想為多個函式加上同樣的「附加行為」：記錄呼叫、計時、檢查權限、快取結果、重試。把這些邏輯抄進每個函式又重複又難維護。**裝飾器**讓你把「附加行為」抽成一個包裝器，用 `@decorator` 一行套用——原函式不動、行為卻被增強。這是 Python 最優雅、最常見的元編程模式，Web 框架（`@app.route`）、快取（`@lru_cache`）、測試（`@pytest.fixture`）到處都是。理解它是進階 Python 的門檻。
 
 ## Theory（理論：接收函式、回傳函式）
 
-裝飾器的本質：**一個接收函式、回傳（通常是包裝過的）函式的高階函式**（建立在 [一等公民](01-first-class-functions.md) 與 [閉包](../02-fundamentals/12-closures.md) 之上）。
+裝飾器的本質：**一個接收函式、回傳（通常是包裝過的）函式的高階函式**——「收卡片、回加工卡片」（建立在[一等公民](01-first-class-functions.md)與[閉包](../02-fundamentals/12-closures.md)之上）。
 
 ```python
 def decorator(func):          # 接收原函式
@@ -20,7 +51,11 @@ def decorator(func):          # 接收原函式
     return wrapper            # 回傳包裝器，取代原函式
 ```
 
-`@decorator` 語法只是**語法糖**——`@decorator` 放在 `def foo` 上面，等於 `foo = decorator(foo)`。理解這個等式，裝飾器就不神秘了。
+`@decorator` 語法只是**語法糖**：
+
+> `@decorator` 放在 `def foo` 上面，**完全等於** `foo = decorator(foo)`。
+
+理解這個等式，裝飾器就不神祕了——它就是「把函式換成包過膜的版本」的普通賦值。
 
 ## Specification（規範：語法與等價寫法）
 

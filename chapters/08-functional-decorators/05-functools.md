@@ -2,17 +2,42 @@
 
 > `functools` 是函數式工具箱：`wraps`（寫裝飾器必備）、`lru_cache`/`cache`（一行加快取）、`reduce`、`partial`、`singledispatch`、`total_ordering`。這些工具能大幅減少樣板、加速程式。
 
+## 💡 白話導讀（建議先讀）
+
+`functools` 是「函式的五金行」——專賣**操作函式、增強函式**的工具。逛三個必買區：
+
+**必買一：`wraps`——貼膜不蓋名牌。**
+[第 3 章](03-decorator-basics.md)的貼膜有個副作用：包完之後，函式的名字變成 `wrapper`、docstring 不見了——**膜把名牌蓋住了**。
+`@functools.wraps(func)` 貼在 wrapper 上，把原函式的名牌（`__name__`、`__doc__`、簽章）**轉印到膜上**。
+守則：**寫裝飾器,一律加 wraps**——不加,除錯和文件工具全部被誤導。
+
+**必買二：`lru_cache`——一行加快取。**
+
+```python
+@lru_cache(maxsize=None)
+def fib(n): ...
+```
+
+它幫函式配一本**帳本**：同樣的輸入來過,直接翻帳本給答案,不重算。
+費氏數列從指數時間變線性——**一行裝飾器的事**。
+（前提:函式是「純」的——同輸入必同輸出;參數要可 hash。）
+
+**必買三：`singledispatch`——依型別分流。**
+「這個函式,遇到 int 這樣做、遇到 list 那樣做」——不用寫一串 isinstance,註冊分流即可。
+
+其他貨架上還有:`reduce`（[上章](02-higher-order-functions.md)講過）、`partial`（[下章](06-partial.md)專講）、`total_ordering`（寫一個比較方法送你全套）、`cached_property`。這章逐一上手。
+
 ## Why（為什麼）
 
 `functools` 模組是「處理函式的函式」集合。其中 `wraps` 是寫裝飾器的必備（沒它裝飾器會遺失原函式資訊）、`lru_cache` 能一行讓昂貴函式加上快取（面試常考）、`total_ordering` 省去手寫一堆比較方法、`singledispatch` 實現函式的「依型別分派」。會用這些，你的程式更短、更快、更專業。這章聚焦 `wraps` 與 `lru_cache` 等最實用的成員（`partial` 見 [下一章](06-partial.md)、`reduce` 見 [高階函式](02-higher-order-functions.md)）。
 
 ## Theory（理論：functools 的定位）
 
-`functools` 提供「操作或增強函式」的工具：
+`functools` 提供「操作或增強函式」的工具——函式的五金行。貨架總覽：
 
-- **`wraps`**：裝飾器用，把原函式的中繼資料（`__name__`/`__doc__`/簽章）複製到包裝器。
-- **`lru_cache` / `cache`**：記憶化（memoization）——快取函式結果，重複輸入直接回快取。
-- **`reduce`**：摺疊序列（見 [高階函式](02-higher-order-functions.md)）。
+- **`wraps`**：裝飾器必備——把原函式的中繼資料（`__name__`/`__doc__`/簽章）複製到包裝器（名牌轉印到膜上）。
+- **`lru_cache` / `cache`**：記憶化（memoization）——快取函式結果，重複輸入直接回快取（幫函式配帳本）。
+- **`reduce`**：摺疊序列（見[高階函式](02-higher-order-functions.md)）。
 - **`partial`**：固定部分參數（見 [partial](06-partial.md)）。
 - **`singledispatch`**：依第一參數的型別分派到不同實作。
 - **`total_ordering`**：由 `__eq__` + 一個比較方法自動補齊其餘比較。

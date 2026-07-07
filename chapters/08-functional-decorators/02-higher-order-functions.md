@@ -2,19 +2,41 @@
 
 > 高階函式是「接收或回傳函式」的函式。`map`、`filter`、`reduce` 是函數式三劍客，但在 Python，多數情況推導式比 map/filter 更 Pythonic——知道何時用哪個才是重點。
 
+## 💡 白話導讀（建議先讀）
+
+函式既然是可以遞來遞去的卡片（上一章），自然出現一種函式：**專門收卡片、或發卡片的函式**——這叫**高階函式**。
+
+三個經典的「收卡片」函式，各自對應一種日常操作：
+
+- **`map`（逐個加工）**：「這疊資料，**每一個**都照這張卡處理」——`map(str.upper, words)`。
+- **`filter`（篩選）**：「照這張卡檢查，**留下合格的**」——`filter(is_valid, items)`。
+- **`reduce`（摺疊）**：「拿這張卡把整疊資料**滾成一個結果**」——累加、累乘。
+
+先給 Python 的立場,免得你學完就誤用：
+
+1. **多數場合,推導式比 map/filter 更 Pythonic**：
+   `[x*2 for x in nums]` 比 `list(map(lambda x: x*2, nums))` 好讀——Python 官方也這麼認為（reduce 甚至被「降級」到 functools,不再是內建）。
+2. **map/filter 的甜蜜點**：手上**已經有現成函式**時——`map(str.strip, lines)` 乾淨俐落,不用寫 lambda。
+3. 別忘了它們回傳的是[點餐券](../07-iterators-generators/07-lazy-evaluation.md)（惰性 iterator）——要看內容得 `list()`,且只能走一輪。
+
+所以這章的重點不是「背三劍客」,而是掌握**「把行為當參數傳」**這個思考方式——它在 `sorted(key=...)`、回呼、事件處理裡無所不在。
+
 ## Why（為什麼）
 
 `map`、`filter`、`reduce` 是函數式程式設計的經典工具，處理序列的「轉換、篩選、聚合」。Python 支援它們，但也提供了推導式（見 [推導式](../02-fundamentals/13-comprehensions.md)）作為更 Pythonic 的替代。搞混「什麼時候該用 map/filter、什麼時候該用推導式」會讓程式不夠地道。這章講清楚三者的用法、它們的惰性特性，以及與推導式的取捨。
 
 ## Theory（理論：高階函式）
 
-**高階函式（higher-order function）** 是「接收函式當參數，或回傳函式」的函式（建立在 [一等公民](01-first-class-functions.md) 之上）。三個經典：
+**高階函式（higher-order function）**：「接收函式當參數，或回傳函式」的函式——收卡片或發卡片的函式（建立在[一等公民](01-first-class-functions.md)之上）。三個經典：
 
-- **`map(func, iterable)`**：對每個元素套用 `func`，產出轉換後的值。
-- **`filter(func, iterable)`**：保留 `func(x)` 為真的元素。
-- **`reduce(func, iterable)`**：把序列「摺疊」成單一值（累加、累乘…）。
+- **`map(func, iterable)`**：對每個元素套用 `func`——逐個加工。
+- **`filter(func, iterable)`**：保留 `func(x)` 為真的元素——篩選。
+- **`reduce(func, iterable)`**：把序列「摺疊」成單一值（累加、累乘⋯⋯）。
 
-`map`/`filter` 是內建、**惰性**（回傳 iterator，見 [惰性求值](../07-iterators-generators/07-lazy-evaluation.md)）；`reduce` 在 `functools` 模組（不是內建，Python 3 刻意「降級」它）。
+兩個 Python 特有的事實：
+
+- `map`/`filter` 是內建且**惰性**（回傳 iterator，見[惰性求值](../07-iterators-generators/07-lazy-evaluation.md)——點餐券）。
+- `reduce` 住在 `functools`，**不是內建**——Python 3 刻意「降級」它（多數情況推導式或迴圈更可讀）。
 
 ## Specification（規範：三者語法）
 
