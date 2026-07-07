@@ -2,18 +2,48 @@
 
 > Python 存取任何關聯式資料庫，底層都是同一套介面——PEP 249 DB-API 2.0。搞懂 connection、cursor、參數化查詢，你就掌握了所有 DB 驅動的共通語言，換資料庫時也不慌。
 
+## 💡 白話導讀（建議先讀）
+
+Python 要連的資料庫百百種（PostgreSQL、MySQL、SQLite⋯⋯），每家的驅動如果各有各的用法——換一次資料庫重學一次？
+
+Python 官方的解法又是那招——**統一插座規格**（PEP 249，DB-API 2.0）：**所有資料庫驅動都長同一個樣子**：
+
+```python
+conn = connect(...)        # ① 建立連線
+cur = conn.cursor()        # ② 拿一支「游標」
+cur.execute(sql, params)   # ③ 執行 SQL
+rows = cur.fetchall()      # ④ 取結果
+conn.commit()              # ⑤ 確認交易
+```
+
+學會這五步，你就會用「所有」關聯式資料庫的驅動——連 SQLAlchemy 這種 ORM，底層走的也是它。
+
+兩個角色的分工先分清：
+
+- **connection（連線）**——一條昂貴的電話線：負責交易（commit/rollback）;建立成本高，實務用連線池重用。
+- **cursor（游標）**——通話中的對話輪次：執行查詢、逐批取結果;一條線可以多輪對話。
+
+這章最重要的一課是安全鐵則（[練習題](../../exercises/part15/)做過的）：
+
+> **SQL 的值永遠用參數化（`?` 佔位）傳入，絕不用字串拼接**——拼接=SQL injection 大門敞開。
+
 ## Why（為什麼）
 
 Python 要連 PostgreSQL、MySQL、SQLite、Oracle——每種資料庫的驅動套件不同（`psycopg`、`mysqlclient`、內建 `sqlite3`…）。如果每個驅動的用法都不一樣，你換資料庫就得重學一遍。**PEP 249（DB-API 2.0）** 是 Python 官方定義的「資料庫存取標準介面」——**所有驅動都遵循同一套 API**（`connect()`、`cursor()`、`execute()`、`fetchone()`…）。學會它，你就會用「所有」關聯式資料庫的驅動；換資料庫時，商業邏輯幾乎不用改。即使你平常用 SQLAlchemy ORM（見 [SQLAlchemy ORM](14-sqlalchemy-orm.md)），它底層也是走 DB-API——理解這層讓你在出問題時知道發生什麼。
 
 ## Theory（理論：connection 與 cursor 模型）
 
-DB-API 的核心是兩個物件：**connection（連線）** 與 **cursor（游標）**。
+DB-API 的核心是兩個物件——電話線與對話輪次：
 
-- **connection**：代表「與資料庫的一條連線」。負責 **transaction 邊界**（commit/rollback，見 [transaction](16-transactions.md)）與關閉連線。建立連線成本高（TCP 握手、認證），所以實務上會用連線池重用（見 [連線池](15-connection-pool.md)）。
-- **cursor**：代表「一次查詢的執行與結果游標」。你用 cursor `execute()` SQL、用 `fetchone()`/`fetchall()` 取結果。一條連線可開多個 cursor。
+- **connection（連線）**：代表「與資料庫的一條連線」。負責 **transaction 邊界**（commit/rollback，見 [transaction](16-transactions.md)）與關閉連線。建立連線成本高（TCP 握手、認證），實務上用連線池重用（見[連線池](15-connection-pool.md)）。
+- **cursor（游標）**：代表「一次查詢的執行與結果游標」。用 `execute()` 執行 SQL、`fetchone()`/`fetchall()` 取結果。一條連線可開多個 cursor。
 
-為什麼分兩層？因為「連線」是昂貴、長生命週期的資源（一條 TCP 連線），而「查詢」是短暫、頻繁的操作。分開讓一條連線能重複執行多個查詢、管理一致的 transaction。這個模型幾乎所有語言的資料庫 API 都採用（Java JDBC、Go database/sql 同理）。
+為什麼分兩層？
+
+> 「連線」是**昂貴、長生命週期**的資源（一條 TCP 線）；「查詢」是**短暫、頻繁**的操作。
+> 分開讓一條連線能重複執行多個查詢、統一管理交易。
+
+這個模型幾乎所有語言都採用（Java JDBC、Go database/sql 同構）。
 
 ## Specification（規範：PEP 249 核心 API）
 
