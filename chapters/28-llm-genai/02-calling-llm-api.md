@@ -2,6 +2,36 @@
 
 > 理解了 [LLM 原理](01-llm-fundamentals.md),現在動手呼叫。本章用 **Anthropic 官方 Python SDK** 呼叫 **Claude**:基本請求、system prompt、多輪對話、串流、錯誤處理、token 計數與模型/成本選擇。可執行範例用 mock client(不需金鑰),真實用法以官方 SDK 程式碼示意。
 
+## 💡 白話導讀(建議先讀)
+
+懂了原理,這章開始**動手**——用 Anthropic 官方 Python SDK 呼叫 Claude。
+第一個必須顛覆的直覺:**API 是「失憶」的**。
+
+你以為的對話是「AI 記得我們聊過什麼」,真相是:
+**每次呼叫,你都要把整段對話歷史重新送一遍**,模型才「想起」上下文。
+它自己**不存任何記憶**——像一個每次見面都失憶的天才,
+你得把「我們之前聊到哪」的筆記每次都遞給他。這解釋了為什麼:
+
+- 對話越長,每次呼叫越貴(送的歷史越來越厚,token 越來越多)。
+- 「記憶」是**你的程式**在管的(把歷史存起來、每次附上),不是 API 的魔法。
+
+Messages API 的形狀也很簡單——一串對話:
+
+```python
+messages = [
+    {"role": "user", "content": "你好"},
+    {"role": "assistant", "content": "你好!有什麼可以幫忙?"},
+    {"role": "user", "content": "解釋一下 GIL"},   # 每次把整串送出
+]
+```
+
+`user` 和 `assistant` 交替,`system` prompt 另外設定(給模型的角色與規則)。
+
+這章帶你走完:裝 SDK、設 API key(**別把金鑰寫進程式碼**——
+呼應 [secrets 管理](../20-security-system-design/05-secrets-management.md))、
+發第一個請求、讀回應、看 token 用量、處理錯誤與重試。
+本書全程用 Claude 示範,模型預設 `claude-opus-4-8`。
+
 ## Why(為什麼)
 
 建 AI 應用的第一步,是**可靠地呼叫 LLM**。這看似只是「發個請求」,但要做對有不少細節:
