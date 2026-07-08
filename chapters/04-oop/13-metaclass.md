@@ -27,6 +27,26 @@
 先說結論：**95% 的情況你不需要它**（類別裝飾器或 `__init_subclass__` 更簡單）。
 學它的價值，是看懂框架（ORM、Enum）的魔法是怎麼變的。
 
+## 🎯 什麼時候會用到
+
+**先講最重要的一句:99% 的應用程式碼,永遠不需要自己寫 metaclass。**
+有句社群名言:「如果你還在猶豫要不要用 metaclass,那你就是不需要。」
+需要「在類別建立時動手腳」時,**先試更簡單的替代**,幾乎都夠用:
+
+- `__init_subclass__`:想在子類別被定義時做事(自動註冊、檢查)——比 metaclass 簡單十倍。
+- **類別裝飾器**:想改造一個已建好的類別——通常能取代 metaclass。
+- **描述器**([descriptors](11-descriptors.md)):想控制屬性存取。
+
+**真正會用到 metaclass 的地方,幾乎都在框架/函式庫內部**,你會「遇到」而非「撰寫」:
+
+- **ORM**:Django `Model`、SQLAlchemy 宣告式 base——metaclass 在類別建立時掃描你宣告的欄位、
+  建立「類別 ↔ 資料表」的映射。你寫 `class User(Model)` 時,背後就是 metaclass 在工作。
+- **資料/序列化框架**:早期 pydantic、各種 schema 框架——蒐集欄位定義、生成驗證邏輯。
+- **內建機制**:`ABCMeta`(讓 [ABC](10-abc.md) 運作)、`Enum`、外掛自動註冊(plugin registry)。
+
+一句話:**應用開發者「看得懂 metaclass 在做什麼」就夠(面試會問);
+一旦你「需要動手寫」,通常代表你正在造框架。**
+
 ## Why（為什麼）
 
 metaclass 是 Python 最深的特性之一，也是「你可能永遠不用寫、但該理解」的東西。理解它能讓你看懂：class 到底是什麼、ORM（如 Django Model、SQLAlchemy）如何用宣告式語法「魔法般」運作、ABC 如何強制契約、`__init_subclass__` 為何存在。面試到資深職位常問「什麼是 metaclass」。Tim Peters 有句名言：「如果你不確定需不需要 metaclass，那你就不需要」——但**理解**它是另一回事。
