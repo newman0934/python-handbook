@@ -2,6 +2,38 @@
 
 > 這是 Part 29 的整合實戰:把[分塊](02-chunking-strategies.md)、[索引](../28-llm-genai/07-vector-databases.md)、[混合檢索](03-hybrid-retrieval-rerank.md)、[組裝生成](01-rag-pipeline.md)、[評估](04-rag-evaluation.md)串成一個**端到端、可執行、可評估**的 RAG 知識庫問答系統。這章不再教新概念,而是示範**怎麼把它們組裝成一個真實系統**,並討論從這個骨架走向生產的要點。
 
+## 💡 白話導讀(建議先讀)
+
+這是 Part 29 的**畢業專題**:把本 Part 的每一塊——
+[分塊](02-chunking-strategies.md)、[混合檢索](03-hybrid-retrieval-rerank.md)、
+[重排](03-hybrid-retrieval-rerank.md)、[評估](04-rag-evaluation.md)——
+組裝成一個**完整、可上線的 RAG 問答系統**,而不只是玩具 demo。
+
+整個系統的資料流,把散落各章的零件串成一條線:
+
+```text
+離線(建知識庫):
+  文件 → 分塊 → 每塊 embed → 存進向量索引(帶來源 metadata)
+
+線上(每次問答):
+  問題 → 混合檢索(向量+關鍵字, RRF 融合) → rerank 精排 top-k
+       → 組裝 prompt(問題 + 撈到的片段 + 「只依據資料回答」)
+       → LLM 生成(附引用來源) → 回答
+
+持續:
+  用評估集量 recall / faithfulness,調參,回歸測試
+```
+
+這章的重點不是再學新東西,而是**把原則落實成工程**:
+來源引用(讓答案可追溯、可信)、找不到資料時**誠實說「不知道」**
+(而不是[幻覺](../28-llm-genai/01-llm-fundamentals.md))、
+處理 context 超長、以及把整套包成一個乾淨的 API(呼應 [Part 14 的 FastAPI](../14-web/README.md))。
+
+走完這章,你就擁有一套**可複用的生產級 RAG 骨架**——
+這正是當前業界最搶手的 AI 工程能力。
+接著 [Part 30 生產化 AI](../30-production-ai/README.md)會講怎麼把它**穩定地運營**
+(監控、版本、A/B、成本控管),讓這個系統真正對得起「上線」兩個字。
+
 ## Why(為什麼)
 
 前面每一章各講一個環節,但真實系統的價值在於**把它們正確地組裝起來**——而組裝本身有工程門檻:

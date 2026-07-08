@@ -2,6 +2,33 @@
 
 > 每個 [agent](05-agents-react.md) 都要接工具:查資料庫、讀檔案、呼叫 API、搜尋……但每接一個工具、每換一個 LLM 應用,你就要重寫一次接法——這是 M×N 的重工。**MCP(Model Context Protocol)** 是 Anthropic 於 2024 年底開源的**標準協定**,把「LLM 應用 ↔ 工具/資料源」的連接標準化,像 USB-C 之於周邊裝置。這章講 MCP 解決什麼、架構,以及怎麼用 Python 實作一個 MCP server。
 
+## 💡 白話導讀(建議先讀)
+
+[agent](05-agents-react.md) 要接一堆工具:查資料庫、讀檔案、呼叫 API、搜尋……
+問題是——**每個 agent 框架接工具的方式都不一樣**。
+你為 A 框架寫的「查資料庫工具」,換到 B 框架、換個模型,又要重寫一遍。
+**N 個工具 × M 個 agent = N×M 種接法**,重複勞動的惡夢。
+
+**MCP(Model Context Protocol,模型脈絡協定)** 就是來終結這件事的——
+它是 AI 工具界的 **USB 標準**。
+
+想想 USB 出現前:每種裝置一種接頭,滑鼠、印表機、隨身碟各插各的孔。
+USB 統一之後,任何裝置只要做成 USB,插上任何電腦就能用。
+MCP 對 AI 工具做的是同一件事:**你把工具/資料源包成一個標準的 MCP server,
+任何支援 MCP 的 host(Claude Desktop、IDE、你的 agent)都能直接接上使用**——
+一次實作,到處可用,N+M 取代 N×M。
+
+它的架構是 client-server(基於 JSON-RPC):
+
+- **Host**:使用者用的 LLM 應用(如 Claude Desktop)。
+- **Server**:包裝某個能力的程式(檔案系統、資料庫、GitHub API…),
+  對外暴露三種東西:**Tools**(可呼叫的動作)、**Resources**(可讀的資料)、
+  **Prompts**(預設的提示模板)。
+
+MCP 是 2024 年 Anthropic 推出、正在快速成為業界標準的協定。
+這章帶你**用 Python 寫一個自己的 MCP server**、理解協定的三種能力,
+並看它怎麼讓 agent 的工具生態從「各自為政」走向「隨插即用」。
+
 ## Why(為什麼)
 
 沒有 MCP 之前,把工具接進 LLM 應用是**碎片化的重工**:
