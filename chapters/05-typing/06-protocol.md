@@ -24,6 +24,20 @@
 
 一句話：**ABC 靠血緣，Protocol 靠長相**。Python 圈的現代偏好是後者。
 
+## 🎯 什麼時候會用到
+
+- **要對「不是你寫的、沒辦法叫它繼承」的型別定契約時**——這是 Protocol 最大的價值。
+  - 為第三方類別、內建型別定型:「任何有 `.read()` 的東西」→ `class Readable(Protocol): def read(self) -> bytes: ...`。
+  - **依賴注入 / 測試替身(最實用場景)**:把函式參數宣告成 Protocol
+    (`class UserRepo(Protocol): def get(self, id: int) -> User: ...`),
+    那麼**正式的 SQLAlchemy repo 和測試用的假 repo 都不必繼承任何東西**,
+    只要「方法長得對」就能傳進去——鴨子型別的彈性 + 靜態檢查的安全,兩者兼得。
+  - **解耦**:上層只依賴 Protocol(介面),不綁死具體實作
+    (正是 [依賴反轉/DI](../16-architecture/03-dependency-injection.md) 在 Python 的慣用寫法)。
+
+**Protocol vs [ABC](../04-oop/10-abc.md)**:
+**你能改對方、想強制它繼承 → ABC;對方改不了(第三方/內建)、或不想逼人繼承 → Protocol。**
+
 ## Why（為什麼）
 
 Python 的鴨子型別說「只要會 `.quack()` 就當它是鴨子」，很自由。但 [ABC](../04-oop/10-abc.md) 要求「明確繼承」才算子型別（名義子型別）——這對你無法修改的第三方類別行不通（總不能叫別人的類別繼承你的 ABC）。**Protocol（PEP 544，3.8+）** 解決這個：定義「一個型別要有哪些方法/屬性」，任何**結構上符合**的類別**自動**算數，不需繼承。這讓鴨子型別能被 mypy 靜態檢查，是型別化「靠行為而非血緣」介面的正解。
