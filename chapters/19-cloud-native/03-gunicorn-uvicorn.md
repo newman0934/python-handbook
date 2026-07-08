@@ -2,6 +2,29 @@
 
 > 你不會用 `python app.py` 把服務推上正式環境——那只跑單一行程、單執行緒，一個請求卡住全部人排隊。正式環境需要**應用伺服器（application server）**：Gunicorn / Uvicorn 管理多個 worker 行程、承受並發流量、優雅重啟。這章講 WSGI vs ASGI、worker 模型，以及怎麼配置。
 
+## 💡 白話導讀（建議先讀）
+
+`python app.py` 直接上正式環境,等於**一人小攤販應付一百人排隊**——
+單行程單執行緒,一個請求卡住,後面全部人等。正式環境要開的是**多窗口服務**:
+**應用伺服器（application server）** 負責開好幾個窗口（worker）、分配客人、
+窗口倒了自動補一個。
+
+先分清兩種「窗口的工作方式」（這就是 WSGI vs ASGI）:
+
+- **WSGI 窗口（同步）**:一次服務一位客人**到底**,中途等後端（查資料庫）就乾等。
+  Flask/Django 傳統模式用它,伺服器是 **gunicorn**。
+- **ASGI 窗口（非同步）**:窗口是[單人服務生](../09-concurrency/README.md)——
+  等 I/O 時轉身服務別人,一個窗口同時照看幾百個請求。FastAPI 用它,伺服器是 **uvicorn**。
+
+那為什麼常看到「gunicorn + uvicorn worker」的組合？分工是:
+**gunicorn 當領班**（管 worker 的生死:起幾個、掛了重啟、收訊號）,
+**uvicorn 當窗口本身**（真正說 ASGI 協定的人）。
+一句話:`gunicorn -k uvicorn.workers.UvicornWorker -w 4` ＝「領班開 4 個非同步窗口」。
+
+worker 數怎麼抓？經驗起點 `CPU 核心數 × 2 + 1`（同步）;非同步窗口本身能扛大量並發,
+通常每核 1 個就夠。這章講完整的參數、超時、以及在容器裡跑的注意事項
+（訊號轉發,銜接[優雅關閉](07-graceful-shutdown.md)）。
+
 ## Why（為什麼）
 
 FastAPI/Flask 開發時你可能跑 `uvicorn app:app --reload` 或 `flask run`——這些是**開發伺服器**：單行程、功能陽春、效能與穩定性都不為正式環境設計。直接拿去上線會出事：

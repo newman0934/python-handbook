@@ -2,6 +2,33 @@
 
 > 你的映像檔裡有 gcc 編譯器、build 工具、開發標頭檔——但正式環境只需要跑應用，這些全是肥肉與攻擊面。**多階段建置（multi-stage build）** 讓你「用一個階段編譯、只把成品搬進最終映像」，做出又小又安全的映像。這章講它的原理與 Python 的實務寫法。
 
+## 💡 白話導讀（建議先讀）
+
+蓋房子需要**鷹架**,但交屋時不會連鷹架一起交給住戶。
+
+建 Python 映像檔也一樣:安裝依賴時可能需要 gcc、make、`-dev` 標頭檔（**建置期依賴**＝鷹架）,
+但應用跑起來只需要 Python 直譯器和裝好的套件（**執行期依賴**＝房子本身）。
+單階段建置＝連鷹架一起交屋:映像肥好幾百 MB,還多帶一堆可被攻擊的工具
+（駭客進來看到現成的編譯器,開心得很）。
+
+**多階段建置（multi-stage build）** 就是「蓋完拆鷹架」:
+
+```dockerfile
+FROM python:3.12 AS builder      # 工地:有全套工具,盡情編譯安裝
+RUN pip install --prefix=/install -r requirements.txt
+
+FROM python:3.12-slim            # 乾淨新家:苗條的基底
+COPY --from=builder /install /usr/local   # 只把「成品」搬進來
+COPY src/ ./src/
+```
+
+一個 Dockerfile、多個 `FROM`,每個 `FROM` 開一個新階段;
+最終映像**只含最後一個階段**——前面工地裡的 gcc、快取、中間檔全部不帶走。
+常見效果:映像從 1GB 縮到 200MB,攻擊面大減,拉取與部署更快。
+
+這章給出 Python 專案可直接抄的多階段模板（含 uv/pip 兩種流派）與常見坑
+（忘了搬 `.so` 的執行期函式庫、階段間 COPY 路徑錯）。
+
 ## Why（為什麼）
 
 很多 Python 套件（`psycopg2`、`numpy`、`cryptography`…）安裝時要**編譯 C 擴充**，需要 gcc、make、開發標頭檔（`-dev` 套件）。於是你的 Dockerfile 裝了一堆 build 工具：
