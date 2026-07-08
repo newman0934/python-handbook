@@ -2,6 +2,32 @@
 
 > [SQL](02-sql-aggregation.md) 適合從資料庫撈數與初步聚合,但撈回本機後、要做**更靈活的整理與探索**時,[pandas](../17-data-science/README.md) 是分析師的主力。pandas 的 `groupby` 是 SQL `GROUP BY` 的對應,但更靈活——一次多重聚合、自訂函式、`transform` 保留原表(對應 [window](04-sql-window-functions.md))。這章講 pandas 分組聚合,並對照 SQL 幫你遷移直覺。
 
+## 💡 白話導讀(建議先讀)
+
+SQL 在資料庫端把數撈回來了,接下來的**靈活加工**輪到 pandas。
+`groupby` 的心智模型和 [SQL GROUP BY](02-sql-aggregation.md)、
+[Part 17 的發票分堆](../17-data-science/04-dataframe-operations.md)完全同源
+——**split-apply-combine**——但 pandas 版多了幾把 SQL 沒有的好刀:
+
+- **`agg`(聚合)＝壓縮**:每組壓成一列,對應 GROUP BY。
+  一次多個統計:`df.groupby("region")["amount"].agg(["sum", "mean", "count"])`。
+- **`transform`(轉換)＝不壓縮**:每列旁邊附上「所屬組的統計」,
+  **列數不變**——認出來了嗎?這就是 [window function](04-sql-window-functions.md) 的
+  pandas 版!最經典用法:「每筆訂單佔該區總額的比例」:
+
+```python
+df["pct"] = df["amount"] / df.groupby("region")["amount"].transform("sum")
+```
+
+- **`filter`(過濾)＝按組踢人**:整組不符合條件就整組刪(「只留總額破百萬的區」,
+  對應 HAVING)。
+
+**選錯 agg/transform 是新手頭號 bug**:要「每組一個數」用 agg;
+要「每列旁邊附組資訊」用 transform。搞混的症狀是 shape 對不上或 NaN 滿天飛。
+
+這章還有具名聚合(結果欄直接命名)、多鍵分組的 MultiIndex 處理、
+以及「groupby + 排序 + head」做**每組 Top N**(又是那道面試菜,pandas 版)。
+
 ## Why(為什麼)
 
 已經有 [SQL 聚合](02-sql-aggregation.md)了,為什麼還要 pandas groupby?

@@ -2,6 +2,31 @@
 
 > SQL 是資料分析師的**第一語言**。絕大多數分析的起點是「從資料庫撈數 + 聚合」——每個區域賣多少、每個月成長多少、每個客群平均消費多少。這一切的核心是 **GROUP BY + 聚合函式**。這章講分析師最常用的 SQL:聚合、分組、過濾分組(HAVING),用 stdlib `sqlite3` 實際跑。
 
+## 💡 白話導讀(建議先讀)
+
+還記得 [pandas 章](../17-data-science/04-dataframe-operations.md)的「發票分堆」嗎?
+把發票**按城市分堆、每堆各算總額、貼回總表**——SQL 的 `GROUP BY` 做的是一模一樣的事,
+而且它才是這招的祖師爺:
+
+```sql
+SELECT city, SUM(amount) FROM orders GROUP BY city;
+```
+
+`GROUP BY city` ＝分堆;`SUM(amount)` ＝每堆的計算器(還有 COUNT/AVG/MIN/MAX)。
+沒有 GROUP BY 時聚合作用於整張表(得一列);有了它,**每堆得一列**。
+
+新手最容易撞的兩面牆,先立好:
+
+1. **SELECT 裡只能放「分堆的鍵」或「聚合結果」**——
+   `SELECT city, customer, SUM(...)  GROUP BY city` 會報錯或亂答:
+   一堆裡有幾百個 customer,一列塞不下。想想「每堆一列」就懂了。
+2. **WHERE vs HAVING**:WHERE 在**分堆前**過濾個別發票(「只看今年的」),
+   HAVING 在**分堆後**過濾整堆(「只看總額破百萬的城市」)。
+   聚合條件放 WHERE 會報錯——分堆前根本還沒有總額這個數字。
+
+這章從單表聚合練到多鍵分組、條件聚合(`CASE WHEN` 搭 SUM 做樞紐的前身)——
+分析師日常八成的查詢,就是這一章的排列組合。
+
 ## Why(為什麼)
 
 為什麼分析師要用 SQL,而不是把資料全撈出來用 [pandas](06-pandas-groupby.md) 算?

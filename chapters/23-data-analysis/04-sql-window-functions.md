@@ -2,6 +2,35 @@
 
 > [GROUP BY](02-sql-aggregation.md) 把多列**壓成一列**——但很多分析問題要「保留每一列,同時看到它在群體中的位置」:這筆訂單在該客戶中排第幾?這個月比上個月成長多少?累計到目前多少?這些都要 **window functions(視窗函式)**。它是**進階 SQL 的分水嶺**,也是分析師面試的高頻考點。這章講透。
 
+## 💡 白話導讀(建議先讀)
+
+`GROUP BY` 把每班**壓成一列**班平均——但很多問題需要「**保留每個學生,
+同時看到群體資訊**」:每個學生旁邊附註班平均、他在班上的排名、和上次段考的差。
+壓縮掉個體就答不了。
+
+**window function(視窗函式)** 就是「**不壓縮的 GROUP BY**」:
+每一列保留,旁邊**多一欄群體視角的計算**:
+
+```sql
+SELECT name, score,
+       AVG(score) OVER (PARTITION BY class)              AS 班平均,
+       RANK()     OVER (PARTITION BY class ORDER BY score DESC) AS 班排名
+FROM students;
+```
+
+`OVER (...)` 裡三個零件,拆開就不可怕:
+
+- **PARTITION BY class**:視野限定在自己班(像 GROUP BY,但不壓列)。
+- **ORDER BY score**:班內怎麼排(排名、累計、前後比較都需要順序)。
+- **ROWS BETWEEN ...**:視窗框到哪(算「近 3 個月移動平均」用)。
+
+高頻應用背三個就夠用一陣子:
+**排名**(`RANK`/`ROW_NUMBER`——「每區銷售 Top 3」的標準解,搭 CTE 過濾)、
+**跟上期比**(`LAG(revenue) OVER (ORDER BY month)`——月增率一行搞定)、
+**累計/移動平均**(`SUM(...) OVER (ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)`)。
+
+這是分析面試的頭號 SQL 考點——「每組取前 N」幾乎必考,這章把它練到反射。
+
 ## Why(為什麼)
 
 有一整類分析問題,`GROUP BY` 做不到或很彆扭:
