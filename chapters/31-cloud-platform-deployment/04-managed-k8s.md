@@ -2,6 +2,31 @@
 
 > [Part 19 教你 Kubernetes 的概念](../19-cloud-native/README.md)(Pod、Deployment、Service、YAML)——那是**廠商中立**的。但**自己架一套 K8s 控制平面(control plane)極其痛苦**:etcd、API server、scheduler、憑證輪替、升級……幾乎沒人自己做。實務上你用**託管 K8s**——AWS 的 **EKS** 或 GCP 的 **GKE**——雲幫你顧控制平面,你只管工作負載。這章講清楚**何時才該用 K8s**(而非上一章更簡單的 Cloud Run/Fargate)、託管 K8s 的分工、EKS vs GKE 差異,並用 Python 實作副本數/資源排程的估算。
 
+## 💡 白話導讀(建議先讀)
+
+[Part 19 教過 Kubernetes 的概念](../19-cloud-native/06-kubernetes.md)(Pod、Deployment、Service)。
+但**自己從零架一套 K8s 叢集**是惡夢——光是維護控制平面(那些讓叢集運作的大腦元件)
+就能耗掉一個團隊。**託管 K8s**(AWS 的 **EKS**、GCP 的 **GKE**)就是來解決這件事的。
+
+核心分工一句話:**雲幫你顧「大腦」,你只管「工人」**。
+
+K8s 分兩塊:
+
+- **控制平面(control plane)＝叢集的大腦**:API server、排程器、controller……
+  這些又難又關鍵,一掛全掛。**託管 K8s 幫你顧好這塊,你完全不用碰**(還幫你自動更新、備援)。
+- **資料平面(節點)＝幹活的工人**:實際跑你容器的機器。這塊還是你管
+  (但雲也能幫你自動擴縮節點)。
+
+那麼問題來了:**既然有 [Cloud Run](03-containers-ecs-cloudrun.md) 這麼省事,何必用 K8s?**
+這章會誠實回答這個選型題。K8s 值得的時機是:
+**你有很多個互相溝通的服務要編排**、需要**細緻的網路/資源控制**、
+要跨雲一致性、或已有 K8s 生態(Helm、Istio、operator)。
+如果只是**單一 web 服務**,Cloud Run 幾乎總是更好——**別為了履歷用 K8s**。
+
+這章帶你把 task-api 部署到 GKE/EKS(對照 Cloud Run 版),
+看清託管 K8s 幫你省了什麼、又留了哪些複雜度給你——
+讓你有能力做出「該不該上 K8s」這個昂貴的架構決定。
+
 ## Why(為什麼)
 
 上一章的 Cloud Run/Fargate 已經能跑容器、自動擴縮了,**為什麼還需要 K8s?** 因為當系統長大,會出現無伺服器容器不好處理的需求:

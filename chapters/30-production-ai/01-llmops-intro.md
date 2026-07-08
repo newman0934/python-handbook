@@ -2,6 +2,31 @@
 
 > 做一個「跑得動」的 LLM demo 很快——一個 [prompt](../29-ai-applications/README.md)、一次 [API 呼叫](../28-llm-genai/02-calling-llm-api.md)、一個 [RAG 雛形](../29-ai-applications/01-rag-pipeline.md),下午就能 demo。但把它變成**幾千個真實使用者天天用、不出包、不燒錢、不被攻擊**的生產服務,是完全不同的工程。這中間的鴻溝,就是 **LLMOps** 要填的。這章綜覽這道鴻溝與這一 Part 的地圖。
 
+## 💡 白話導讀(建議先讀)
+
+做一個「跑得動」的 LLM demo,一個週末就成:一個 prompt、幾行 API 呼叫。
+但「demo 能動」和「產品能上線營運」之間,隔著一條巨大的鴻溝——
+就像「會煮一頓飯」和「開一家天天穩定出餐的餐廳」是兩回事。
+**LLMOps** 就是跨越這條鴻溝的整套工程實踐,這個 Part 是全書 AI 線的**落地終章**。
+
+為什麼 LLM 上線特別難?因為它有一堆傳統軟體沒有的麻煩:
+
+- **不確定性**:同個輸入每次答不一樣——沒法用「輸入 X 斷言等於 Y」的方式測。
+- **依賴外部 API**:會逾時、會限流(429)、會漲價、會改版。
+- **按 token 燒錢**:每個請求都是成本,失控的迴圈能燒出天價帳單。
+- **會被攻擊**:[prompt injection](05-prompt-injection-security.md)、洩漏系統提示。
+- **品質會漂移**:改一個字的 prompt,可能悄悄弄壞十個你沒測到的場景。
+
+這個 Part 就是逐一馴服這些問題的支柱,每章對應一根:
+[部署服務](02-serving-llm-apps.md)、[可靠性](03-reliability.md)(重試/降級/限流)、
+[可觀測性](04-observability.md)、[安全](05-prompt-injection-security.md)與
+[護欄](06-guardrails.md)、[把評估變 CI 閘門](07-eval-in-cicd.md)、
+[A/B 與版本](08-ab-testing-versioning.md)、[資料飛輪](09-data-flywheel.md)。
+
+它其實是把前面學過的[雲原生](../19-cloud-native/README.md)、
+[資安](../20-security-system-design/README.md)、[分散式](../22-distributed-systems/README.md)
+那套工程紀律,**套用到 LLM 這個新的、不聽話的元件上**。這章先鳥瞰全局。
+
 ## Why(為什麼)
 
 「demo 能跑」到「生產可靠」之間,橫著一堆 demo 階段看不到的問題:

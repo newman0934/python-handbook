@@ -2,6 +2,39 @@
 
 > [Part 19 雲原生講過 CI/CD 的原理](../19-cloud-native/README.md)(test → build → deploy 的自動化管線)。這章把它**接到雲**:GitHub Actions 如何**build 映像、推 registry、部署到 Cloud Run/ECS**,而最關鍵的一題是——**CI 怎麼安全地取得雲的部署權限?** 舊做法是把長期 access key 存進 CI secret,但那是**外洩重災區**。現代做法是 **OIDC 聯合身分(federation)免金鑰**:CI 用短時效 token 換取雲的臨時憑證,**完全不存任何長期金鑰**。這章講清楚部署管線、OIDC 的運作與為何它更安全,並用 Python 實作一個 OIDC 信任驗證器。
 
+## 💡 白話導讀(建議先讀)
+
+[Part 19 講過 CI/CD 的原理](../19-cloud-native/05-ci-cd.md)(test → build → deploy 流水線)。
+這章把它**真正接上雲**:讓每次 `git push` 自動測試、建映像、部署到 Cloud Run/ECS——
+從此上線是「推一個 commit」的事,而不是某人半夜手動操作的驚險儀式。
+
+典型的雲部署管線(以 GitHub Actions 為例):
+
+```text
+git push → CI 觸發
+  ├─ test:  pytest / ruff / mypy(不過就停,壞碼進不了)
+  ├─ build: docker build
+  ├─ auth:  【換取雲的臨時憑證】← 本章的靈魂
+  ├─ push:  推映像到 ECR / Artifact Registry
+  └─ deploy: 部署到 Cloud Run / ECS
+```
+
+這章的**核心重點**,是那個 auth 步驟背後的觀念——**OIDC 免金鑰部署**,
+它是 [ch02「用角色別用金鑰」](02-iam.md)的最漂亮實踐:
+
+**老做法(危險)**:在雲上產生一把永久 access key,塞進 GitHub secrets——
+這把萬能鑰匙一旦外洩(GitHub 被駭、設定失誤),攻擊者就能長驅直入你的雲帳號。
+而且沒人記得輪替它。
+
+**新做法(OIDC 聯合身分)**:GitHub Actions 和雲**建立信任關係**,
+每次部署時,GitHub 出示一張「我真的是你信任的那個 repo 的 workflow」的**臨時身分證**,
+雲驗證後發一組**幾分鐘就過期的臨時憑證**——
+**全程沒有任何長期金鑰存在**,自然沒有金鑰可洩漏。
+
+這章帶你寫出完整的 GitHub Actions 部署 workflow、設定 OIDC 信任、
+配合 [Terraform](08-iac-terraform.md) 做基礎設施的 CI/CD,
+並加上部署的安全網:**冒煙測試、自動回滾**。這是讓團隊能安心、頻繁上線的關鍵基建。
+
 ## Why(為什麼)
 
 把應用自動部署上雲,最危險的一環是**「CI 憑什麼能動你的雲?」**:

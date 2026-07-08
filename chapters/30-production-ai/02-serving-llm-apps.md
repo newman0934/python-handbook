@@ -2,6 +2,30 @@
 
 > 你的 [RAG](../29-ai-applications/01-rag-pipeline.md) 或 [agent](../29-ai-applications/05-agents-react.md) 邏輯要能被前端、App、其他服務呼叫,就得包成 **API 服務**。但 LLM 服務有個傳統 API 沒有的關鍵需求:**串流(streaming)**——回應要一個字一個字吐出來,而不是讓使用者盯著轉圈等十秒。這章講怎麼用 [FastAPI](../14-web/README.md) 把 LLM 應用做成生產級 API,重點在串流與非同步。
 
+## 💡 白話導讀(建議先讀)
+
+你的 [RAG](../29-ai-applications/01-rag-pipeline.md) 或 [agent](../29-ai-applications/05-agents-react.md)
+在筆記本裡跑得好好的,但要讓**真實使用者**用,得包成一個**線上 API 服務**。
+這章講怎麼把 LLM 邏輯,變成一個對得起「上線」二字的服務。
+
+第一個非做不可的,是**串流(streaming)**——而且對 LLM 尤其關鍵。
+LLM [一個 token 一個 token 生成](../28-llm-genai/01-llm-fundamentals.md),
+一段長回應要好幾秒。不串流,使用者**盯著空白畫面乾等 5 秒**;
+串流則是文字**邊生成邊冒出來**,使用者零點幾秒就看到第一個字(**TTFT,首字時間**)——
+同樣的總時間,體感天差地遠。技術上用 SSE,配上你早學過的
+[async](../28-llm-genai/05-streaming-async.md)(LLM 呼叫是極致 I/O-bound,async 主場)。
+
+這章把 LLM 服務的工程細節補齊:
+
+- **FastAPI 包裝**(呼應 [Part 14](../14-web/README.md)):串流端點怎麼寫、
+  怎麼把 tool use 的多步循環也串流出去。
+- **並發與資源**:一台機器能同時扛多少請求?async 讓你用少少的行程扛大量等待中的請求。
+- **超時與取消**:使用者關掉頁面,要能中止背後的生成(別白燒 token)。
+- **水平擴展與[容器化](../19-cloud-native/01-docker.md)**:無狀態設計才能多開幾台分攤流量。
+
+一句話:這章把「會呼叫 API」升級成「營運一個 LLM 服務」——
+是整個生產化的起點。
+
 ## Why(為什麼)
 
 把 LLM 邏輯 API 化,除了「讓別人能呼叫」的一般理由,還有 LLM 特有的考量:
