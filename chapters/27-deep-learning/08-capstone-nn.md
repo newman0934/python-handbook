@@ -2,6 +2,29 @@
 
 > 這是 Part 27、也是整條 **資料 / AI 學習線** 深度學習部分的收尾整合。我們把本 Part 的知識——[神經元與前向傳播](01-neural-network-basics.md)、[反向傳播與梯度下降](02-backpropagation.md)、[多層架構](03-nn-from-scratch.md)、[ReLU 與初始化](07-training-techniques.md)、[mini-batch](02-backpropagation.md)——組裝成一個**通用的、多層的神經網路類別**,用純 numpy 從零訓練它解決一個**真實的非線性分類問題**(make_moons)。做完這章,你就親手實現了一個完整、可用的深度學習框架的核心。
 
+## 💡 白話導讀(建議先讀)
+
+這是 Part 27、也是整條**資料/AI 學習線**深度學習部分的**畢業專題**。
+我們把前七章的每一塊——[神經元與前向傳播](01-neural-network-basics.md)、
+[反向傳播](02-backpropagation.md)、[各種訓練技巧](07-training-techniques.md)——
+組裝成一個**通用的、任意層數的神經網路類別**,只用 numpy 從零打造。
+
+為什麼收尾要「再手刻一次」,而不是用 PyTorch?
+因為這是檢驗你**真的懂了**的終極測試:
+能把散落的零件(初始化、前向、損失、反向、更新、dropout)
+親手組成一個**能指定架構(如 `[2,16,8,1]`)、自己跑完整訓練**的類別——
+代表你掌握的是**原理**,不只是會呼叫 API。
+
+這個 capstone 網路會包含:
+He 初始化、ReLU 隱藏層 + sigmoid 輸出、快取中間值供反向傳播、
+通用地處理任意層數的反向傳播迴圈、以及一個乾淨的 `fit`/`predict` 介面
+(呼應 [sklearn 的一致設計](../25-machine-learning/01-ml-intro.md))。
+
+走完這章,你對神經網路的理解就從「聽說過」變成「造得出」。
+往後 [Part 28 大型語言模型](../28-llm-genai/README.md)進入 GPT、
+RAG、微調的世界——那裡你會站在巨人(框架與預訓練模型)的肩膀上,
+但正因為親手造過輪子,你才真正看得懂巨人腳下的機械原理。
+
 ## Why(為什麼)
 
 [ch03 的 XOR 網路](03-nn-from-scratch.md)是寫死的兩層;真實框架([PyTorch](04-frameworks.md))能建**任意層數**的網路。這章把手刻提升到「通用網路類別」的層次,整合本 Part 所有技巧:
