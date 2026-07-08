@@ -170,8 +170,9 @@ def demo() -> None:
         ordered[k] = 1
     print(f"順序: {list(ordered)}")               # ['z', 'a', 'm']
 
-    # 5. 合併
-    print(f"合併: {{'x': 1} | {'x': 9, 'y': 2}}")  # {'x': 9, 'y': 2}
+    # 5. 合併（dict union，3.9+）
+    merged = {"x": 1} | {"x": 9, "y": 2}
+    print(f"合併: {merged}")                       # {'x': 9, 'y': 2}
 
 
 if __name__ == "__main__":

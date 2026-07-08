@@ -1,6 +1,9 @@
 # Python Handbook — 章節總覽
 
-> 核心 **22 個 Part** 由語言基礎往上逐步建立工程能力;**資料 / AI 學習線**(Part 23–30,對應 Data Analyst / ML Engineer / AI Engineer 職位)與 **Part 31 雲端平台部署(AWS + GCP)** 皆已完成,全書共 **31 個 Part**。
+> 全書共 **31 個 Part**,由語言基礎往上逐步建立完整工程能力,分兩條主線:
+>
+> - **Python 工程主線(Part 1–22)**:語言核心 → 型別/錯誤處理 → 迭代/函數式 → 並發 → CPython 內部 → 標準庫/測試/打包 → Web/資料庫 → 架構 → 微服務/分散式。
+> - **資料 / AI / 部署主線(Part 23–31)**:資料分析 → 統計與商業分析 → 機器學習 → 深度學習 → LLM/RAG/Agent → 生產化 AI(LLMOps)→ 雲端平台部署,對應 Data Analyst / ML Engineer / AI Engineer 職位。
 
 | # | Part | 章數 | 主題 |
 |---|------|------|------|
@@ -27,7 +30,7 @@
 | 21 | [微服務 Microservices](21-microservices/) | 8 | gRPC、服務發現、API gateway、限流與熔斷——Python 的微服務實務。 |
 | 22 | [分散式系統 Distributed Systems](22-distributed-systems/) | 8 | CAP、一致性、分散式鎖、訊息佇列、冪等、Saga 與分散式追蹤。 |
 
-### 資料 / AI 學習線(進行中)
+### 資料 / AI / 部署主線(Part 23–31)
 
 | # | Part | 章數 | 主題 |
 |---|------|------|------|

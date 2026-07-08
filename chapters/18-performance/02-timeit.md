@@ -79,10 +79,12 @@ python -m timeit -s "words=['x']*100" "''.join(words)"
 
 **Jupyter/IPython 魔術指令**（見 [Jupyter](../17-data-science/07-jupyter.md)）：
 
-```python
+```text
 %timeit "".join(words)        # 單行，自動決定 number/repeat
-%%timeit                       # 整個 cell
+%%timeit                       # 整個 cell（放在 cell 第一行）
 ```
+
+> 上面是 IPython/Jupyter 的**魔術指令**（magic），不是純 Python 語法，不能直接用 `python` 執行。
 
 **重要細節**：`timeit` 預設**關閉 GC**（垃圾回收，見 [CPython GC](../10-cpython-internals/README.md)）以減少干擾——所以它測的是「沒有 GC 打斷」的成本。要含 GC 影響需在 setup 加 `gc.enable()`。
 
