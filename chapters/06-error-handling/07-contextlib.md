@@ -29,6 +29,18 @@ def open_db():
 
 這章還附幾件 contextlib 的現成小工具（`suppress`、`closing`、`ExitStack`），順手好用。
 
+## 🎯 什麼時候會用到
+
+`contextlib` 是「寫 `with` 的省力工具箱」,遇到對應情境就有現成的:
+
+- **`@contextmanager`**:要寫自己的 context manager,但不想寫整個類別時——
+  用一個**只含單一 `yield`** 的生成器函式即可(`yield` 前是 setup、之後是 teardown)。**自訂 context manager 的首選寫法**。
+- **`suppress(SomeError)`**:想忽略特定例外時,取代難看的 `try/except: pass`——`with suppress(FileNotFoundError): ...`。
+- **`ExitStack`**:要**動態管理數量不定的資源**(一次開一批檔案)、或**有條件地**進入 context 時。
+- **`closing(obj)`**:替「有 `.close()` 但沒實作 context manager」的物件,補上 `with` 能力。
+
+一句話:**要自己寫 `with` 之前,先看 contextlib 有沒有現成的**——多半有,能省下一整個類別。
+
 ## Why（為什麼）
 
 上一章的 context manager 要寫一整個類別、兩個 dunder。對簡單的「進入做 A、離開做 B」場景太重。`contextlib` 模組提供工具讓 context manager 更好寫：`@contextmanager` 用 generator 一個函式搞定、`suppress` 優雅忽略特定例外、`ExitStack` 動態管理不定數量的資源。這些是日常寫資源管理與清理邏輯的利器。

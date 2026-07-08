@@ -27,6 +27,19 @@ def fib(n): ...
 
 其他貨架上還有:`reduce`（[上章](02-higher-order-functions.md)講過）、`partial`（[下章](06-partial.md)專講）、`total_ordering`（寫一個比較方法送你全套）、`cached_property`。這章逐一上手。
 
+## 🎯 什麼時候會用到
+
+`functools` 是「處理函式的函式」工具箱,對應情境挑對工具:
+
+- **`@wraps`**:寫**任何**裝飾器都要加——保住被包函式的名字與 docstring(不加,`help()` 與除錯全亂)。
+- **`lru_cache` / `cache`**:純函式、同輸入同輸出、且會用相同參數重複呼叫時——一行加速(見 [快取](../18-performance/04-caching.md))。
+- **`partial`**:想「先固定函式的部分參數、產生一個新函式」時——常用於回呼、湊 `key=`、簡化重複呼叫。
+- **`cached_property`**:實例上「算一次就固定」的昂貴屬性。
+- **`singledispatch`**:想依「第一個參數的型別」分派到不同實作(函式版的多型)。
+- **`reduce`**:序列「兩兩累積成一個值」(多數情況 `sum`/`math.prod`/迴圈更清楚,reduce 留給非標準累積)。
+
+一句話:**寫裝飾器、要快取、要湊參數時,第一個想到 functools。**
+
 ## Why（為什麼）
 
 `functools` 模組是「處理函式的函式」集合。其中 `wraps` 是寫裝飾器的必備（沒它裝飾器會遺失原函式資訊）、`lru_cache` 能一行讓昂貴函式加上快取（面試常考）、`total_ordering` 省去手寫一堆比較方法、`singledispatch` 實現函式的「依型別分派」。會用這些，你的程式更短、更快、更專業。這章聚焦 `wraps` 與 `lru_cache` 等最實用的成員（`partial` 見 [下一章](06-partial.md)、`reduce` 見 [高階函式](02-higher-order-functions.md)）。
