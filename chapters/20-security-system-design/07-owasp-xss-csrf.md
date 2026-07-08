@@ -2,6 +2,29 @@
 
 > **OWASP Top 10** 是 Web 安全的「最常見致命漏洞」清單，每個後端工程師都該熟。這章聚焦三個經典的注入/偽造類漏洞——**XSS（跨站腳本）、CSRF（跨站請求偽造）、SSRF（伺服器端請求偽造）**——它們的原理、危害與防禦。
 
+## 💡 白話導讀（建議先讀）
+
+OWASP Top 10 是 Web 界的「十大死因排行榜」。這章聚焦兩個最經典、
+機制常被搞混的:XSS 和 CSRF。用兩個場景分清楚:
+
+**XSS（跨站腳本）＝在留言板貼一張「會自己動的紙條」。**
+你把使用者留言**未經逃逸**直接塞進 HTML,有人留言 `<script>偷cookie()</script>`,
+這張紙條就在**每個看到留言的人**的瀏覽器裡執行——偷 session、改頁面、釣魚。
+受害者是**其他讀者**,你的網站成了兇器。
+解法:**輸出時逃逸**（模板引擎自動做,別用 `|safe`/`f-string` 拼 HTML）、
+CSP 標頭當第二道網、cookie 設 `HttpOnly`（就算被 XSS 也偷不到）。
+
+**CSRF（跨站請求偽造）＝偽造你的簽名寄信給銀行。**
+你登入著銀行網站（瀏覽器存著 cookie）,逛到惡意網站,
+它偷偷用你的名義發一個 `POST /transfer`——**瀏覽器自動帶上你的 cookie**,
+銀行以為是你本人操作。受害者是**你自己**,利用的是「瀏覽器自動帶 cookie」這個特性。
+解法:CSRF token（表單裡藏一個攻擊者拿不到的一次性暗號）、
+cookie 設 `SameSite=Lax/Strict`（跨站請求不帶 cookie,現代瀏覽器的主力防線）。
+
+一句話分辨:**XSS 是把程式碼塞進你的網站害別人;
+CSRF 是借你的身分對網站下指令**。純 token 認證的 API（不用 cookie）天然免疫 CSRF,
+但 XSS 反而更致命（token 存 localStorage 會被偷)——這章連這些取捨一起講透。
+
 ## Why（為什麼）
 
 **OWASP（Open Web Application Security Project）Top 10** 是業界公認的 Web 應用最嚴重風險清單（每幾年更新），涵蓋：broken access control（見 [授權](03-authn-authz.md)）、injection（見 [注入](02-injection.md)）、加密失效、安全設定錯誤、脆弱組件（見 [供應鏈](06-supply-chain.md)）、SSRF 等。它是資安面試與實務的共同語言——「你知道 OWASP Top 10 嗎」幾乎是後端資安的入門考題。
