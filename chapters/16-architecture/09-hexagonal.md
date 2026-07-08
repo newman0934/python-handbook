@@ -2,6 +2,27 @@
 
 > Hexagonal 架構把應用畫成一個六角形：核心在中間，外界（Web、DB、佇列、測試）透過「ports（介面）」與「adapters（實作）」接入。核心不知道外界是什麼，因此任何外界都能插拔、替換、測試。這是 Clean Architecture 的一種具體形態。
 
+## 💡 白話導讀（建議先讀）
+
+想像你的業務核心是一台**主機**，機殼四周全是**標準插孔**——
+HDMI、USB、網路孔。任何合規格的裝置都能插上：螢幕、鍵盤、印表機。
+主機不在乎插的是哪牌螢幕；規格對了就能用。
+
+Hexagonal（六角形）架構就這一句話：
+
+- **主機**＝業務核心（純 Python，不 import 任何框架）。
+- **插孔（Port）**＝核心定義的介面：「我需要一個能存訂單的東西」「我提供下單這個服務」。
+- **插頭（Adapter）**＝介面的具體實作：FastAPI 路由、SQL repository、CLI、測試用的假物件。
+
+插孔分兩側：**左側（driving）是外界呼叫核心**——Web、CLI 都只是「觸發用例的不同插頭」；
+**右側（driven）是核心呼叫外界**——資料庫、email 都是「被核心使喚的插頭」。
+
+聽起來眼熟？沒錯——它和 [Clean Architecture](02-clean-architecture.md) 是**同一個思想的不同畫法**：
+依賴指向核心、細節可替換。六角形的貢獻是把「可插拔」畫得更直白：
+**換資料庫＝換插頭；跑測試＝插上測試插頭**，主機永遠不用拆開。
+
+這章用一個完整的 Python 範例把 port/adapter 實際組出來。
+
 ## Why（為什麼）
 
 應用的核心業務邏輯，總得和外界打交道：接收 Web 請求、讀寫資料庫、發送訊息、呼叫外部 API。問題是——**如果核心直接依賴這些外部技術（FastAPI、SQLAlchemy、Redis），核心就被綁死**，換技術要動核心、測試要起真實服務。**Hexagonal Architecture（六角形架構，又稱 Ports & Adapters，Alistair Cockburn 提出）** 用一個生動的比喻解決：**把應用畫成六角形，核心在中央，所有與外界的互動都透過「port（埠/介面）」定義，由「adapter（轉接器）」實作**。核心只認識 ports（抽象），不認識 adapters（具體技術）。於是**任何外界都能像插頭一樣插拔**：正式用 PostgreSQL adapter、測試用記憶體 adapter、Web 用 FastAPI adapter、也能加 CLI adapter——核心一行不改。它和 [Clean Architecture](02-clean-architecture.md) 是同一思想（依賴指向核心）的具體形態，常與 [DDD](08-ddd.md) 搭配。

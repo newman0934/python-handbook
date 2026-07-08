@@ -2,6 +2,31 @@
 
 > 業務邏輯裡到處是 SQL，就等於把業務綁死在資料庫上。Repository 模式把「資料存取」藏在一個像集合（collection）的介面後面——業務層只說「給我 id=1 的使用者」，不管背後是 SQL、NoSQL 還是記憶體。這是分層與 Clean Architecture 落地的關鍵拼圖。
 
+## 💡 白話導讀（建議先讀）
+
+業務程式碼裡到處散落 SQL，就像廚師自己跑倉庫、記得每個架位——
+倉庫改個擺法（換資料庫、改 schema），全部廚師重新受訓。
+
+**Repository 模式**請了一位**倉管員**：業務只說「給我 42 號用戶」「把這張訂單存起來」，
+至於去哪個架上拿、用 SQL 還是 Mongo，是倉管員的事。
+
+它的手感刻意設計得像你最熟的東西——**操作一個 Python 集合**：
+
+```python
+user = repo.get(42)          # 像 users[42]
+repo.add(new_user)           # 像 users.append(...)
+repo.find_by_email("a@b")    # 像 list comprehension 篩選
+```
+
+業務層看到的就是這幾個方法，完全不知道背後是資料庫。這帶來兩個直接好處：
+
+- **測試不用資料庫**：寫一個 `InMemoryUserRepo`（背後就是 dict）,業務邏輯測試毫秒級跑完。
+- **資料層可換**：SQLite 換 PostgreSQL、ORM 換裸 SQL,只改 repository 實作，業務不動。
+
+它正是前兩章的具體落地：[Clean Architecture](02-clean-architecture.md) 說「核心定義介面、外圍實作」，
+repository 介面就是那個介面；[DI](03-dependency-injection.md) 說「依賴用傳的」，
+傳進 service 的正是 repository。三章合起來，才是完整的一套。
+
 ## Why（為什麼）
 
 如果業務邏輯裡直接寫 SQL（`SELECT * FROM users WHERE ...`），會有幾個問題：**業務層綁死特定資料庫與查詢語法**、**同樣的查詢散落各處難維護**、**測試業務邏輯得真的連 DB**、**換 DB 或 ORM 要改一堆業務碼**。**Repository 模式**是解法：**把資料存取封裝在一個「像記憶體集合」的介面後面**——業務層透過 `repo.get(id)`、`repo.add(user)` 操作，彷彿在操作一個 in-memory 的物件集合，**完全不知道背後是 SQL、MongoDB、REST API 還是 dict**。這讓業務層與資料存取解耦，是 [分層架構](01-layered-architecture.md)、[Clean Architecture](02-clean-architecture.md)、[DI](03-dependency-injection.md) 落地的關鍵拼圖，也讓測試能用記憶體假 repository（不碰 DB）。

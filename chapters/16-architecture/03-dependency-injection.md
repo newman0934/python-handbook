@@ -2,6 +2,30 @@
 
 > 「一個物件需要另一個物件」時，是自己去建立它，還是由外部給它？依賴注入選後者——把依賴當參數傳入。這個小改變帶來鬆耦合、可測試、可替換的巨大回報，是幾乎所有現代框架的骨幹。
 
+## 💡 白話導讀（建議先讀）
+
+一個廚師需要雞肉。兩種做法：
+
+1. **自己養雞**：廚師在後院養雞、殺雞、處理——換供應商？重蓋後院。
+2. **供應商送上門**：廚師只管「收到雞肉、做菜」，雞從哪來是外面的事。
+
+程式裡的對應：一個 `OrderService` 需要資料庫連線。
+
+- **自己建**：在 `__init__` 裡自己 `create_engine(...)` ——這個 service 從此綁死這顆資料庫，
+  測試時也逃不掉（一測就真的連資料庫）。
+- **外部給**：`def __init__(self, repo: OrderRepo)` ——需要什麼，**當參數傳進來**。
+
+第二種就是**依賴注入（Dependency Injection，DI）**。聽起來高大上，本質只是「**把依賴當參數傳**」。
+
+回報卻很大：
+
+- **可測試**：測試時傳一個假的 `FakeRepo`（存在記憶體 dict 裡），不碰真資料庫。
+- **可替換**：換資料庫、換郵件服務，只改「組裝的那一處」，用的人不動。
+- **依賴看得見**：從 `__init__` 簽名一眼看出這個類別需要什麼，沒有暗藏的全域變數。
+
+「那誰負責建立這些依賴？」——在程式的**入口處**統一組裝（有人稱 composition root），
+FastAPI 的 `Depends` 就是框架幫你做這件事。下面從控制反轉（IoC）講起。
+
 ## Why（為什麼）
 
 物件常需要別的物件才能工作：`TransferService` 需要 `Repository`、`EmailSender` 需要 `SmtpClient`。**如果物件自己在內部建立依賴**（`self.repo = PostgresRepository()`），就把自己**綁死**在那個具體實作上——測試時無法換成假的（要真的連 DB）、要換實作得改原始碼、依賴關係藏在內部看不見。**依賴注入（Dependency Injection，DI）** 是個簡單但威力巨大的原則：**不要自己建立依賴，而是由外部「注入」（當參數傳入）**。這帶來鬆耦合、可測試（注入 mock）、可替換（注入不同實作）、依賴明確（看建構子就知道需要什麼）。它是 [Clean Architecture](02-clean-architecture.md)、[Repository 模式](04-repository-pattern.md)、FastAPI `Depends`（見 [Depends](../14-web/11-fastapi-depends.md)）、pytest fixture（見 [fixture](../12-testing/04-fixtures.md)）背後的共同骨幹。

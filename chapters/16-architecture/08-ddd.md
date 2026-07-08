@@ -2,6 +2,26 @@
 
 > 複雜業務系統的最大難題不是技術，而是「搞懂業務、把業務正確映射成程式」。DDD 提供一套方法與詞彙——entity、value object、aggregate、bounded context——讓程式忠實反映領域，讓工程師與領域專家說同一種語言。
 
+## 💡 白話導讀（建議先讀）
+
+複雜系統最貴的 bug，往往不是技術錯，而是**工程師理解的「訂單」和業務嘴裡的「訂單」不是同一回事**。
+DDD（Domain-Driven Design，領域驅動設計）整套方法就在對付這件事。核心就兩招：
+
+**第一招：全公司說同一種語言（Ubiquitous Language）。**
+業務說「結案」，程式裡就叫 `order.close()`，不要翻譯成 `set_status_to_4()`。
+程式碼裡的名詞動詞＝業務術語，開會時工程師和 PM 才真的在講同一件事。
+
+**第二招：承認同一個詞在不同部門意思不同（Bounded Context）。**
+「商品」對目錄部門是「名稱＋圖片＋描述」，對倉儲部門是「SKU＋數量＋儲位」。
+硬要建一個「大一統的 Product 類別」服務所有人，會變成誰都不滿意的巨獸。
+DDD 說：**劃清邊界，各自建模**——這條邊界，日後正是[微服務](../21-microservices/README.md)的切分線。
+
+邊界劃好後，才輪到戰術層的積木：**Entity**（有身分、會變的東西，如訂單）、
+**Value Object**（只看值、不可變，如「金額」「地址」）、
+**Aggregate**（一組必須一起維持一致的物件，改動只能從老大 aggregate root 進）。
+
+DDD 不是每個專案都需要——CRUD 小系統用不上；但業務一複雜，它就是那套救命的思考框架。
+
 ## Why（為什麼）
 
 技術不是複雜系統的最大挑戰——**理解業務、並把業務正確表達成程式**才是。當業務規則複雜（保險理賠、銀行交易、物流），如果程式只是一堆 CRUD 和散落各處的 if，沒人搞得懂「這段對應哪條業務規則」，改動風險極高。**領域驅動設計（Domain-Driven Design, DDD，Eric Evans 提出）** 是一套應對「複雜業務領域」的方法論：**把「領域（業務）」放在設計中心，讓程式結構忠實反映業務概念，並讓工程師與領域專家用同一套語言溝通**。它提供一組戰術工具（entity、value object、aggregate、repository、domain service）與戰略工具（bounded context、ubiquitous language），是 [Clean Architecture](02-clean-architecture.md)、[Hexagonal](09-hexagonal.md) 常搭配的思想。**注意**：DDD 是為**複雜領域**設計的，簡單 CRUD 用它是過度工程——理解「何時該用」和「用了什麼」同樣重要。
