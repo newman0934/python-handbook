@@ -70,6 +70,20 @@ args.verbose    # True    ← 有打 -v 就是 True,沒打就是 False
 
 一句定位:**只要腳本會給第二個人用,就值得上 argparse**——它把「一串生字」變成「整理好、型別正確、還附說明書」的參數。
 
+## 🎯 什麼時候會用到
+
+只要「**同一支程式要跑很多次、每次餵不同設定**」,就是 argparse 的舞台:
+
+- **自己寫的工具腳本(最常見)**:`python 批次改圖.py ./照片 --寬度 800`、備份、爬蟲——同一支腳本換不同輸入重複跑。
+- **資料處理 / ML 訓練腳本**:`python train.py --epochs 50 --lr 0.001`——把超參數做成參數,不改程式碼就能跑不同實驗。
+- **專案的維運 / 管理指令**:`python manage.py migrate --env prod`、種子資料、批次匯入。
+- **排程與 CI 工作**:cron、GitHub Actions 裡呼叫的腳本,靠參數傳日期/環境/開關。
+- **發佈給別人裝的 CLI 工具**:別人 `pip install` 後在終端機打的指令,背後常是 argparse(或更現代的 click / typer,見下方 Best Practice)。
+
+**反過來,什麼時候用不到**:只跑一次、不帶參數、設定不會變的小腳本——直接寫死或用 `input()` 問就好,別為它加 argparse。
+
+> 💡 其實你**天天在用別人寫的 argparse**:`pip install`、`git commit -m`、`docker run -p 8080:80`——這些工具解析你參數的方式,就是 argparse 這類東西在做的事。
+
 ## Why（為什麼）
 
 寫命令列工具（CLI）少不了解析引數：`myprog --verbose input.txt --count 5`。手動拆 `sys.argv` 又累又易錯（順序、型別、缺漏、`--help`）。**`argparse`** 幫你做這一切——宣告你要哪些引數，它負責解析、轉型、驗證、產生 `--help` 說明、處理錯誤。這是把腳本變成專業 CLI 工具的關鍵，也是 [os/sys](01-os-sys.md) 提到「複雜命令列別手動解析」的正解。
