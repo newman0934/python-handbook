@@ -59,7 +59,7 @@ match point:
 
 ## Specification（規範：模式的種類）
 
-```python
+```text
 match subject:
     case pattern1:
         ...
@@ -118,7 +118,7 @@ match code:
 
 要比對具名常數，必須用**帶點的名稱**（dotted name，如 `HTTPStatus.FORBIDDEN`）或直接寫字面值：
 
-```python
+```text
 from http import HTTPStatus
 
 match code:
@@ -156,7 +156,7 @@ def describe(p: Point) -> str:
 
 ### guard 與 or 模式
 
-```python
+```text
 match value:
     case int(n) if n < 0:        # 是 int 且為負
         return "負整數"

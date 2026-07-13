@@ -44,7 +44,7 @@ data = r.json()                  # 3. 解析 JSON
 
 ## Specification（規範：三者語法）
 
-```python
+```text
 # --- urllib（標準庫）---
 import urllib.request
 import json

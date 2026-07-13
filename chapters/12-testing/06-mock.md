@@ -130,7 +130,7 @@ def test_get_weather(mock_get):
 
 **這是 mock 最容易錯的地方**。`patch` 要替換的是「**被測程式 import 該名稱的位置**」，不是「該名稱定義的位置」：
 
-```python
+```text
 # mymodule.py
 from external import fetch_data     # 在這裡 import
 

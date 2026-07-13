@@ -34,7 +34,7 @@
 
 ## Specification（規範：三模組速查）
 
-```python
+```text
 # --- collections（見 Part 3）---
 from collections import Counter, defaultdict, deque, namedtuple, OrderedDict, ChainMap
 Counter(items)                  # 計數

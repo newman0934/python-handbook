@@ -139,6 +139,95 @@ Module(
 
 `a + b` 被解析成一棵 `BinOp`（二元運算）節點，左右各一個 `Name`。編譯器就是走訪這棵樹產生前面那段 bytecode 的。
 
+## Code Example（可執行的 Python 範例）
+
+把整條管線串起來，親手走一遍「原始碼 → AST → bytecode → 執行」：
+
+```python
+# how_python_runs_demo.py —— 親眼看完整管線
+from __future__ import annotations
+
+import ast
+import dis
+
+SOURCE = "result = a + b * 2"
+
+
+def show_ast(source: str) -> None:
+    """第 1 站：原始碼 → AST（語法樹）。"""
+    print("【AST】")
+    print(ast.dump(ast.parse(source), indent=2))
+
+
+def show_bytecode(source: str) -> None:
+    """第 2 站：AST → bytecode（PVM 的指令）。"""
+    code_obj = compile(source, "<demo>", "exec")
+    print("\n【Bytecode】")
+    dis.dis(code_obj)
+    print(f"常數池 co_consts: {code_obj.co_consts}")
+
+
+def run(source: str) -> dict[str, object]:
+    """第 3 站：PVM 執行 bytecode。"""
+    namespace: dict[str, object] = {"a": 3, "b": 4}
+    exec(compile(source, "<demo>", "exec"), namespace)
+    return namespace
+
+
+def demo() -> None:
+    print(f"原始碼: {SOURCE}\n")
+    show_ast(SOURCE)
+    show_bytecode(SOURCE)
+    ns = run(SOURCE)
+    print(f"\n【執行結果】a=3, b=4 → result = {ns['result']}")
+
+
+if __name__ == "__main__":
+    demo()
+```
+
+**預期輸出**（bytecode 的指令名稱與偏移量隨版本略有差異，此為 3.12）：
+
+```pycon
+$ python how_python_runs_demo.py
+原始碼: result = a + b * 2
+
+【AST】
+Module(
+  body=[
+    Assign(
+      targets=[
+        Name(id='result', ctx=Store())],
+      value=BinOp(
+        left=Name(id='a', ctx=Load()),
+        op=Add(),
+        right=BinOp(
+          left=Name(id='b', ctx=Load()),
+          op=Mult(),
+          right=Constant(value=2))))],
+  type_ignores=[])
+
+【Bytecode】
+  0           0 RESUME                   0
+
+  1           2 LOAD_NAME                0 (a)
+              4 LOAD_NAME                1 (b)
+              6 LOAD_CONST               0 (2)
+              8 BINARY_OP                5 (*)
+             12 BINARY_OP                0 (+)
+             16 STORE_NAME               2 (result)
+             18 RETURN_CONST             1 (None)
+常數池 co_consts: (2, None)
+
+【執行結果】a=3, b=4 → result = 11
+```
+
+**看懂這段輸出，你就看懂 Python 怎麼跑**：
+
+- **AST** 顯示 `b * 2` 是巢狀在 `a + ...` 裡的 `BinOp`——**運算優先序在語法樹階段就決定了**，不是執行時才判斷。
+- **Bytecode** 印證了這點：先 `LOAD_NAME b`、`LOAD_CONST 2`、`BINARY_OP *`（先算乘法），結果留在堆疊上，再和 `a` 做 `BINARY_OP +`。
+- **常數池** `(2, None)` 收著原始碼裡的字面常數——`2` 在編譯期就被提取出來了。
+
 ## Diagram（圖解：CPython 執行管線）
 
 ```mermaid

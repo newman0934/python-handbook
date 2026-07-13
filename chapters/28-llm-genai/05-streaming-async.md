@@ -67,7 +67,7 @@ with client.messages.stream(
 
 **非同步串流**(`AsyncAnthropic`,並發服務多請求):
 
-```python
+```text
 async_client = anthropic.AsyncAnthropic()
 
 async def stream_reply(prompt: str) -> None:

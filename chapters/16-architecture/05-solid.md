@@ -93,7 +93,7 @@ class Service:
 
 ### SRP 實作：拆分職責
 
-```python
+```text
 # 🔴 違反 SRP：一個類別做太多
 class UserManager:
     def create_user(self, ...): ...        # 業務

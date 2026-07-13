@@ -21,7 +21,7 @@
 
 最後預告全 Python 最惡名昭彰的陷阱——**可變預設值**：
 
-```python
+```text
 def add_item(item, items=[]):   # ← 這個 [] 是地雷！
 ```
 

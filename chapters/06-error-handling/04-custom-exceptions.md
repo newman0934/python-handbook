@@ -89,7 +89,7 @@ except OrderError:                # 兜底：接住所有訂單相關錯誤
 
 自訂例外可帶結構化資料，讓處理端能程式化地反應（而非解析錯誤訊息字串）：
 
-```python
+```text
 class ValidationError(Exception):
     def __init__(self, field: str, value: object, reason: str) -> None:
         self.field = field

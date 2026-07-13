@@ -8,7 +8,7 @@
 
 先給幾個立即提升程式碼品質的替換：
 
-```python
+```text
 for i, item in enumerate(items):      # 要索引又要元素 → enumerate（別再 range(len())）
 for name, score in zip(names, scores): # 兩條序列並排走 → zip（像拉拉鍊）
 if any(x > 10 for x in nums):          # 「有沒有任何一個…」→ any

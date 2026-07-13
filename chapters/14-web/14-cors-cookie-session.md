@@ -20,7 +20,7 @@
 前端 `app.com` 要打後端 `api.com`(跨源)——合法需求。
 **由後端**在回應標頭聲明「我允許 app.com 來訪」,瀏覽器就放行:
 
-```python
+```text
 app.add_middleware(CORSMiddleware, allow_origins=["https://app.com"], ...)
 ```
 

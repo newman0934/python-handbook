@@ -15,7 +15,7 @@
 
 櫃檯後面接哪個團隊,由你挑——**流程完全一樣**：
 
-```python
+```text
 with ThreadPoolExecutor() as ex:    # 後面是店員團隊(執行緒池) → I/O 密集
 with ProcessPoolExecutor() as ex:   # 後面是分店團隊(行程池)   → CPU 密集
 ```

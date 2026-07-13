@@ -37,6 +37,10 @@ jobs:
       - name: Mypy type check
         run: mypy .
 
+      # 章節合規：模板區塊、區塊順序、相對連結，以及所有 ```python 區塊的語法
+      - name: Chapter compliance check
+        run: python scripts/check_chapters.py
+
       # exercises/ 為練習用，預設紅燈，故不納入 CI 的通過條件
       - name: Pytest (project / examples / solutions)
         run: pytest project examples solutions

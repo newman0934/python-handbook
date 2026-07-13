@@ -11,10 +11,11 @@
 Python 3.11 的 **`TaskGroup`** 用「**旅行團**」模式解決——結構化並發：
 
 ```python
-async with asyncio.TaskGroup() as tg:      # 旅行團集合
-    tg.create_task(fetch(u1))               # 團員一
-    tg.create_task(fetch(u2))               # 團員二
-# 離開這個區塊 = 全員到齊才出發回家 —— 保證沒有失蹤人口
+async def main() -> None:
+    async with asyncio.TaskGroup() as tg:      # 旅行團集合
+        tg.create_task(fetch(u1))               # 團員一
+        tg.create_task(fetch(u2))               # 團員二
+    # 離開這個區塊 = 全員到齊才出發回家 —— 保證沒有失蹤人口
 ```
 
 旅行團的三條團規：
@@ -47,7 +48,7 @@ async with asyncio.TaskGroup() as tg:      # 旅行團集合
 
 ## Specification（規範：TaskGroup、async with/for）
 
-```python
+```text
 import asyncio
 
 # TaskGroup（3.11+）：結構化並發
@@ -157,12 +158,13 @@ async def main():
 即使 asyncio 單執行緒幾乎不需鎖，某些情況（保護「跨多個 await 的原子操作」）仍需要——asyncio 提供 async 版的同步原語：
 
 ```python
-lock = asyncio.Lock()
-async with lock:                    # async 版的鎖
-    await modify_shared_state()
+async def main() -> None:
+    lock = asyncio.Lock()
+    async with lock:                    # async 版的鎖
+        await modify_shared_state()
 
-sem = asyncio.Semaphore(10)         # 限流（見上一章）
-event = asyncio.Event()
+    sem = asyncio.Semaphore(10)         # 限流（見上一章）
+    event = asyncio.Event()
 ```
 
 注意：用 **`asyncio.Lock` 而非 `threading.Lock`**（後者會阻塞 event loop）。
@@ -209,13 +211,16 @@ async def taskgroup_error_demo() -> str:
         await asyncio.sleep(0.05)
         raise ValueError("任務失敗")
 
+    # ⚠️ 注意：except* 區塊內「不能」有 return/break/continue（SyntaxError）——
+    # 要回傳結果，先存進變數，離開 except* 後再 return。
+    result = "無錯誤"
     try:
         async with asyncio.TaskGroup() as tg:
             tg.create_task(ok())
             tg.create_task(fail())
     except* ValueError as eg:
-        return f"捕捉到 {len(eg.exceptions)} 個 ValueError"
-    return "無錯誤"
+        result = f"捕捉到 {len(eg.exceptions)} 個 ValueError"
+    return result
 
 
 async def main() -> None:

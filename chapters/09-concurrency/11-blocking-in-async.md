@@ -57,16 +57,17 @@ event loop 用 `await` 等「外包出去的工作」完成，期間繼續跑別
 import asyncio
 from concurrent.futures import ProcessPoolExecutor
 
-# to_thread（3.9+，最簡單）：把阻塞函式丟到執行緒
-result = await asyncio.to_thread(blocking_func, arg1, arg2)
+async def main() -> None:
+    # to_thread（3.9+，最簡單）：把阻塞函式丟到執行緒
+    result = await asyncio.to_thread(blocking_func, arg1, arg2)
 
-# run_in_executor（較低階，可指定池）
-loop = asyncio.get_running_loop()
-result = await loop.run_in_executor(None, blocking_func, arg)   # None = 預設執行緒池
+    # run_in_executor（較低階，可指定池）
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(None, blocking_func, arg)   # None = 預設執行緒池
 
-# CPU 密集：用行程池
-with ProcessPoolExecutor() as pool:
-    result = await loop.run_in_executor(pool, cpu_func, arg)
+    # CPU 密集：用行程池
+    with ProcessPoolExecutor() as pool:
+        result = await loop.run_in_executor(pool, cpu_func, arg)
 ```
 
 ## Implementation（to_thread、run_in_executor、CPU vs I/O）
@@ -132,12 +133,13 @@ async def main():
 `to_thread` 是「橋接同步函式庫」的權宜之計。若有 async 原生版，**優先用它**（不需執行緒開銷）：
 
 ```python
-# 權宜：用執行緒橋接同步的 requests
-data = await asyncio.to_thread(requests.get, url)
+async def main() -> None:
+    # 權宜：用執行緒橋接同步的 requests
+    data = await asyncio.to_thread(requests.get, url)
 
-# ✅ 更好：直接用 async 的 httpx/aiohttp
-async with httpx.AsyncClient() as client:
-    resp = await client.get(url)
+    # ✅ 更好：直接用 async 的 httpx/aiohttp
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url)
 ```
 
 `to_thread` 用於「沒有 async 版可用」時；能一路 async 就一路 async（見 [async/await](08-async-await.md)）。

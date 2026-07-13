@@ -10,7 +10,7 @@ asyncio 的兩個關鍵字,各一句話：
 
 一個大坑立刻要拆：**呼叫協程函式,不會執行它**——
 
-```python
+```text
 async def serve(): ...
 
 serve()          # ⚠️ 什麼都沒發生!只是拿到一張「服務流程單」(協程物件)
@@ -53,7 +53,7 @@ await serve()    # ✓ 這才是「開始執行,做完為止」
 
 ## Specification（規範：規則）
 
-```python
+```text
 import asyncio
 
 # async def 定義協程
@@ -80,7 +80,7 @@ coro = fetch("x")                # 沒執行！要 await 或交給 loop
 
 這是硬性語法規則——`await` 出現在非 async 函式裡是 **SyntaxError**：
 
-```python
+```text
 # ❌ 普通函式不能 await
 def process():
     data = await fetch()      # SyntaxError: 'await' outside async function
@@ -132,16 +132,17 @@ async def main():
 因為「一路 async 到底」，很多同步操作有 async 對應版：
 
 ```python
-# 睡眠
-await asyncio.sleep(1)              # 非阻塞（不是 time.sleep）
+async def main() -> None:
+    # 睡眠
+    await asyncio.sleep(1)              # 非阻塞（不是 time.sleep）
 
-# HTTP（用 async 函式庫）
-async with aiohttp.ClientSession() as session:
-    async with session.get(url) as resp:
-        data = await resp.text()
+    # HTTP（用 async 函式庫）
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            data = await resp.text()
 
-# 資料庫（asyncpg 等）
-rows = await conn.fetch("SELECT ...")
+    # 資料庫（asyncpg 等）
+    rows = await conn.fetch("SELECT ...")
 ```
 
 用 async 版函式庫（`aiohttp`/`httpx`/`asyncpg`/`aiofiles`）才能真正非阻塞；用同步版（`requests`、同步 DB）會卡住 event loop（見 [asyncio 基礎](07-asyncio-basics.md)）。
@@ -151,10 +152,11 @@ rows = await conn.fetch("SELECT ...")
 context manager 與迭代也有 async 版（見 [asyncio 進階](10-asyncio-advanced.md)）：
 
 ```python
-async with resource as r:      # async context manager（__aenter__/__aexit__）
-    ...
-async for item in async_iterable:   # async iterator（__anext__）
-    ...
+async def main() -> None:
+    async with resource as r:      # async context manager（__aenter__/__aexit__）
+        ...
+    async for item in async_iterable:   # async iterator（__anext__）
+        ...
 ```
 
 用於非同步的資源管理與串流。

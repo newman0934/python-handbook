@@ -40,7 +40,8 @@ for url in urls:
 非同步的洞見：**既然在等 A 回應時 CPU 閒著，何不同時發出 B、C、D、E 的請求，讓所有等待重疊？** 用 `asyncio.gather` 併發：
 
 ```python
-data = await asyncio.gather(*[fetch(url) for url in urls])   # 5 個一起等
+async def main() -> None:
+    data = await asyncio.gather(*[fetch(url) for url in urls])   # 5 個一起等
 ```
 
 總時間降到約 **100ms**（5 個等待重疊成一個）——快 5 倍。這不是把計算變快，而是**把閒置的等待時間利用起來**。
@@ -67,36 +68,39 @@ data = await asyncio.gather(*[fetch(url) for url in urls])   # 5 個一起等
 ```python
 import asyncio
 
-# gather：併發跑多個、全部完成後回傳結果 list（順序對應）
-results = await asyncio.gather(fetch(a), fetch(b), fetch(c))
+async def main() -> None:
+    # gather：併發跑多個、全部完成後回傳結果 list（順序對應）
+    results = await asyncio.gather(fetch(a), fetch(b), fetch(c))
 
-# TaskGroup（3.11+，推薦）：結構化併發，一個失敗會妥善取消其他
-async with asyncio.TaskGroup() as tg:
-    t1 = tg.create_task(fetch(a))
-    t2 = tg.create_task(fetch(b))
+    # TaskGroup（3.11+，推薦）：結構化併發，一個失敗會妥善取消其他
+    async with asyncio.TaskGroup() as tg:
+        t1 = tg.create_task(fetch(a))
+        t2 = tg.create_task(fetch(b))
 
-# as_completed：誰先完成先處理
-for coro in asyncio.as_completed([fetch(a), fetch(b)]):
-    result = await coro
+    # as_completed：誰先完成先處理
+    for coro in asyncio.as_completed([fetch(a), fetch(b)]):
+        result = await coro
 
-# 限流：用 Semaphore 控制同時併發數（避免壓垮對方）
-sem = asyncio.Semaphore(10)
-async def limited_fetch(url):
-    async with sem:
-        return await fetch(url)
+    # 限流：用 Semaphore 控制同時併發數（避免壓垮對方）
+    sem = asyncio.Semaphore(10)
+    async def limited_fetch(url):
+        async with sem:
+            return await fetch(url)
 ```
 
 **逾時控制**：
 
 ```python
-async with asyncio.timeout(5):   # 3.11+
-    await slow_operation()
+async def main() -> None:
+    async with asyncio.timeout(5):   # 3.11+
+        await slow_operation()
 ```
 
 **把阻塞操作丟到執行緒**（別在事件迴圈裡跑阻塞呼叫）：
 
 ```python
-result = await asyncio.to_thread(blocking_io_function, arg)
+async def main() -> None:
+    result = await asyncio.to_thread(blocking_io_function, arg)
 ```
 
 ## Implementation（底層：事件迴圈與「別阻塞」）

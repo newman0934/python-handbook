@@ -151,7 +151,7 @@ def build_use_case(env: str) -> PlaceOrderUseCase:
 
 Hexagonal 讓核心測試極簡單——**所有外部都插假 adapter**，純測業務邏輯：
 
-```python
+```text
 def test_place_order_notifies():
     repo = InMemoryOrderRepository()
     notifier = FakeNotificationAdapter()          # 記錄通知

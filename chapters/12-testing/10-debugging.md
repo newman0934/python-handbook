@@ -73,7 +73,7 @@ def buggy(data):
 
 **post-mortem（事後檢驗）**——例外炸了之後，檢視**當時的現場**（變數、堆疊）：
 
-```python
+```text
 python -m pdb myscript.py    # 崩潰時自動進入 post-mortem
 # 或程式中：
 import pdb; pdb.post_mortem()   # 在 except 區塊裡檢視例外現場
