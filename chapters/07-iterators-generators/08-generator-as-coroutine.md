@@ -237,7 +237,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 7！** 你已掌握 Python 的迭代與生成：iterable/iterator 協定、`__iter__`/`__next__`、生成器與 yield、生成器表達式、yield from、itertools、惰性求值與記憶體效益、以及生成器作為協程。
+你已掌握 Python 的迭代與生成：iterable/iterator 協定、`__iter__`/`__next__`、生成器與 yield、生成器表達式、yield from、itertools、惰性求值與記憶體效益、以及生成器作為協程。
 接下來 [Part 8 函數式與裝飾器](../08-functional-decorators/README.md) 將進入高階函式、decorator 與 functools。
+
+
+➡️ 下一章：[Part 7 統整：迭代器與生成器全貌](09-summary.md)
 
 [⬆️ 回 Part 7 索引](README.md)
