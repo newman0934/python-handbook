@@ -246,7 +246,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 6！** 你已掌握 Python 的錯誤處理：例外機制與傳播、try/except/else/finally、raise 與例外鏈、自訂例外、context manager 與 contextlib、最佳實踐、EAFP vs LBYL、例外階層、ExceptionGroup、以及 assert/warnings/traceback。
+你已掌握 Python 的錯誤處理：例外機制與傳播、try/except/else/finally、raise 與例外鏈、自訂例外、context manager 與 contextlib、最佳實踐、EAFP vs LBYL、例外階層、ExceptionGroup、以及 assert/warnings/traceback。
 接下來 [Part 7 迭代器與生成器](../07-iterators-generators/README.md) 將進入 iterable/iterator 協定、yield 與惰性求值。
+
+
+➡️ 下一章：[Part 6 統整：錯誤處理全貌](13-summary.md)
 
 [⬆️ 回 Part 6 索引](README.md)

@@ -12,7 +12,7 @@
 | 3 | [資料結構 Data Structures](03-data-structures/) | 13 | list / tuple / dict / set 的用法與底層模型，可變性與 hashable。 |
 | 4 | [物件導向 OOP](04-oop/) | 16 | class、繼承、MRO、property 與魔術方法——Python 的物件模型。 |
 | 5 | [型別系統 Typing](05-typing/) | 12 | type hints、typing 模組、泛型與 Protocol，配合 mypy 做靜態型別檢查。 |
-| 6 | [錯誤處理 Error Handling](06-error-handling/) | 12 | exception 機制、try/except、自訂例外與 context manager。 |
+| 6 | [錯誤處理 Error Handling](06-error-handling/) | 13 | exception 機制、try/except、自訂例外與 context manager。 |
 | 7 | [迭代器與生成器 Iterators & Generators](07-iterators-generators/) | 8 | iterable / iterator 協定、generator 與 yield、itertools。 |
 | 8 | [函數式與裝飾器 Functional & Decorators](08-functional-decorators/) | 7 | 高階函式、decorator 原理與 functools。 |
 | 9 | [並發與並行 Concurrency](09-concurrency/) | 13 | threading、GIL、multiprocessing、asyncio——Python 的並發全貌。 |

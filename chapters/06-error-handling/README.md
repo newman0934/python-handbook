@@ -18,6 +18,7 @@
 | 10 | [例外階層 exception hierarchy](10-exception-hierarchy.md) |
 | 11 | [ExceptionGroup 與 except* (3.11)](11-exception-groups.md) |
 | 12 | [assert、warnings 與 traceback](12-assert-warnings-traceback.md) |
+| 13 | [**Part 6 統整：錯誤處理全貌**](13-summary.md) |
 
 ---
 
