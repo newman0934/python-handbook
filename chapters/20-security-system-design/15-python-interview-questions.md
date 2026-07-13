@@ -182,6 +182,6 @@ $ python interview_tracker.py
 
 ---
 
-⬅️ 這是 Part 20 的最後一章。
+➡️ 下一章：[Part 20 統整：安全與系統設計全貌](16-summary.md)
 
-[⬆️ 回 Part 20 索引](README.md) ｜ [下一 Part：微服務 ➡️](../21-microservices/README.md)
+[⬆️ 回 Part 20 索引](README.md)
