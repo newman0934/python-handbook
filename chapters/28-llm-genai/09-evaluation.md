@@ -247,8 +247,8 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 28!** 你已掌握用 LLM 建應用的地基:LLM 原理、呼叫 Claude API、prompt engineering、結構化輸出與 tool use、串流與非同步、embeddings 與語意搜尋、向量資料庫、成本優化、評估。這是 **AI Engineer / AI Application Engineer** 的核心基本功。接下來 **Part 29(AI 應用工程)** 將把這些組合成真實產品:RAG、agents、生產化。
+你已掌握用 LLM 建應用的地基:LLM 原理、呼叫 Claude API、prompt engineering、結構化輸出與 tool use、串流與非同步、embeddings 與語意搜尋、向量資料庫、成本優化、評估。這是 **AI Engineer / AI Application Engineer** 的核心基本功。接下來 **Part 29(AI 應用工程)** 將把這些組合成真實產品:RAG、agents、生產化。
 
-⬅️ 這是 Part 28 的最後一章。
+➡️ 下一章：[Part 28 統整：LLM 與生成式 AI 全貌](10-summary.md)
 
-[⬆️ 回 Part 28 索引](README.md) ｜ [🏠 回全書總覽](../README.md)
+[⬆️ 回 Part 28 索引](README.md)

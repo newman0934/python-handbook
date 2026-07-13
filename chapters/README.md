@@ -39,7 +39,7 @@
 | 25 | [機器學習基礎 ML Foundations](25-machine-learning/) | 8 | ML 概論、工作流與 train/test split、特徵工程、線性/邏輯回歸、模型評估、過擬合與正則化、端到端 ML 專案。 |
 | 26 | [進階機器學習 Advanced ML](26-advanced-ml/) | 8 | 決策樹、集成學習(隨機森林/梯度提升)、k-means 聚類、PCA 降維、超參數調校、類別不平衡、模型可解釋性、進階 ML 專案。 |
 | 27 | [深度學習 Deep Learning](27-deep-learning/) | 8 | 神經網路基礎、反向傳播與梯度下降、從零手刻 NN、PyTorch 框架、CNN、注意力機制、訓練技巧、從零訓練通用網路。 |
-| 28 | [LLM 與生成式 AI 基礎 LLM & GenAI](28-llm-genai/) | 9 | LLM 原理、呼叫 Claude API、prompt engineering、tool use、串流、embeddings、向量資料庫、成本優化、評估。 |
+| 28 | [LLM 與生成式 AI 基礎 LLM & GenAI](28-llm-genai/) | 10 | LLM 原理、呼叫 Claude API、prompt engineering、tool use、串流、embeddings、向量資料庫、成本優化、評估。 |
 | 29 | [AI 應用工程 AI Application Engineering](29-ai-applications/) | 10 | RAG 全流程、chunking、混合檢索與 rerank、RAG 評估、ReAct agents、MCP、對話記憶、多 agent、應用框架、生產級 RAG Capstone。 |
 | 30 | [生產級 AI 與 LLMOps Production AI & LLMOps](30-production-ai/) | 10 | LLMOps、API 化與串流、可靠性、可觀測性、prompt injection、護欄/PII、評估回歸 CI、A/B 與版本管理、資料飛輪、生產級 LLM 服務 Capstone。 |
 | 31 | [雲端平台部署 Cloud Platform Deployment(AWS + GCP)](31-cloud-platform-deployment/) | 11 | AWS↔GCP 對照、IAM、容器(ECS/Fargate vs Cloud Run)、K8s(EKS vs GKE)、Serverless、託管 DB/物件儲存、密鑰/網路、Terraform、OIDC 免金鑰 CI/CD、可觀測性/成本、task-api 端到端上雲 Capstone。 |

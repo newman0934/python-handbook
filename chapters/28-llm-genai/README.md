@@ -17,6 +17,7 @@
 | 07 | [向量資料庫 (pgvector / Chroma / FAISS)](07-vector-databases.md) |
 | 08 | [成本、延遲、快取與限流](08-cost-latency-caching.md) |
 | 09 | [LLM 應用評估與 prompt 測試](09-evaluation.md) |
+| 10 | [**Part 28 統整：LLM 與生成式 AI 全貌**](10-summary.md) |
 
 ---
 
