@@ -15,8 +15,9 @@
 | 章 | 標題 |
 |----|------|
 | 01 | [後端在做什麼:一個請求的完整旅程](01-request-journey.md) |
+| 02 | [TCP / UDP 與可靠傳輸](02-tcp-udp.md) |
 
-> 其餘章節規劃(陸續補上):TCP/UDP 與可靠傳輸、DNS 與 IP/Port、HTTP 報文深入、
+> 其餘章節規劃(陸續補上):DNS 與 IP/Port、HTTP 報文深入、
 > HTTPS 與 TLS、Linux process 與 thread、檔案描述符與 I/O、訊號與程序生命週期、
 > shell/環境變數/診斷、Part 0 統整。
 

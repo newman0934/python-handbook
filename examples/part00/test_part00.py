@@ -30,3 +30,34 @@ def test_fetch_walks_the_journey() -> None:
     assert status_line == "HTTP/1.1 200 OK"
     assert body == "Hello from backend!"
     server.join(timeout=3)
+
+
+def test_tcp_is_reliable_and_replies() -> None:
+    from examples.part00.tcp_vs_udp import tcp_echo_server, tcp_roundtrip
+
+    port = _free_port()
+    ready = threading.Event()
+    threading.Thread(target=tcp_echo_server, args=(port, ready), daemon=True).start()
+    assert ready.wait(timeout=3)
+
+    replies = tcp_roundtrip(port, [b"hello", b"world"])
+
+    # TCP 保序、可靠：每次都收到對應的大寫回應
+    assert replies == [b"HELLO", b"WORLD"]
+
+
+def test_udp_is_fire_and_forget() -> None:
+    import time
+
+    from examples.part00.tcp_vs_udp import udp_send, udp_server
+
+    port = _free_port()
+    ready = threading.Event()
+    box: list[bytes] = []
+    threading.Thread(target=udp_server, args=(port, ready, box), daemon=True).start()
+    assert ready.wait(timeout=3)
+
+    udp_send(port, [b"packet-1", b"packet-2", b"packet-3"])
+    time.sleep(1.2)  # 等 UDP server 收完（localhost 幾乎不丟）
+
+    assert box == [b"packet-1", b"packet-2", b"packet-3"]
