@@ -24,6 +24,7 @@
 | 16 | [例外處理與錯誤回應](16-exception-handlers.md) |
 | 17 | [GraphQL](17-graphql.md) |
 | 18 | [API 設計實務](18-api-design.md) |
+| 19 | [**Part 14 統整：Web 開發全貌**](19-summary.md) |
 
 ---
 
