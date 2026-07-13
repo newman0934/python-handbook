@@ -30,16 +30,24 @@
 
 閱讀完本書後，你將能夠：
 
+**Python 工程主線（Part 1–22）**
+
 - 寫出符合慣例（idiomatic / Pythonic）的 Python 程式碼
 - 理解 `list` / `dict` / `set` 的底層模型與 Python 物件模型
 - 掌握並發：`threading` / GIL / `multiprocessing` / `asyncio`
 - 理解 CPython：物件模型、引用計數、GC、bytecode、GIL 原理
 - 用 `cProfile` 進行 Profiling 與效能優化
 - 設計可維護的後端服務與專案架構（FastAPI + 分層）
-- 掌握資料處理生態（`numpy` / `pandas`）
-- 進行雲原生部署（Docker / Kubernetes）
-- 通過 Senior Python Interview
-- 成長為 Python Backend Architect
+- 進行雲原生部署（Docker / Kubernetes），並掌握微服務與分散式系統
+- 通過 Senior Python Interview，成長為 Python Backend Architect
+
+**資料 / AI / 部署主線（Part 23–31）**
+
+- 掌握資料處理與分析生態（`numpy` / `pandas` / SQL / EDA / 統計與 A/B 測試）
+- 建立機器學習與深度學習模型（scikit-learn、集成學習、PyTorch、CNN、注意力機制）
+- 打造 LLM 應用：prompt engineering、tool use、embeddings、**RAG**、**AI agent**、MCP
+- 把 AI 應用推上生產：LLMOps、可靠性、護欄、prompt injection 防禦、評估與資料飛輪
+- 將服務部署上雲（AWS / GCP：容器、serverless、託管 DB、Terraform、OIDC CI/CD）
 
 ---
 
@@ -117,7 +125,8 @@ python-handbook/
 ├── examples/             # 可執行範例（pytest 驗證）
 ├── exercises/            # 練習題（stub + 測試，實作前為紅燈）
 ├── solutions/            # 練習解答（參考答案，全綠）
-└── interview/            # Python 面試題庫
+├── interview/            # Python 面試題庫
+└── docs/                 # 設計文件與 spec
 ```
 
 > **開發者用法**（已安裝 Python 3.12+）：
@@ -201,6 +210,8 @@ Architecture & Deployment
 
 每個章節都包含：
 
+- **💡 白話導讀**（先用生活比喻把觀念講白，技術名詞後置——**每章必有，建議先讀**）
+- **🎯 什麼時候會用到**（真實使用場景與決策訊號；抽象／理論章附上）
 - **Why**（為什麼）
 - **Theory**（理論）
 - **Specification**（規範）
@@ -210,6 +221,9 @@ Architecture & Deployment
 - **Best Practice**（最佳實踐）
 - **Common Mistakes**（常見誤解）
 - **Interview Notes**（面試重點）
+
+> 寫作原則：**詳盡 ≠ 密集**。每個抽象機制都配一個生活比喻（GIL＝餐廳只有一把菜刀、
+> asyncio＝單人服務生、RAG＝開書考試），且比喻跨章沿用，建立一致的心智模型。
 
 ---
 
