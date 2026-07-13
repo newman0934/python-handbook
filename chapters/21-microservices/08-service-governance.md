@@ -234,4 +234,7 @@ flowchart TD
 
 ⬅️ 這是 Part 21 的最後一章。
 
-[⬆️ 回 Part 21 索引](README.md) ｜ [下一 Part：分散式系統 ➡️](../22-distributed-systems/README.md)
+
+➡️ 下一章：[Part 21 統整：微服務全貌](09-summary.md)
+
+[⬆️ 回 Part 21 索引](README.md)
