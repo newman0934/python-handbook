@@ -94,6 +94,15 @@ def check() -> list[str]:
             if not (path.parent / match.group(1)).resolve().is_file():
                 problems.append(f"{rel}: 失效連結 {match.group(1)}")
 
+        # 3b. 統整章必須涵蓋該 Part 的每一章（曾發生「憑印象猜章名」而寫漏／寫錯）
+        if is_summary:
+            siblings = {
+                p.name for p in path.parent.glob("[0-9]*.md") if not p.name.endswith("-summary.md")
+            }
+            linked = {m.group(1) for m in MD_LINK.finditer(text)}
+            for missing in sorted(siblings - linked):
+                problems.append(f"{rel}: 統整章未涵蓋 {missing}")
+
         # 4. ```python 必須是合法 Python
         for match in PY_BLOCK.finditer(text):
             py_blocks += 1

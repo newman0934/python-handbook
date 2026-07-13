@@ -12,8 +12,8 @@ flowchart TD
     A["ch01 函式是一等公民 ⭐<br/>能賦值、能傳參、能回傳<br/>—— 函式就是「值」"] --> B["② 那就能「傳行為進去」"]
     A --> C["③ 那也能「回傳一個函式」"]
 
-    B --> B1["高階函式<br/>sorted(key=...)、map/filter<br/>ch02 map/filter/reduce"]
-    B --> B2["ch06 lambda<br/>（臨時的小行為）"]
+    B --> B1["ch02 高階函式<br/>map / filter / reduce<br/>（但推導式更 Pythonic）"]
+    B --> B2["ch06 partial<br/>（先固定部分參數）"]
 
     C --> C1["工廠函式 + 閉包<br/>（Part 2 ch12）"]
     C1 --> D["ch03 裝飾器 ⭐<br/>吃函式、吐函式<br/>—— 不動原函式一行，就替它加功能"]
@@ -30,7 +30,7 @@ flowchart TD
 **一句話串起來**：
 
 因為**函式是值**（ch01），所以你能**把行為當參數傳進去**——
-`sorted(data, key=len)` 就是在傳一個「怎麼比大小」的行為（ch02、ch06）。
+`sorted(data, key=len)` 就是在傳一個「怎麼比大小」的行為——這就是**高階函式**（ch02）。
 
 也因為函式是值，你能**回傳一個函式**。
 一個「**吃函式、吐函式**」的函式，就是 **[裝飾器](03-decorator-basics.md)**（ch03）——
@@ -48,18 +48,17 @@ flowchart TD
 |------|--------|------|
 | 把「怎麼比較／怎麼轉換」當參數傳 | `sorted(xs, key=...)`、`max(xs, key=...)` | [ch01](01-first-class-functions.md) |
 | 用 dict 派發取代一長串 `if/elif` | `handlers = {"add": do_add}; handlers[cmd]()` | [ch01](01-first-class-functions.md) |
-| 臨時傳一個一行的小行為 | `lambda`（長了就改用 `def`） | [ch06](06-lambda.md) |
-| 對序列做轉換／篩選 | **推導式**（比 `map`/`filter` 更 Pythonic） | [ch02](02-map-filter-reduce.md) |
+| 對序列做轉換／篩選 | **推導式**（比 `map`/`filter` 更 Pythonic） | [ch02](02-higher-order-functions.md) |
 | **替函式加功能但不改它的程式碼** | **裝飾器**（計時、快取、重試、log、權限） | [ch03](03-decorator-basics.md) |
 | 裝飾器要收參數（`@retry(times=3)`） | **再多包一層**（三層巢狀函式） | [ch04](04-decorator-with-args.md) |
 | **寫任何裝飾器** | **一定加 `@functools.wraps(func)`** | [ch05](05-functools.md) |
 | 純函式、同輸入同輸出、會重複呼叫 | **`@functools.lru_cache`**（一行加速） | [ch05](05-functools.md) |
-| 想「先固定某幾個參數」產生新函式 | `functools.partial(f, a=1)` | [ch05](05-functools.md) |
+| **想「先固定某幾個參數」產生新函式** | **`functools.partial(f, a=1)`**（回呼、設定的利器） | [ch06](06-partial.md) |
 | 實例上「算一次就固定」的昂貴屬性 | `@functools.cached_property` | [ch05](05-functools.md) |
 | 依「第一個參數的型別」分派實作 | `@functools.singledispatch` | [ch05](05-functools.md) |
 | 對**整個類別**做統一改造（自動註冊…） | **類別裝飾器**（`@dataclass` 就是這類） | [ch07](07-class-decorators.md) |
 | 裝飾器**自己需要保存狀態**（計數、限流） | **用類別當裝飾器**（實例可呼叫） | [ch07](07-class-decorators.md) |
-| 累積成一個值 | 多數時候用 `sum`/`math.prod`/迴圈；`reduce` 留給非標準累積 | [ch02](02-map-filter-reduce.md) |
+| 累積成一個值 | 多數時候用 `sum`/`math.prod`/迴圈；`reduce` 留給非標準累積 | [ch02](02-higher-order-functions.md) |
 
 ## 🔑 核心心智模型（帶得走的幾句話）
 
@@ -234,9 +233,9 @@ $ python decorators_demo.py
 - [ ] 為什麼寫裝飾器**一定**要加 `@functools.wraps`？不加會怎樣？（[ch05](05-functools.md)）
 - [ ] `@retry(times=3)` 這種帶參數的裝飾器，為什麼需要**三層**函式？（[ch04](04-decorator-with-args.md)）
 - [ ] `lru_cache` 能用在什麼樣的函式上？什麼函式**不能**用？（[ch05](05-functools.md)）
-- [ ] `functools.partial` 解決什麼問題？（[ch05](05-functools.md)）
-- [ ] lambda 什麼時候該用、什麼時候不該用？（[ch06](06-lambda.md)）
-- [ ] `map`/`filter` 和推導式，Python 慣例上偏好哪個？（[ch02](02-map-filter-reduce.md)）
+- [ ] `map`/`filter` 和推導式，何時用哪個？（[ch02](02-higher-order-functions.md)）
+- [ ] `partial` 解決什麼問題？舉一個「從通用函式衍生特化版」的例子。（[ch06](06-partial.md)）
+- [ ] `map`/`filter` 和推導式，Python 慣例上偏好哪個？（[ch02](02-higher-order-functions.md)）
 - [ ] 什麼時候該「用類別當裝飾器」而不是函式？（[ch07](07-class-decorators.md)）
 - [ ] 裝飾器和 [Part 4 的描述器](../04-oop/11-descriptors.md)、[Part 2 的閉包](../02-fundamentals/12-closures.md) 有什麼關係？
 
@@ -249,7 +248,7 @@ $ python decorators_demo.py
 | **帶參數的裝飾器怎麼寫？** | 「**多包一層**：`retry(times=3)` 先被呼叫，**回傳一個裝飾器**，那個裝飾器才去裝飾函式。所以是三層：`retry(參數)` → `decorator(func)` → `wrapper(*args)`。」 | [ch04](04-decorator-with-args.md) |
 | **`lru_cache` 的限制？** | 「① 函式必須是**純函式**（同輸入同輸出、無副作用）——不然會回傳過時的錯誤結果；② **參數必須 hashable**（不能傳 list／dict，呼應 [Part 3](../03-data-structures/07-hashable.md)）；③ 快取會**一直長大**，要設 `maxsize`。」 | [ch05](05-functools.md) |
 | **裝飾器的實際用途？** | 「**橫切關注**——那些『每個函式都需要、卻不屬於業務邏輯』的事：Flask/FastAPI 的路由註冊、權限檢查、交易管理、重試、快取、計時、log。它讓業務函式**保持乾淨**。」 | [ch03](03-decorator-basics.md) |
-| **`map`/`filter` vs 推導式？** | 「Python 慣例**偏好推導式**——更好讀、且能同時做轉換與篩選。`map`/`filter` 在『已有現成函式可傳』時還算自然（`map(int, xs)`），但配 `lambda` 就不如推導式清楚。」 | [ch02](02-map-filter-reduce.md) |
+| **`map`/`filter` vs 推導式？** | 「Python 慣例**偏好推導式**——更好讀、且能同時做轉換與篩選。`map`/`filter` 在『已有現成函式可傳』時還算自然（`map(int, xs)`），但配 `lambda` 就不如推導式清楚。」 | [ch02](02-higher-order-functions.md) |
 
 ---
 

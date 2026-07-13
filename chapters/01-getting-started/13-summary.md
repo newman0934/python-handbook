@@ -39,6 +39,7 @@ flowchart TD
 
 | 情境 | 怎麼做 | 章節 |
 |------|--------|------|
+| 有人問「為什麼選 Python 不選 Go/Java」 | 講設計取捨：可讀性優先、一切皆物件、生態廣；代價是速度與 GIL | [ch01](01-why-python.md) |
 | 想知道「我現在跑的是哪個 Python」 | `sys.executable`、`python -V`；Windows 用 `py -0` 列出所有版本 | [ch02](02-install-and-interpreter.md) |
 | 快速試一段程式碼 | REPL（`python`）；要留存就寫 `.py` | [ch03](03-repl-and-first-program.md) |
 | 想讓檔案「被執行才跑、被 import 不跑」 | `if __name__ == "__main__":` | [ch03](03-repl-and-first-program.md) |
@@ -153,6 +154,7 @@ $ python env_report.py
 
 ## ✅ 自測清單（答不出來就回去讀）
 
+- [ ] Python 的兩個核心設計決策是什麼？它換來了什麼、犧牲了什麼？（[ch01](01-why-python.md)）
 - [ ] 說得出「Python」和「CPython」的差別嗎？（[ch02](02-install-and-interpreter.md)）
 - [ ] 為什麼推薦 `python -m pip install` 而不是直接 `pip install`？（[ch04](04-pip-and-packages.md)）
 - [ ] venv 到底隔離了什麼？不用它會出什麼事？（[ch05](05-venv.md)）

@@ -65,6 +65,7 @@ Python 的 OOP 有**兩根支柱**：
 | 想讓物件能被 `print` 出有用的資訊 | 實作 `__repr__`（**永遠先做這個**） | [ch08](08-dunder-methods.md) |
 | 想強制子類別「必須實作某些方法」 | **ABC + `@abstractmethod`**（漏實作 → 無法實例化） | [ch10](10-abc.md) |
 | 只想標「這是內部用的」 | 單底線 `_name`（**君子協定**，不是強制） | [ch05](05-encapsulation.md) |
+| 子類別要擴充父類別的行為 | **`super().method()`**（別寫死 `Base.method(self)`——多重繼承會出事） | [ch03](03-inheritance.md) |
 | 多重繼承下搞不清方法從哪來 | 看 **`Cls.__mro__`**；`super()` 沿 MRO 走 | [ch04](04-mro.md) |
 | 想「拌」一小塊功能進類別 | mixin——但**先問：能不能改用組合？** | [ch15](15-mixin.md) |
 | 想控制「實例怎麼被造出來」（單例、快取實例） | `__new__`（多數時候你只需要 `__init__`） | [ch12](12-new-and-init.md) |
@@ -223,6 +224,7 @@ $ python oop_demo.py
 - [ ] `self` 到底是什麼？為什麼方法的第一個參數要寫它？（[ch01](01-class-and-instance.md)）
 - [ ] class 屬性和 instance 屬性差在哪？寫錯會出什麼事？（[ch01](01-class-and-instance.md)）
 - [ ] 「方法」其實是什麼？為什麼 `obj.method` 拿到的是「綁定了實例的函式」？（[ch02](02-attributes-and-methods.md)）
+- [ ] `super()` 該怎麼用？為什麼不該寫死 `Base.method(self)`？（[ch03](03-inheritance.md)）
 - [ ] 菱形繼承下，`super()` 會走到哪？為什麼不是字面父類別？（[ch04](04-mro.md)）
 - [ ] Python 的 `__private` 真的私有嗎？它實際做了什麼？（[ch05](05-encapsulation.md)）
 - [ ] `@property` 解決什麼問題？和「直接開放屬性」比有什麼好處？（[ch06](06-property.md)）
