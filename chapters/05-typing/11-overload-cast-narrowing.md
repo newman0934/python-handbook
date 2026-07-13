@@ -267,7 +267,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 5！** 你已掌握 Python 的型別系統：為何用型別註記、基本與進階語法、typing 模組、Optional/Union 與窄化、泛型與 TypeVar、Protocol 結構化子型別、mypy、TypedDict/Literal/Final/Annotated、PEP 695/ParamSpec/Self、overload/cast。
+你已掌握 Python 的型別系統：為何用型別註記、基本與進階語法、typing 模組、Optional/Union 與窄化、泛型與 TypeVar、Protocol 結構化子型別、mypy、TypedDict/Literal/Final/Annotated、PEP 695/ParamSpec/Self、overload/cast。
 接下來 [Part 6 錯誤處理](../06-error-handling/README.md) 將進入 exception、try/except、context manager 與 EAFP。
+
+
+➡️ 下一章：[Part 5 統整：型別系統全貌](12-summary.md)
 
 [⬆️ 回 Part 5 索引](README.md)

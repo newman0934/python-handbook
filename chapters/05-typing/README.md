@@ -17,6 +17,7 @@
 | 09 | [TypedDict、Literal、Final、Annotated](09-typeddict-literal-final.md) |
 | 10 | [進階泛型：PEP 695 新語法、ParamSpec、Self](10-advanced-generics.md) |
 | 11 | [overload、cast 與型別窄化](11-overload-cast-narrowing.md) |
+| 12 | [**Part 5 統整：型別系統全貌**](12-summary.md) |
 
 ---
 
