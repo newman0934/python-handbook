@@ -230,4 +230,7 @@ flowchart TD
 
 ⬅️ 這是 Part 19 的最後一章。
 
-[⬆️ 回 Part 19 索引](README.md) ｜ [下一 Part：安全與系統設計面試 ➡️](../20-security-system-design/README.md)
+
+➡️ 下一章：[Part 19 統整：雲原生與部署全貌](09-summary.md)
+
+[⬆️ 回 Part 19 索引](README.md)

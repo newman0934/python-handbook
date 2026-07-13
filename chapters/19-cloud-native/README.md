@@ -14,6 +14,7 @@
 | 06 | [Kubernetes 部署](06-kubernetes.md) |
 | 07 | [graceful shutdown](07-graceful-shutdown.md) |
 | 08 | [可觀測性 logging / metrics / tracing](08-observability.md) |
+| 9 | [**Part 19 統整：雲原生與部署全貌**](09-summary.md) |
 
 ---
 
