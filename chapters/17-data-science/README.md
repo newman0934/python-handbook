@@ -15,6 +15,7 @@
 | 07 | [Jupyter 與資料工作流](07-jupyter.md) |
 | 08 | [機器學習入門 scikit-learn](08-machine-learning-intro.md) |
 | 09 | [polars 高效 DataFrame](09-polars.md) |
+| 10 | [**Part 17 統整：資料處理與科學計算全貌**](10-summary.md) |
 
 ---
 

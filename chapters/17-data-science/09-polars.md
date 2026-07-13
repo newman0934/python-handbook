@@ -224,4 +224,7 @@ flowchart TD
 
 ⬅️ 這是 Part 17 的最後一章。
 
-[⬆️ 回 Part 17 索引](README.md) ｜ [下一 Part：效能優化 ➡️](../18-performance/README.md)
+
+➡️ 下一章：[Part 17 統整：資料處理與科學計算全貌](10-summary.md)
+
+[⬆️ 回 Part 17 索引](README.md)
