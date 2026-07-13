@@ -19,6 +19,7 @@
 | 11 | [在 async 中跑阻塞工作：to_thread、run_in_executor](11-blocking-in-async.md) |
 | 12 | [free-threaded Python 與 GIL 的未來 (3.13 / PEP 703)](12-free-threaded-python.md) |
 | 13 | [如何選擇並發模型](13-choosing-concurrency-model.md) |
+| 14 | [**Part 9 統整：並發與並行全貌**](14-summary.md) |
 
 ---
 

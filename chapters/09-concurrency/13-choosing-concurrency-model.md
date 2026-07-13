@@ -223,7 +223,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 9！** 這是全書最硬的 Part 之一。你已掌握 Python 並發的全貌：並發vs並行、GIL、threading 與同步、multiprocessing、concurrent.futures、asyncio 的 event loop / async-await / Task / TaskGroup、在 async 中處理阻塞、free-threaded 的未來，以及如何選對並發模型。
+這是全書最硬的 Part 之一。你已掌握 Python 並發的全貌：並發vs並行、GIL、threading 與同步、multiprocessing、concurrent.futures、asyncio 的 event loop / async-await / Task / TaskGroup、在 async 中處理阻塞、free-threaded 的未來，以及如何選對並發模型。
 接下來 [Part 10 CPython 內部與記憶體](../10-cpython-internals/README.md) 將深入物件模型、引用計數、GC 與 bytecode。
+
+
+➡️ 下一章：[Part 9 統整：並發與並行全貌](14-summary.md)
 
 [⬆️ 回 Part 9 索引](README.md)
