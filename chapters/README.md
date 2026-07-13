@@ -24,7 +24,7 @@
 | 15 | [資料庫 Database](15-database/) | 26 | **原理篇**:關聯模型、SQL 語意、正規化、儲存/索引/優化器、交易並發(MVCC)、WAL、複製分片、NoSQL 選型;**實作篇**:DB-API、SQLAlchemy、連線池、transaction、migration、Redis、async、N+1、索引、PostgreSQL 專屬(JSONB/UPSERT/GIN)、多資料庫對照、MySQL 專屬(InnoDB/utf8mb4)、MongoDB 文件建模(embed vs reference)。 |
 | 16 | [架構與設計 Architecture](16-architecture/) | 12 | 分層、Clean Architecture、DI、Repository、SOLID 與設計模式。 |
 | 17 | [資料處理與科學計算 Data & Scientific Computing](17-data-science/) | 10 | numpy、pandas、資料清理與視覺化——Python 生態的殺手級應用。 |
-| 18 | [效能優化 Performance](18-performance/) | 7 | profiling、快取、Cython/numba 與記憶體優化。 |
+| 18 | [效能優化 Performance](18-performance/) | 8 | profiling、快取、Cython/numba 與記憶體優化。 |
 | 19 | [雲原生與部署 Cloud Native](19-cloud-native/) | 8 | Docker、Gunicorn/Uvicorn、12-factor、CI/CD、Kubernetes 與可觀測性。 |
 | 20 | [安全與系統設計面試 Security & System Design Interview](20-security-system-design/) | 15 | 輸入驗證、注入、認證授權、密鑰管理，以及系統設計案例與 Python 面試題庫。 |
 | 21 | [微服務 Microservices](21-microservices/) | 8 | gRPC、服務發現、API gateway、限流與熔斷——Python 的微服務實務。 |

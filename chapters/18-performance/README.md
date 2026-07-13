@@ -13,6 +13,7 @@
 | 05 | [Cython 與 numba](05-cython-numba.md) |
 | 06 | [記憶體優化 __slots__](06-memory-optimization.md) |
 | 07 | [非同步效能](07-async-performance.md) |
+| 8 | [**Part 18 統整：效能優化全貌**](08-summary.md) |
 
 ---
 

@@ -237,4 +237,7 @@ flowchart TD
 
 ⬅️ 這是 Part 18 的最後一章。
 
-[⬆️ 回 Part 18 索引](README.md) ｜ [下一 Part：雲原生與部署 ➡️](../19-cloud-native/README.md)
+
+➡️ 下一章：[Part 18 統整：效能優化全貌](08-summary.md)
+
+[⬆️ 回 Part 18 索引](README.md)
