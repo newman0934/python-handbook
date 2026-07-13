@@ -14,7 +14,7 @@
 | 5 | [型別系統 Typing](05-typing/) | 12 | type hints、typing 模組、泛型與 Protocol，配合 mypy 做靜態型別檢查。 |
 | 6 | [錯誤處理 Error Handling](06-error-handling/) | 13 | exception 機制、try/except、自訂例外與 context manager。 |
 | 7 | [迭代器與生成器 Iterators & Generators](07-iterators-generators/) | 9 | iterable / iterator 協定、generator 與 yield、itertools。 |
-| 8 | [函數式與裝飾器 Functional & Decorators](08-functional-decorators/) | 7 | 高階函式、decorator 原理與 functools。 |
+| 8 | [函數式與裝飾器 Functional & Decorators](08-functional-decorators/) | 8 | 高階函式、decorator 原理與 functools。 |
 | 9 | [並發與並行 Concurrency](09-concurrency/) | 13 | threading、GIL、multiprocessing、asyncio——Python 的並發全貌。 |
 | 10 | [CPython 內部與記憶體 CPython Internals & Memory](10-cpython-internals/) | 11 | 物件模型、引用計數、GC、bytecode、GIL 原理——理解 Python 為何這樣跑。 |
 | 11 | [標準庫 Standard Library](11-stdlib/) | 17 | os / pathlib / datetime / json / re / logging 等日常必備標準庫。 |

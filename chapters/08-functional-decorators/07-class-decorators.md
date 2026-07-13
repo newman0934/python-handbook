@@ -298,7 +298,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 8！** 你已掌握 Python 的函數式與裝飾器：一等公民函式、高階函式 map/filter/reduce、裝飾器基礎與帶參數版、functools（wraps/lru_cache/total_ordering/singledispatch）、partial、以及類別裝飾器。
+你已掌握 Python 的函數式與裝飾器：一等公民函式、高階函式 map/filter/reduce、裝飾器基礎與帶參數版、functools（wraps/lru_cache/total_ordering/singledispatch）、partial、以及類別裝飾器。
 接下來 [Part 9 並發與並行](../09-concurrency/README.md) 將進入 threading、GIL、multiprocessing 與 asyncio。
+
+
+➡️ 下一章：[Part 8 統整：函數式與裝飾器全貌](08-summary.md)
 
 [⬆️ 回 Part 8 索引](README.md)

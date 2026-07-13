@@ -13,6 +13,7 @@
 | 05 | [functools 與 wraps](05-functools.md) |
 | 06 | [partial 與偏函式](06-partial.md) |
 | 07 | [類別裝飾器](07-class-decorators.md) |
+| 8 | [**Part 8 統整：函數式與裝飾器全貌**](08-summary.md) |
 
 ---
 
