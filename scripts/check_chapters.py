@@ -114,8 +114,36 @@ def check() -> list[str]:
     return problems
 
 
+def check_counts() -> list[str]:
+    """章數宣稱必須與實際相符（散在 CLAUDE.md／chapters/README.md，最易過時）。"""
+    problems: list[str] = []
+    actual_total = len(list(CHAPTERS.glob("*/[0-9]*.md")))
+
+    # 1. CLAUDE.md 的全書總章數
+    claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    for match in re.finditer(r"(\d+)\s*章", claude):
+        claimed = int(match.group(1))
+        if claimed > 100 and claimed != actual_total:  # 只驗「全書總數」等級的數字
+            problems.append(
+                f"CLAUDE.md: 宣稱 {claimed} 章，實際 {actual_total} 章"
+            )
+
+    # 2. chapters/README.md 每個 Part 的章數欄
+    index = (ROOT / "chapters" / "README.md").read_text(encoding="utf-8")
+    row_pattern = r"\|\s*\d+\s*\|\s*\[[^\]]+\]\((\d\d-[^/)]+)/\)\s*\|\s*(\d+)\s*\|"
+    for row in re.finditer(row_pattern, index):
+        part_dir, claimed_str = row.group(1), row.group(2)
+        actual = len(list((CHAPTERS / part_dir).glob("[0-9]*.md")))
+        if int(claimed_str) != actual:
+            problems.append(
+                f"chapters/README.md: {part_dir} 宣稱 {claimed_str} 章，實際 {actual} 章"
+            )
+    return problems
+
+
 def main() -> int:
     problems = check()
+    problems += check_counts()
     if problems:
         print(f"\n❌ 發現 {len(problems)} 個問題：\n")
         for problem in problems:
