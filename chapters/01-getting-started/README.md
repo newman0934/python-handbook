@@ -18,6 +18,7 @@
 | 10 | [Python 2 vs 3 與版本演進](10-python2-vs-3.md) |
 | 11 | [編輯器與工具鏈設定](11-editor-and-tooling-setup.md) |
 | 12 | [Python 如何執行：source → bytecode → PVM](12-how-python-runs.md) |
+| 13 | [**Part 1 統整：入門全貌**](13-summary.md) |
 
 ---
 

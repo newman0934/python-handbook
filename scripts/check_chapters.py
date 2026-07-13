@@ -39,6 +39,15 @@ REQUIRED_SECTIONS = [
     "## Interview Notes",
 ]
 
+# 統整章（NN-summary.md）用專屬結構，不套標準模板
+SUMMARY_SECTIONS = [
+    "## 🗺️ 知識地圖",
+    "## ⚡ 速查表",
+    "## 🛠️ 小實作",
+    "## ✅ 自測清單",
+    "## 🎯 面試速查",
+]
+
 # 索引／行為面試型章節：模板允許「依需要增減」
 EXEMPT_FROM_SECTIONS = {
     "20-security-system-design/14-behavioral-interview.md",
@@ -58,20 +67,27 @@ def check() -> list[str]:
         rel = path.relative_to(CHAPTERS).as_posix()
         text = path.read_text(encoding="utf-8")
 
-        # 1. 必備區塊
-        if rel not in EXEMPT_FROM_SECTIONS:
+        is_summary = path.name.endswith("-summary.md")
+
+        # 1. 必備區塊（統整章用專屬清單）
+        if is_summary:
+            for section in SUMMARY_SECTIONS:
+                if section not in text:
+                    problems.append(f"{rel}: 統整章缺區塊 {section}")
+        elif rel not in EXEMPT_FROM_SECTIONS:
             for section in REQUIRED_SECTIONS:
                 if section not in text:
                     problems.append(f"{rel}: 缺區塊 {section}")
 
-        # 2. 區塊順序：白話導讀 → （🎯）→ Why
-        i_intro = text.find("## 💡 白話導讀")
-        i_usecase = text.find("## 🎯 什麼時候會用到")
-        i_why = text.find("## Why")
-        if i_intro >= 0 and i_why >= 0 and i_intro > i_why:
-            problems.append(f"{rel}: 順序錯——白話導讀應在 Why 之前")
-        if i_usecase >= 0 and not (i_intro < i_usecase < i_why):
-            problems.append(f"{rel}: 順序錯——🎯 應在導讀之後、Why 之前")
+        # 2. 區塊順序：白話導讀 → （🎯）→ Why（統整章不適用）
+        if not is_summary:
+            i_intro = text.find("## 💡 白話導讀")
+            i_usecase = text.find("## 🎯 什麼時候會用到")
+            i_why = text.find("## Why")
+            if i_intro >= 0 and i_why >= 0 and i_intro > i_why:
+                problems.append(f"{rel}: 順序錯——白話導讀應在 Why 之前")
+            if i_usecase >= 0 and not (i_intro < i_usecase < i_why):
+                problems.append(f"{rel}: 順序錯——🎯 應在導讀之後、Why 之前")
 
         # 3. 相對連結有效
         for match in MD_LINK.finditer(text):

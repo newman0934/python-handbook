@@ -271,7 +271,9 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 1！** 你已經從「Python 是什麼」一路走到「Python 怎麼被執行」。
-接下來 [Part 2 語言基礎](../02-fundamentals/README.md) 將正式開始寫 Python：動態型別、基本型別、流程控制與函式。
+你已經從「Python 是什麼」一路走到「Python 怎麼被執行」。
+下一章把這 12 章串成一張圖，並用一支「環境自檢報告」驗收你的所得。
+
+➡️ 下一章：[Part 1 統整：入門全貌](13-summary.md)
 
 [⬆️ 回 Part 1 索引](README.md)
