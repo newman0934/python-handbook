@@ -18,6 +18,7 @@
 | 10 | [常用內建函式](10-builtin-functions.md) |
 | 11 | [排序 sorted / key / operator](11-sorting.md) |
 | 12 | [heapq 與 bisect](12-heapq-bisect.md) |
+| 13 | [**Part 3 統整：資料結構全貌**](13-summary.md) |
 
 ---
 

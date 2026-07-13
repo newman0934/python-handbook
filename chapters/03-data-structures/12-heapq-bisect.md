@@ -241,7 +241,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 3！** 你已掌握 Python 的內建資料結構：list/tuple/dict/set 的用法與底層、切片、可變性與 hashable 這條主線、collections 專用容器、複製的層次、以及排序、heapq/bisect。
+你已掌握 Python 的內建資料結構：list/tuple/dict/set 的用法與底層、切片、可變性與 hashable 這條主線、collections 專用容器、複製的層次、以及排序、heapq/bisect。
 接下來 [Part 4 物件導向](../04-oop/README.md) 將深入 class、繼承、MRO 與 Python 的物件模型。
+
+
+➡️ 下一章：[Part 3 統整：資料結構全貌](13-summary.md)
 
 [⬆️ 回 Part 3 索引](README.md)
