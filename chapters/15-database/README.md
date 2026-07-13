@@ -42,6 +42,7 @@
 | 23 | [多資料庫上手與語法對照](23-multi-db-guide.md) |
 | 24 | [MySQL 專屬功能與實戰](24-mysql-features.md) |
 | 25 | [MongoDB 與文件資料庫實戰](25-mongodb.md) |
+| 26 | [**Part 15 統整：資料庫全貌**](26-summary.md) |
 
 > 🔗 兩區呼應:原理篇 [ch05 索引內部原理](05-index-internals.md) ↔ 實作篇 [ch21 索引與查詢優化基礎](21-indexing.md);原理篇 [ch07 交易與並發控制](07-transactions-concurrency.md) ↔ 實作篇 [ch16 transaction 交易](16-transactions.md)。原理篇講「引擎為什麼這樣」,實作篇講「Python 怎麼用」。
 

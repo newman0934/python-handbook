@@ -309,4 +309,7 @@ flowchart TB
 
 ⬅️ 這是 Part 15 的最後一章。
 
-[⬆️ 回 Part 15 索引](README.md) ｜ [下一 Part:架構與設計 ➡️](../16-architecture/README.md)
+
+➡️ 下一章：[Part 15 統整：資料庫全貌](26-summary.md)
+
+[⬆️ 回 Part 15 索引](README.md)
