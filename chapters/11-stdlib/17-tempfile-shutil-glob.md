@@ -256,7 +256,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 11！** 你已掌握 Python 標準庫的日常必備模組：os/sys、pathlib、datetime、json、re、io、subprocess、logging、collections/functools/itertools、argparse、random/math/statistics、pickle、csv/tomllib、HTTP client、socket、collections.abc、tempfile/shutil/glob。這是「電池內建」的實戰工具箱。
+你已掌握 Python 標準庫的日常必備模組：os/sys、pathlib、datetime、json、re、io、subprocess、logging、collections/functools/itertools、argparse、random/math/statistics、pickle、csv/tomllib、HTTP client、socket、collections.abc、tempfile/shutil/glob。這是「電池內建」的實戰工具箱。
 接下來 [Part 12 測試](../12-testing/README.md) 將進入 unittest、pytest、fixture、mock 與 TDD。
+
+
+➡️ 下一章：[Part 11 統整：標準庫全貌](18-summary.md)
 
 [⬆️ 回 Part 11 索引](README.md)

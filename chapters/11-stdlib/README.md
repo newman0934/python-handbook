@@ -23,6 +23,7 @@
 | 15 | [socket 網路程式基礎](15-socket.md) |
 | 16 | [collections.abc 與抽象基底](16-collections-abc.md) |
 | 17 | [tempfile / shutil / glob 檔案操作](17-tempfile-shutil-glob.md) |
+| 18 | [**Part 11 統整：標準庫全貌**](18-summary.md) |
 
 ---
 
