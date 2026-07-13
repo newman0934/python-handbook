@@ -17,6 +17,7 @@
 | 09 | [doctest](09-doctest.md) |
 | 10 | [除錯技巧與工具](10-debugging.md) |
 | 11 | [屬性測試 property-based testing](11-property-based-testing.md) |
+| 12 | [**Part 12 統整：測試全貌**](12-summary.md) |
 
 ---
 

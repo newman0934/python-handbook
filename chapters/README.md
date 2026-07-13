@@ -18,7 +18,7 @@
 | 9 | [並發與並行 Concurrency](09-concurrency/) | 14 | threading、GIL、multiprocessing、asyncio——Python 的並發全貌。 |
 | 10 | [CPython 內部與記憶體 CPython Internals & Memory](10-cpython-internals/) | 12 | 物件模型、引用計數、GC、bytecode、GIL 原理——理解 Python 為何這樣跑。 |
 | 11 | [標準庫 Standard Library](11-stdlib/) | 18 | os / pathlib / datetime / json / re / logging 等日常必備標準庫。 |
-| 12 | [測試 Testing](12-testing/) | 11 | unittest、pytest、fixture、mock、覆蓋率與 TDD。 |
+| 12 | [測試 Testing](12-testing/) | 12 | unittest、pytest、fixture、mock、覆蓋率與 TDD。 |
 | 13 | [工程化與打包 Tooling & Packaging](13-tooling-packaging/) | 9 | pip、venv、uv/poetry、pyproject.toml、打包發佈與 lint/format。 |
 | 14 | [Web 開發 Web Development](14-web/) | 18 | WSGI/ASGI、FastAPI/Flask、REST API、pydantic 驗證與認證。 |
 | 15 | [資料庫 Database](15-database/) | 25 | **原理篇**:關聯模型、SQL 語意、正規化、儲存/索引/優化器、交易並發(MVCC)、WAL、複製分片、NoSQL 選型;**實作篇**:DB-API、SQLAlchemy、連線池、transaction、migration、Redis、async、N+1、索引、PostgreSQL 專屬(JSONB/UPSERT/GIN)、多資料庫對照、MySQL 專屬(InnoDB/utf8mb4)、MongoDB 文件建模(embed vs reference)。 |

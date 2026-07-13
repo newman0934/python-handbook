@@ -267,7 +267,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 12！** 你已掌握 Python 的測試與品質保證：為什麼測試、unittest、pytest（基礎/fixture/參數化）、mock 與 patch、覆蓋率、TDD、doctest、除錯技巧，以及屬性測試。測試是「敢改程式」的安全網，除錯是「查而非猜」的能力。
+你已掌握 Python 的測試與品質保證：為什麼測試、unittest、pytest（基礎/fixture/參數化）、mock 與 patch、覆蓋率、TDD、doctest、除錯技巧，以及屬性測試。測試是「敢改程式」的安全網，除錯是「查而非猜」的能力。
 接下來 [Part 13 工程化與打包](../13-tooling-packaging/README.md) 將進入 pip、venv、uv/poetry、打包發佈與工具鏈。
+
+
+➡️ 下一章：[Part 12 統整：測試全貌](12-summary.md)
 
 [⬆️ 回 Part 12 索引](README.md)
