@@ -247,4 +247,7 @@ flowchart TD
 
 ⬅️ 這是全書的最後一章。
 
-[⬆️ 回 Part 22 索引](README.md) ｜ [🏠 回全書總覽](../README.md)
+
+➡️ 下一章：[Part 22 統整：分散式系統全貌](09-summary.md)
+
+[⬆️ 回 Part 22 索引](README.md)

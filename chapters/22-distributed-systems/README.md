@@ -14,6 +14,7 @@
 | 06 | [冪等性設計](06-idempotency.md) |
 | 07 | [Saga 與分散式交易](07-saga.md) |
 | 08 | [分散式追蹤與可觀測性](08-distributed-tracing.md) |
+| 9 | [**Part 22 統整：分散式系統全貌**](09-summary.md) |
 
 ---
 
