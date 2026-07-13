@@ -296,4 +296,7 @@ flowchart TD
 
 ⬅️ 這是 Part 16 的最後一章。
 
-[⬆️ 回 Part 16 索引](README.md) ｜ [下一 Part：資料處理與科學計算 ➡️](../17-data-science/README.md)
+
+➡️ 下一章：[Part 16 統整：架構與設計全貌](12-summary.md)
+
+[⬆️ 回 Part 16 索引](README.md)

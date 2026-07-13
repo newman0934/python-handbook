@@ -17,6 +17,7 @@
 | 09 | [Hexagonal / Ports & Adapters 架構](09-hexagonal.md) |
 | 10 | [事件驅動與訊息佇列 (Celery / RabbitMQ / Kafka)](10-event-driven-mq.md) |
 | 11 | [設定管理與環境變數](11-config-management.md) |
+| 12 | [**Part 16 統整：架構與設計全貌**](12-summary.md) |
 
 ---
 
