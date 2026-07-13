@@ -61,3 +61,21 @@ def test_udp_is_fire_and_forget() -> None:
     time.sleep(1.2)  # 等 UDP server 收完（localhost 幾乎不丟）
 
     assert box == [b"packet-1", b"packet-2", b"packet-3"]
+
+
+def test_resolve_localhost() -> None:
+    from examples.part00.dns_ip_port import resolve
+
+    # localhost 走 hosts 檔，不依賴外部 DNS，CI 穩定
+    assert resolve("localhost") == ["127.0.0.1"]
+
+
+def test_free_port_is_valid_and_bindable() -> None:
+    from examples.part00.dns_ip_port import free_port
+
+    port = free_port()
+    assert 1024 <= port <= 65535
+    # 分配到的 port 應該可以再綁（證明它當下是空閒的）
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(("localhost", port))

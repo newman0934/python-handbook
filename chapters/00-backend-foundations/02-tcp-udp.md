@@ -309,6 +309,6 @@ sequenceDiagram
 
 ---
 
-➡️ 下一章：DNS 與 IP / Port（撰寫中，先回索引）
+➡️ 下一章：[DNS 與 IP / Port](03-dns-ip-port.md)
 
 [⬆️ 回 Part 0 索引](README.md)
