@@ -16,7 +16,7 @@
 | 7 | [迭代器與生成器 Iterators & Generators](07-iterators-generators/) | 9 | iterable / iterator 協定、generator 與 yield、itertools。 |
 | 8 | [函數式與裝飾器 Functional & Decorators](08-functional-decorators/) | 8 | 高階函式、decorator 原理與 functools。 |
 | 9 | [並發與並行 Concurrency](09-concurrency/) | 14 | threading、GIL、multiprocessing、asyncio——Python 的並發全貌。 |
-| 10 | [CPython 內部與記憶體 CPython Internals & Memory](10-cpython-internals/) | 11 | 物件模型、引用計數、GC、bytecode、GIL 原理——理解 Python 為何這樣跑。 |
+| 10 | [CPython 內部與記憶體 CPython Internals & Memory](10-cpython-internals/) | 12 | 物件模型、引用計數、GC、bytecode、GIL 原理——理解 Python 為何這樣跑。 |
 | 11 | [標準庫 Standard Library](11-stdlib/) | 17 | os / pathlib / datetime / json / re / logging 等日常必備標準庫。 |
 | 12 | [測試 Testing](12-testing/) | 11 | unittest、pytest、fixture、mock、覆蓋率與 TDD。 |
 | 13 | [工程化與打包 Tooling & Packaging](13-tooling-packaging/) | 9 | pip、venv、uv/poetry、pyproject.toml、打包發佈與 lint/format。 |

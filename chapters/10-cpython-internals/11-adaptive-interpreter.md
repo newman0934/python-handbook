@@ -206,7 +206,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 10！** 你已深入 CPython 的內部：一切皆物件、物件模型（id/type/value）、引用計數與循環 GC、記憶體管理與 pymalloc、bytecode 與 dis、PVM 直譯器、GIL 底層原理、interning、weakref，以及適應性直譯器的效能演進。這是理解「Python 為何這樣運作」的核心。
+你已深入 CPython 的內部：一切皆物件、物件模型（id/type/value）、引用計數與循環 GC、記憶體管理與 pymalloc、bytecode 與 dis、PVM 直譯器、GIL 底層原理、interning、weakref，以及適應性直譯器的效能演進。這是理解「Python 為何這樣運作」的核心。
 接下來 [Part 11 標準庫](../11-stdlib/README.md) 將回到實用層面，深入 os/pathlib/datetime/json/re/logging 等日常必備模組。
+
+
+➡️ 下一章：[Part 10 統整：CPython 內部與記憶體全貌](12-summary.md)
 
 [⬆️ 回 Part 10 索引](README.md)

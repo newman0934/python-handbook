@@ -17,6 +17,7 @@
 | 09 | [小整數與字串 interning](09-interning.md) |
 | 10 | [weakref 弱引用](10-weakref.md) |
 | 11 | [適應性直譯器與近期優化 (PEP 659, 3.11+)](11-adaptive-interpreter.md) |
+| 12 | [**Part 10 統整：CPython 內部與記憶體全貌**](12-summary.md) |
 
 ---
 
