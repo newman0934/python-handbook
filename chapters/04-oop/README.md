@@ -21,6 +21,7 @@
 | 13 | [metaclass 元類別](13-metaclass.md) |
 | 14 | [Enum 列舉](14-enum.md) |
 | 15 | [mixin 與組合優於繼承](15-mixin.md) |
+| 16 | [**Part 4 統整：物件導向全貌**](16-summary.md) |
 
 ---
 

@@ -232,7 +232,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 4！** 你已掌握 Python 的物件模型：class/instance、屬性系統與 `__dict__`、繼承與 MRO、封裝、property 與描述器、三種方法、魔術方法、dataclass、ABC、`__new__`、metaclass、Enum，以及「組合優於繼承」的設計判斷。
+你已掌握 Python 的物件模型：class/instance、屬性系統與 `__dict__`、繼承與 MRO、封裝、property 與描述器、三種方法、魔術方法、dataclass、ABC、`__new__`、metaclass、Enum，以及「組合優於繼承」的設計判斷。
 接下來 [Part 5 型別系統](../05-typing/README.md) 將進入 type hints、泛型、Protocol 與 mypy。
+
+
+➡️ 下一章：[Part 4 統整：物件導向全貌](16-summary.md)
 
 [⬆️ 回 Part 4 索引](README.md)

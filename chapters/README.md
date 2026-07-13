@@ -10,7 +10,7 @@
 | 1 | [入門 Getting Started](01-getting-started/) | 13 | 從零開始：認識 Python、把開發環境準備好、理解 Python 怎麼被執行。 |
 | 2 | [語言基礎 Fundamentals](02-fundamentals/) | 17 | 動態型別、基本型別、運算子、流程控制、函式與作用域——寫任何 Python 的地基。 |
 | 3 | [資料結構 Data Structures](03-data-structures/) | 13 | list / tuple / dict / set 的用法與底層模型，可變性與 hashable。 |
-| 4 | [物件導向 OOP](04-oop/) | 15 | class、繼承、MRO、property 與魔術方法——Python 的物件模型。 |
+| 4 | [物件導向 OOP](04-oop/) | 16 | class、繼承、MRO、property 與魔術方法——Python 的物件模型。 |
 | 5 | [型別系統 Typing](05-typing/) | 11 | type hints、typing 模組、泛型與 Protocol，配合 mypy 做靜態型別檢查。 |
 | 6 | [錯誤處理 Error Handling](06-error-handling/) | 12 | exception 機制、try/except、自訂例外與 context manager。 |
 | 7 | [迭代器與生成器 Iterators & Generators](07-iterators-generators/) | 8 | iterable / iterator 協定、generator 與 yield、itertools。 |
