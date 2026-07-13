@@ -15,6 +15,7 @@
 | 07 | [mypy 工程化](07-mypy-tooling.md) |
 | 08 | [pre-commit hooks](08-pre-commit.md) |
 | 09 | [CLI 應用開發 (argparse / click / typer)](09-cli-apps.md) |
+| 10 | [**Part 13 統整：工程化與打包全貌**](10-summary.md) |
 
 ---
 

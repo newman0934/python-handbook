@@ -245,7 +245,10 @@ flowchart TD
 
 ---
 
-🎉 **恭喜完成 Part 13！** 你已掌握 Python 的工程化與打包：pip 進階、虛擬環境、uv/poetry、pyproject.toml、打包發佈、ruff、mypy、pre-commit，以及 CLI 應用開發。這是「把 Python 專案做得專業」的工具鏈。
+你已掌握 Python 的工程化與打包：pip 進階、虛擬環境、uv/poetry、pyproject.toml、打包發佈、ruff、mypy、pre-commit，以及 CLI 應用開發。這是「把 Python 專案做得專業」的工具鏈。
 接下來 [Part 14 Web 開發](../14-web/README.md) 將進入 WSGI/ASGI、FastAPI、REST API 與認證。
+
+
+➡️ 下一章：[Part 13 統整：工程化與打包全貌](10-summary.md)
 
 [⬆️ 回 Part 13 索引](README.md)
