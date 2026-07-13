@@ -43,7 +43,7 @@ Web 框架做的事，本質是**把 HTTP 請求轉成一次函式呼叫**。
 
 而 **FastAPI 最迷人的一點**，是它把 [Part 5 的型別註記](../05-typing/README.md)**變成了真正的工作**：
 
-```python
+```text
 def create_task(data: TaskIn) -> TaskOut:   # ← 這不只是註記
 ```
 
