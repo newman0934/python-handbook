@@ -124,9 +124,7 @@ def check_counts() -> list[str]:
     for match in re.finditer(r"(\d+)\s*章", claude):
         claimed = int(match.group(1))
         if claimed > 100 and claimed != actual_total:  # 只驗「全書總數」等級的數字
-            problems.append(
-                f"CLAUDE.md: 宣稱 {claimed} 章，實際 {actual_total} 章"
-            )
+            problems.append(f"CLAUDE.md: 宣稱 {claimed} 章，實際 {actual_total} 章")
 
     # 2. chapters/README.md 每個 Part 的章數欄
     index = (ROOT / "chapters" / "README.md").read_text(encoding="utf-8")
