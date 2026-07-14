@@ -232,9 +232,6 @@ flowchart TD
 
 ---
 
-⬅️ 這是 Part 21 的最後一章。
-
-
-➡️ 下一章：[Part 21 統整：微服務全貌](09-summary.md)
+➡️ 下一章：[作為可靠的 HTTP 客戶端](09-reliable-http-client.md)
 
 [⬆️ 回 Part 21 索引](README.md)

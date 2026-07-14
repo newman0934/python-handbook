@@ -1,8 +1,8 @@
 # Part 21 統整：微服務全貌
 
-> 把這 8 章串成一張圖——它的第一課，是一個反直覺的建議：**先別拆。**
+> 把這 10 章串成一張圖——它的第一課，是一個反直覺的建議：**先別拆。** 而 ch09–10 補上另一半視角：前面都在教你「當 server」，最後兩章教你可靠地「當 client」去呼叫別人。
 
-## 🗺️ 知識地圖（這 8 章怎麼串起來）
+## 🗺️ 知識地圖（這 10 章怎麼串起來）
 
 微服務不是「先進架構」，是**一個取捨**。這個 Part 先讓你**看清代價**，再教你**處理代價**。
 
@@ -22,8 +22,13 @@ flowchart TD
     B --> F["④ 一堆服務怎麼管"]
     F --> F1["ch08 服務治理<br/>（集中設定、feature flag）"]
 
+    B --> G["⑤ 換你當 client 呼叫別人"]
+    G --> G1["ch09 可靠 HTTP 客戶端<br/>逾時預算 + 重試退避 + 消費端熔斷"]
+    G --> G2["ch10 客戶端冪等鍵<br/>asyncio 取消 + SDK 封裝"]
+
     style A fill:#ffebee
     style E1 fill:#e8f5e9
+    style G fill:#e3f2fd
 ```
 
 **一句話串起來**：
@@ -65,6 +70,10 @@ flowchart TD
 | 擋住暴衝流量 | **限流**（令牌桶，見 [Part 20](../20-security-system-design/11-system-design-rate-limiter.md)） | [ch07](07-rate-limit-circuit-breaker.md) |
 | 改一個設定要動 100 個服務 | **集中設定中心**（動態生效、不必重啟） | [ch08](08-service-governance.md) |
 | 新功能想先給 5% 使用者 | **feature flag**（部署與發布分家） | [ch08](08-service-governance.md) |
+| **你要去呼叫第三方 / 下游** | 必設逾時 + **整趟逾時預算** + 錯誤分類後重試 + 連線池復用 | [ch09](09-reliable-http-client.md) |
+| 重試一個有副作用的呼叫 | **冪等鍵**（重試用同一把）——避免重複扣款 | [ch10](10-client-idempotency-cancellation.md) |
+| async 裡呼叫外部要設死線 | `asyncio.wait_for` / `asyncio.timeout`，取消時 `try/finally` 清理 | [ch10](10-client-idempotency-cancellation.md) |
+| 團隊反覆呼叫同一第三方 | 封裝成 **client / SDK**：逾時 / 重試 / 冪等 / 錯誤轉換集中一處 | [ch10](10-client-idempotency-cancellation.md) |
 
 ## 🔑 核心心智模型（帶得走的幾句話）
 
@@ -230,6 +239,10 @@ $ python microservices_demo.py
 - [ ] 為什麼重試「只能」重試冪等操作？（[ch07](07-rate-limit-circuit-breaker.md)）
 - [ ] 集中設定中心比環境變數好在哪？（[ch08](08-service-governance.md)）
 - [ ] feature flag 怎麼讓「部署」和「發布」分家？（[ch08](08-service-governance.md)）
+- [ ] 呼叫第三方時為什麼要「逾時預算」，不只是單次逾時？（[ch09](09-reliable-http-client.md)）
+- [ ] 哪些錯誤該重試、哪些不該？「不確定」的呢？（[ch09](09-reliable-http-client.md)）
+- [ ] 重試付款為什麼可能扣兩次？冪等鍵怎麼解？（[ch10](10-client-idempotency-cancellation.md)）
+- [ ] asyncio 的逾時底層是什麼？取消時要注意什麼？（[ch10](10-client-idempotency-cancellation.md)）
 
 ## 🎯 面試速查
 
@@ -241,6 +254,8 @@ $ python microservices_demo.py
 | **gRPC vs REST？** | 「**gRPC**：HTTP/2 + protobuf 二進位，**快、強型別、有合約**（`.proto` 跨語言）——適合**內部高頻通訊**。**REST**：通用、好除錯、瀏覽器直接吃——適合**對外 API**。口訣：**對外 REST、內部 gRPC**。」 | [ch02](02-grpc-protobuf.md) |
 | **服務發現？** | 「服務實例的 IP 會隨擴縮容、重啟一直變。**服務註冊中心**（Consul/etcd/Eureka）記錄『哪個服務有哪些健康實例在哪』，實例啟動時註冊、健康檢查維持、下線移除。**K8s 內建**——打 Service 的 DNS 名（如 `http://inventory-service`）就會被轉發到健康實例。」 | [ch04](04-service-discovery.md) |
 | **API gateway 的價值與風險？** | 「**價值**：單一入口（客戶端只記一個位址）+ **集中橫切關注**（認證、限流、TLS 在一處做，不必每個服務重複）。**風險**：① 單點（要高可用）；② **業務邏輯偷偷長進 gateway** → 變成新的單體。原則：**笨管道、智慧端點**。」 | [ch05](05-api-gateway.md) |
+| **呼叫第三方 API 你會注意什麼？** | 「**必設逾時**（防無限等 / 連鎖故障）、**整趟逾時預算**（重試會累加，要有總上限）、**錯誤分類後才重試**（暫時重試、永久放棄）、**退避 + 抖動**、**消費端熔斷**、**復用連線池**。逾時最重要。」 | [ch09](09-reliable-http-client.md) |
+| **重試付款會不會扣兩次？怎麼避免？**（高頻） | 「會——請求送出後逾時（其實成功了），重試就重複扣款。解法 **冪等鍵（Idempotency-Key）**：第一次帶一把由業務識別碼**穩定算出**的鍵，重試**用同一把**；對方據鍵去重，只執行一次。**逾時 = 不確定**，只有冪等操作能安全重試。」 | [ch10](10-client-idempotency-cancellation.md) |
 
 ---
 

@@ -14,7 +14,9 @@
 | 06 | [健康檢查與就緒/存活探針](06-health-checks.md) |
 | 07 | [限流與熔斷 (rate limit / circuit breaker)](07-rate-limit-circuit-breaker.md) |
 | 08 | [分散式設定與服務治理](08-service-governance.md) |
-| 9 | [**Part 21 統整：微服務全貌**](09-summary.md) |
+| 09 | [作為可靠的 HTTP 客戶端：逾時、重試與消費端熔斷](09-reliable-http-client.md) |
+| 10 | [呼叫別人時的冪等、取消與 SDK 設計](10-client-idempotency-cancellation.md) |
+| 11 | [**Part 21 統整：微服務全貌**](11-summary.md) |
 
 ---
 
