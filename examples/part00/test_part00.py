@@ -214,3 +214,29 @@ def test_load_config_bad_int_raises() -> None:
 
     with pytest.raises(ConfigError, match="PORT"):
         load_config({"DATABASE_URL": "x", "PORT": "abc"})
+
+
+def test_healthcheck_resolve_localhost() -> None:
+    from examples.part00.healthcheck import resolve
+
+    assert "127.0.0.1" in resolve("localhost")
+
+
+def test_healthcheck_port_open_then_closed() -> None:
+    import socket
+
+    from examples.part00.healthcheck import check_tcp_port, diagnose
+
+    srv = socket.socket()
+    srv.bind(("localhost", 0))
+    srv.listen(1)
+    port = srv.getsockname()[1]
+    try:
+        report = diagnose("localhost", port)
+        assert report["port_open"] is True
+        assert report["target"] == f"localhost:{port}"
+        assert isinstance(report["pid"], int)
+    finally:
+        srv.close()
+    # 監聽關掉後，同一個 port 就連不上了
+    assert check_tcp_port("localhost", port) is False

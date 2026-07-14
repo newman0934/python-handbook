@@ -299,6 +299,6 @@ flowchart LR
 
 ---
 
-➡️ 下一章：Part 0 統整:後端基礎知識地圖（撰寫中,先回索引）
+➡️ 下一章：[Part 0 統整:後端基礎知識地圖](10-summary.md)
 
 [⬆️ 回 Part 0 索引](README.md)

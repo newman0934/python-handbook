@@ -23,8 +23,7 @@
 | 07 | [檔案描述符與 I/O](07-file-descriptor-io.md) |
 | 08 | [訊號與程序生命週期](08-signals-lifecycle.md) |
 | 09 | [shell、環境變數與常用診斷](09-shell-env-diagnostics.md) |
-
-> 其餘章節規劃(陸續補上):Part 0 統整。
+| 10 | [Part 0 統整:後端基礎知識地圖](10-summary.md) |
 
 ---
 
