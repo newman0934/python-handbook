@@ -289,6 +289,6 @@ flowchart TD
 
 ---
 
-➡️ 下一章：訊號與程序生命週期（撰寫中，先回索引）
+➡️ 下一章：[訊號與程序生命週期](08-signals-lifecycle.md)
 
 [⬆️ 回 Part 0 索引](README.md)

@@ -169,3 +169,13 @@ def test_nonblocking_accept_does_not_block() -> None:
 
     # 非阻塞 accept 沒人連時「立刻」拋例外，不卡住 —— asyncio 的地基
     assert nonblocking_accept_raises() is True
+
+
+def test_sigterm_triggers_graceful_shutdown() -> None:
+    from examples.part00.graceful_shutdown import run_and_trigger
+
+    server = run_and_trigger()
+    # handler 被觸發：旗標翻轉、收尾步驟被記錄（沒有被硬切斷）
+    assert server.running is False
+    assert server.shutdown_log[0].startswith("收到 SIGTERM")
+    assert "1. 停止接受新請求" in server.shutdown_log
