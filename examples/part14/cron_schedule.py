@@ -33,14 +33,22 @@ def _match_field(spec: str, value: int, low: int) -> bool:
 def cron_matches(
     minute: str, hour: str, dom: str, month: str, dow: str, dt: datetime
 ) -> bool:
-    """五欄位 cron（分 時 日 月 週）是否匹配 dt。dow：0=週日…6=週六。"""
-    return (
+    """五欄位 cron（分 時 日 月 週）是否匹配 dt。dow：0=週日…6=週六。
+
+    注意標準 cron 的「日 / 星期」規則：兩者都有限制（非 *）時是 **OR**
+    （任一符合就算命中）；只有一個受限時，就照那一個判斷。
+    """
+    time_ok = (
         _match_field(minute, dt.minute, 0)
         and _match_field(hour, dt.hour, 0)
-        and _match_field(dom, dt.day, 1)
         and _match_field(month, dt.month, 1)
-        and _match_field(dow, dt.isoweekday() % 7, 0)
     )
+    dom_ok = _match_field(dom, dt.day, 1)
+    dow_ok = _match_field(dow, dt.isoweekday() % 7, 0)
+    both_restricted = dom != "*" and dow != "*"
+    # 兩者都受限 → OR；至多一個受限 → 另一個是 *（恆真），等同只看受限那欄
+    day_ok = (dom_ok or dow_ok) if both_restricted else (dom_ok and dow_ok)
+    return time_ok and day_ok
 
 
 def demo() -> None:
