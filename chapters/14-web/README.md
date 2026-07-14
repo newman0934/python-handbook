@@ -24,7 +24,12 @@
 | 16 | [例外處理與錯誤回應](16-exception-handlers.md) |
 | 17 | [GraphQL](17-graphql.md) |
 | 18 | [API 設計實務](18-api-design.md) |
-| 19 | [**Part 14 統整：Web 開發全貌**](19-summary.md) |
+| 19 | [錯誤契約：RFC 9457 problem+json 與版本策略](19-error-contract-rfc9457.md) |
+| 20 | [ETag、條件請求與 webhook 設計](20-etag-conditional-webhook.md) |
+| 21 | [背景任務進階：為什麼需要任務佇列](21-task-queue-why.md) |
+| 22 | [Celery 實戰：broker、task、重試與冪等](22-celery.md) |
+| 23 | [排程：cron 型定時任務](23-scheduling.md) |
+| 24 | [**Part 14 統整：Web 開發全貌**](24-summary.md) |
 
 ---
 
