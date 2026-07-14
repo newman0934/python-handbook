@@ -107,3 +107,28 @@ def test_parse_response() -> None:
     assert parsed["reason"] == "Created"
     assert parsed["headers"] == {"Content-Type": "application/json"}
     assert parsed["body"] == '{"id":1}'
+
+
+def test_fingerprint_is_deterministic_and_sensitive() -> None:
+    from examples.part00.tls_building_blocks import fingerprint
+
+    # 確定性：同輸入同輸出
+    assert fingerprint(b"hello") == fingerprint(b"hello")
+    # 敏感性：改一個字母，指紋完全不同
+    assert fingerprint(b"hello") != fingerprint(b"hellp")
+
+
+def test_cert_verification_catches_tampering() -> None:
+    import secrets
+
+    from examples.part00.tls_building_blocks import ca_sign, verify_cert
+
+    ca_secret = secrets.token_bytes(32)
+    cert = "CN=api.example.com; pubkey=ABC123"
+    signature = ca_sign(ca_secret, cert)
+
+    # 未竄改：驗章通過
+    assert verify_cert(ca_secret, cert, signature) is True
+    # 中間人竄改域名：驗章失敗，擋下冒充
+    tampered = cert.replace("api.example.com", "evil.com")
+    assert verify_cert(ca_secret, tampered, signature) is False
