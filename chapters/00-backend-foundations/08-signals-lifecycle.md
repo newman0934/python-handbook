@@ -268,6 +268,6 @@ sequenceDiagram
 
 ---
 
-➡️ 下一章：shell、環境變數、常用診斷（撰寫中，先回索引）
+➡️ 下一章：[shell、環境變數與常用診斷](09-shell-env-diagnostics.md)
 
 [⬆️ 回 Part 0 索引](README.md)

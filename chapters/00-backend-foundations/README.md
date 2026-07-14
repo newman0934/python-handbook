@@ -22,9 +22,9 @@
 | 06 | [Linux process 與 thread](06-process-thread.md) |
 | 07 | [檔案描述符與 I/O](07-file-descriptor-io.md) |
 | 08 | [訊號與程序生命週期](08-signals-lifecycle.md) |
+| 09 | [shell、環境變數與常用診斷](09-shell-env-diagnostics.md) |
 
-> 其餘章節規劃(陸續補上):> HTTPS 與 TLS、Linux process 與 thread、檔案描述符與 I/O、訊號與程序生命週期、
-> shell/環境變數/診斷、Part 0 統整。
+> 其餘章節規劃(陸續補上):Part 0 統整。
 
 ---
 

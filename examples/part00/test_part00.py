@@ -179,3 +179,38 @@ def test_sigterm_triggers_graceful_shutdown() -> None:
     assert server.running is False
     assert server.shutdown_log[0].startswith("收到 SIGTERM")
     assert "1. 停止接受新請求" in server.shutdown_log
+
+
+def test_load_config_reads_env() -> None:
+    from examples.part00.env_config import load_config
+
+    cfg = load_config({"DATABASE_URL": "postgres://db/app", "PORT": "5432", "DEBUG": "on"})
+    assert cfg.database_url == "postgres://db/app"
+    assert cfg.port == 5432
+    assert cfg.debug is True
+
+
+def test_load_config_defaults_and_bool_falsey() -> None:
+    from examples.part00.env_config import load_config
+
+    cfg = load_config({"DATABASE_URL": "x", "DEBUG": "false"})
+    assert cfg.port == 8000  # 預設
+    assert cfg.debug is False  # "false" 不是 truthy 白名單
+
+
+def test_load_config_missing_required_fails_fast() -> None:
+    import pytest
+
+    from examples.part00.env_config import ConfigError, load_config
+
+    with pytest.raises(ConfigError, match="DATABASE_URL"):
+        load_config({})
+
+
+def test_load_config_bad_int_raises() -> None:
+    import pytest
+
+    from examples.part00.env_config import ConfigError, load_config
+
+    with pytest.raises(ConfigError, match="PORT"):
+        load_config({"DATABASE_URL": "x", "PORT": "abc"})
