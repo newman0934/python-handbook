@@ -19,6 +19,7 @@
 | 03 | [DNS 與 IP / Port](03-dns-ip-port.md) |
 | 04 | [HTTP 報文深入](04-http-messages.md) |
 | 05 | [HTTPS 與 TLS](05-https-tls.md) |
+| 06 | [Linux process 與 thread](06-process-thread.md) |
 
 > 其餘章節規劃(陸續補上):> HTTPS 與 TLS、Linux process 與 thread、檔案描述符與 I/O、訊號與程序生命週期、
 > shell/環境變數/診斷、Part 0 統整。

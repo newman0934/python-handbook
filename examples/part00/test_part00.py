@@ -132,3 +132,23 @@ def test_cert_verification_catches_tampering() -> None:
     # 中間人竄改域名：驗章失敗，擋下冒充
     tampered = cert.replace("api.example.com", "evil.com")
     assert verify_cert(ca_secret, tampered, signature) is False
+
+
+def test_threads_share_memory() -> None:
+    from examples.part00.process_vs_thread import collect_via_threads
+
+    # 3 個執行緒都 append 到同一份 list（共享記憶體）→ 收集到 3 個值
+    result = collect_via_threads(3)
+    assert sorted(result) == [0, 1, 2]
+
+
+def test_process_is_isolated() -> None:
+    import os
+
+    from examples.part00.process_vs_thread import child_report
+
+    report = child_report()
+    # 子行程有不同的 PID（是另一個行程）
+    assert report["child_pid"] != os.getpid()
+    # 子行程改的是它「自己的」list
+    assert report["child_list"] == [999, 123]
