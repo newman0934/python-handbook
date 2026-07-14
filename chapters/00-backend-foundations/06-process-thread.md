@@ -271,6 +271,6 @@ flowchart TD
 
 ---
 
-➡️ 下一章：檔案描述符與 I/O（撰寫中，先回索引）
+➡️ 下一章：[檔案描述符與 I/O](07-file-descriptor-io.md)
 
 [⬆️ 回 Part 0 索引](README.md)

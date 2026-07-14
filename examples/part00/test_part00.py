@@ -152,3 +152,20 @@ def test_process_is_isolated() -> None:
     assert report["child_pid"] != os.getpid()
     # 子行程改的是它「自己的」list
     assert report["child_list"] == [999, 123]
+
+
+def test_everything_has_an_fd() -> None:
+    from examples.part00.file_descriptor import file_fd, pipe_fds, socket_fd
+
+    # 檔案、socket、pipe 都拿到一個非負整數 fd
+    assert file_fd() >= 0
+    assert socket_fd() >= 0
+    read_fd, write_fd = pipe_fds()
+    assert read_fd >= 0 and write_fd >= 0
+
+
+def test_nonblocking_accept_does_not_block() -> None:
+    from examples.part00.file_descriptor import nonblocking_accept_raises
+
+    # 非阻塞 accept 沒人連時「立刻」拋例外，不卡住 —— asyncio 的地基
+    assert nonblocking_accept_raises() is True

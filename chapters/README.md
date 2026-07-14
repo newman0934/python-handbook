@@ -7,7 +7,7 @@
 
 | # | Part | 章數 | 主題 |
 |---|------|------|------|
-| 0 | [後端與網路/OS 基礎 Backend Foundations](00-backend-foundations/) | 6 | 前置通識：一個請求的完整旅程、TCP/TLS、Linux/OS 與訊號——本書其餘部分「用而不教」的底層（撰寫中）。 |
+| 0 | [後端與網路/OS 基礎 Backend Foundations](00-backend-foundations/) | 7 | 前置通識：一個請求的完整旅程、TCP/TLS、Linux/OS 與訊號——本書其餘部分「用而不教」的底層（撰寫中）。 |
 | 1 | [入門 Getting Started](01-getting-started/) | 13 | 從零開始：認識 Python、把開發環境準備好、理解 Python 怎麼被執行。 |
 | 2 | [語言基礎 Fundamentals](02-fundamentals/) | 17 | 動態型別、基本型別、運算子、流程控制、函式與作用域——寫任何 Python 的地基。 |
 | 3 | [資料結構 Data Structures](03-data-structures/) | 13 | list / tuple / dict / set 的用法與底層模型，可變性與 hashable。 |
