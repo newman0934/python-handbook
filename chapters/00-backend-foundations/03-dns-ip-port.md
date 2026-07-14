@@ -252,6 +252,6 @@ flowchart TD
 
 ---
 
-➡️ 下一章：HTTP 報文深入（撰寫中，先回索引）
+➡️ 下一章：[HTTP 報文深入](04-http-messages.md)
 
 [⬆️ 回 Part 0 索引](README.md)

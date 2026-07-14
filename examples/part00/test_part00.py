@@ -79,3 +79,31 @@ def test_free_port_is_valid_and_bindable() -> None:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(("localhost", port))
+
+
+def test_build_request_has_four_parts() -> None:
+    from examples.part00.http_messages import build_request
+
+    raw = build_request("POST", "/tasks", "api.example.com", '{"title":"x"}')
+    text = raw.decode()
+    # 起始行、Host header、空行分界、body
+    assert text.startswith("POST /tasks HTTP/1.1\r\n")
+    assert "Host: api.example.com\r\n" in text
+    assert "\r\n\r\n" in text  # header 與 body 的分界
+    assert text.endswith('{"title":"x"}')
+
+
+def test_parse_response() -> None:
+    from examples.part00.http_messages import parse_response
+
+    raw = (
+        b"HTTP/1.1 201 Created\r\n"
+        b"Content-Type: application/json\r\n"
+        b"\r\n"
+        b'{"id":1}'
+    )
+    parsed = parse_response(raw)
+    assert parsed["status"] == 201
+    assert parsed["reason"] == "Created"
+    assert parsed["headers"] == {"Content-Type": "application/json"}
+    assert parsed["body"] == '{"id":1}'
