@@ -1,6 +1,6 @@
 # N+1 問題與 eager / lazy loading
 
-> ORM 讓你用 `user.orders` 存取關聯，方便到讓你忘了它背後在打 DB。一個迴圈裡存取關聯，就從 1 個查詢暴增成 N+1 個——這是 ORM 最常見、最致命的效能陷阱。搞懂它與 eager loading，是資深工程師的分水嶺。
+> 一段「列出每位使用者的訂單數」的無害迴圈，怎麼會偷偷對資料庫發出 **101 次**查詢？這章帶你抓出這個 ORM 頭號殺手，把它從 101 次打回 2 次——這正是「會用 ORM」與「懂 ORM」的分水嶺。
 
 ## 💡 白話導讀（建議先讀）
 
@@ -28,6 +28,14 @@ users = session.query(User).options(selectinload(User.orders)).all()
 
 101 次 → 2 次。**這是「會用 ORM」和「懂 ORM」的分水嶺**,面試必考、code review 必抓。
 怎麼發現它(開 SQL echo 數查詢次數)、`selectinload` vs `joinedload` 怎麼選——章內實戰。
+
+## 🎯 什麼時候會用到
+
+- 你的 API 上線後**突然變慢**,尤其是列表頁——一看 log,滿滿重複的小 `SELECT`。
+- code review 時看到**迴圈裡存取 `.orders` / `.user`** 這種關聯——該亮紅燈的時刻。
+- 你開了 SQL echo(`echo=True`),發現**一個請求打了幾十上百條 SELECT**。
+- 你在 `selectinload` 和 `joinedload` 之間猶豫,不知道差在哪、該選哪個。
+- 面試被問:「**什麼是 N+1?你怎麼發現、怎麼解決?**」
 
 ## Why（為什麼）
 
