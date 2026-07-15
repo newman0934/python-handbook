@@ -27,6 +27,21 @@ python -m pip install requests    # 而不是直接打 pip install
 
 意思是「用**我現在這個** python 自帶的 pip 來裝」——保證貨送到你正在用的那份 Python 家裡，地址絕不會錯。
 
+## 🔗 前端對照
+
+`pip` 對前端來說就是 `npm`——都是套件管理器,從中央倉庫抓別人的程式碼:
+
+| | Python | 前端 |
+|---|--------|------|
+| 套件管理器 | `pip`（或 uv / poetry） | `npm`（或 pnpm / yarn） |
+| 中央倉庫 | PyPI | npm registry |
+| 安裝 | `pip install requests` | `npm install axios` |
+| 相依清單 | `pyproject.toml` / `requirements.txt` | `package.json` |
+| 鎖定版本 | `uv.lock` / 釘死版本的 requirements | `package-lock.json` |
+
+一句話:心智一樣。最大差異——npm 預設把套件裝進**專案本地** `node_modules`;`pip` 預設裝進
+**目前那個 Python 環境**（所以下一章的 venv 特別重要:它就是 Python 版的「專案本地」隔離）。
+
 ## Why（為什麼）
 
 Python 的殺手級優勢之一是它龐大的**第三方套件生態**：requests（HTTP）、numpy（數值）、fastapi（Web）……幾乎任何需求都有現成輪子。這些輪子放在 **PyPI（Python Package Index）**，而 **pip** 就是把它們抓下來、裝進你環境的工具。

@@ -28,6 +28,19 @@ AttributeError: 'NoneType' object has no attribute ...
 
 另外破除一個誤會：`Optional[X]` 的意思**不是「這個參數可以不傳」**，而是「值可能是 None」——它就等於 `X | None`，現代直接寫後者。
 
+## 🔗 前端對照
+
+Python 的 `X | Y`（union）和 `Optional`（可為 None）幾乎直譯自 TypeScript 的 union 型別:
+
+| | Python | TypeScript |
+|---|--------|-----------|
+| 聯集型別 | `int \| str` | `number \| string` |
+| 可為空 | `str \| None`（即 `Optional[str]`） | `string \| undefined`（或 `\| null`） |
+| 縮小型別 | `if x is None:` / `isinstance` | `if (x === undefined)` / `typeof` |
+
+一句話:語法幾乎對譯。差別在「空」的表示——Python 只有一個 `None`;
+JavaScript 有 `undefined` **和** `null` 兩種空值,這反而是前端轉 Python 時變單純的地方。
+
 ## Why（為什麼）
 
 `None` 相關的錯誤（`'NoneType' object has no attribute ...`）是 Python 最常見的執行期崩潰之一。原因是「一個值可能有、可能沒有」的情況無所不在（查無資料、可選參數、找不到的 key）。**`Optional` / `Union`** 讓你在型別上明確標出「這裡可能是 None / 可能是好幾種型別」，於是 mypy 會**強迫你在使用前檢查**——把 None 錯誤提前到執行前。這是型別註記最能立即回本的地方。

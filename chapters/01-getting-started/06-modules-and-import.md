@@ -25,6 +25,21 @@
 
 帶著「找 → 執行 → 快取」三步走完這章。
 
+## 🔗 前端對照
+
+Python 的模組系統對應前端的 **ES modules**（`import` / `export`）——都是把程式碼拆檔、彼此引用:
+
+| | Python | JavaScript（ESM） |
+|---|--------|------------------|
+| 匯入指定名稱 | `from math import sqrt` | `import { sqrt } from "..."` |
+| 匯入整個模組 | `import math` → `math.sqrt` | `import * as math from "..."` |
+| 匯出 | **不用宣告**,模組裡的名稱預設都可被 import | 要 `export`（沒 export 就抓不到） |
+| 找檔規則 | 依 `sys.path` 搜尋 | 依相對/絕對路徑或 bundler 解析 |
+| 執行時機 | import 時**執行整個模組一次**並快取 | 同樣執行一次並快取（單例） |
+
+一句話:概念相同（拆檔、單例快取）,但 Python **不需要 `export`**——模組裡的東西預設都能被 import;
+「哪些算公開」靠命名慣例（前底線 `_private`）而非語法強制。
+
 ## Why（為什麼）
 
 程式一長，不可能全塞在一個檔案。把程式切成多個檔、彼此 import 重用，是任何真實專案的基本。但 `import` 背後其實做了不少事：它會**去哪裡找**這個模組？找到後**做什麼**？重複 import 會不會重複執行？

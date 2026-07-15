@@ -43,6 +43,21 @@ next(g)                # 2 —— 從斷點繼續,到下個 yield
 
 一句話:**「產生一串值 + 不必同時全在記憶體」→ generator;「要反覆存取整份」→ list。**
 
+## 🔗 前端對照
+
+Python 的 generator 和 JavaScript 的 **generator function（`function*` + `yield`）** 幾乎是同一個東西——
+呼叫時**不立刻執行**,而是回一個能「產一個、暫停、再產一個」的物件:
+
+| | Python | JavaScript |
+|---|--------|-----------|
+| 定義 | 函式體內有 `yield` | `function* gen() {}` |
+| 產值 | `yield v` | `yield v` |
+| 取下一個 | `next(g)` | `g.next().value` |
+| 惰性 | ✅ 要才算 | ✅ 同 |
+
+一句話:**心智模型一致**——都是惰性、可暫停的序列產生器。差別只在標記方式:
+Python 靠「函式體內有 `yield`」自動變 generator;JS 要明確寫 `function*`。
+
 ## Why（為什麼）
 
 上一章手寫 iterator 要一整個類別。生成器讓同樣的事**用一個函式 + `yield`** 完成。更重要的是，生成器是**惰性的**——值「用到才算」，不必一次把全部結果放進記憶體。這讓你能處理無限序列、超大檔案、串流資料，而記憶體幾乎不增加。生成器是 Python 資料處理管線、asyncio、以及無數標準庫功能的基礎，是進階 Python 的分水嶺。

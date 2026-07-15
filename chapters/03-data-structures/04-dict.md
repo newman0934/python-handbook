@@ -22,6 +22,21 @@ dict 為什麼查東西那麼快？用置物櫃講：
 
 最後強調 dict 的地位：物件的屬性、函式的關鍵字參數、模組的命名空間——**Python 的地基到處都是 dict**。值得徹底搞懂。
 
+## 🔗 前端對照
+
+Python `dict` 對應前端的 `Object` 和 `Map`——這兩者在 JS 是分開的,Python 用一個 `dict` 全包:
+
+| | Python `dict` | JavaScript |
+|---|---------------|-----------|
+| 鍵可以是什麼 | 任何 hashable（字串、數字、tuple…） | `Object`:只有字串 / Symbol;`Map`:任意 |
+| 取值 | `d["k"]`（沒有 → `KeyError`） | `obj.k` / `map.get(k)`（沒有 → `undefined`） |
+| 安全取值 | `d.get("k", 預設)` | `obj.k ?? 預設` |
+| 保留插入順序 | ✅（3.7+ 保證） | `Object` ✅、`Map` ✅ |
+| 走訪 | `for k, v in d.items()` | `for (const [k, v] of map)` |
+
+一句話:JS 把「純資料字典」和「物件」混在 `Object`,需要非字串鍵才用 `Map`;
+**Python 一個 `dict` 就涵蓋這兩者**,鍵能是任何 hashable 值。
+
 ## Why（為什麼）
 
 dict 不只是「鍵值對容器」，它是 Python 執行機制的基石：物件的屬性存在 `__dict__`（一個 dict）、模組的全域名稱、函式的 `**kwargs`——全都是 dict。日常上，dict 提供平均 O(1) 的查找，是計數、分組、快取、建索引的首選。但要用得好，得懂：key 的限制（必須 hashable）、如何安全取值（`get`/`setdefault`/`defaultdict`）、以及 3.7 之後「保留順序」這個重要保證。

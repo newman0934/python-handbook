@@ -25,6 +25,20 @@
 
 分清「菜檯 vs 服務生」，這個 Part 的每一章都建立在這對概念上。
 
+## 🔗 前端對照
+
+Python 的「可迭代協定」對應 JavaScript 的 **iterable protocol（`Symbol.iterator`）**——都是「物件怎麼讓 `for` 走訪它」的約定:
+
+| | Python | JavaScript |
+|---|--------|-----------|
+| 可迭代要件 | 實作 `__iter__` | 實作 `[Symbol.iterator]()` |
+| 迭代器要件 | 實作 `__next__`,耗盡拋 `StopIteration` | 回 `{ value, done }`,`done: true` 結束 |
+| 走訪語法 | `for x in obj:` | `for (const x of obj)` |
+| 展開 | `[*obj]` | `[...obj]` |
+
+一句話:同一個設計（把「怎麼被走訪」交給物件自己定義）。差別只在收尾方式——
+Python 用**拋 `StopIteration`** 表示結束,JS 用回傳 **`{ done: true }`**。
+
 ## Why（為什麼）
 
 `for` 迴圈、推導式、`in`、`zip`、`map`、拆包（`a, b = ...`）——這些無所不在的操作背後是同一套機制：**迭代協定（iterator protocol）**。理解它能解答很多疑問：為什麼有些東西能遍歷兩次、有些只能一次？為什麼生成器用完就空了？為什麼 `iter()` 和 `next()` 這樣運作？這是理解生成器、惰性求值、乃至整個 Python 資料流的基礎。

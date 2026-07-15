@@ -41,6 +41,20 @@ match point:
 
 一句話:**要「拆開一個結構、依它的形狀決定怎麼做」→ `match`;只是比相等 → `if/elif` 或 dict。**
 
+## 🔗 前端對照
+
+`match` 常被拿來和 JavaScript 的 `switch` 比,但它更強大——像 `switch`,卻能**拆解結構**:
+
+| | Python `match` | JavaScript `switch` |
+|---|----------------|--------------------|
+| 比對值 | ✅ | ✅ |
+| 貫穿（fall-through） | **沒有**,配對到就結束 | **有**,忘了 `break` 會往下漏 |
+| 結構拆解 | ✅ `case Point(x, y):` 直接綁定 | ❌ 只能比對值 |
+| 沒配到 | `case _:` | `default:` |
+
+一句話:`switch` 只能「比對一個值」且要小心忘記 `break`;Python 的 `match` **不會貫穿**,
+還能像解構賦值一樣**拆開結構並綁定變數**——比較接近其他語言的 pattern matching,而不只是 `switch`。
+
 ## Why（為什麼）
 
 處理「依資料的形狀分流」的邏輯時（例如解析一個可能長成好幾種樣子的 JSON、處理不同型別的事件），用一連串 `if isinstance(...) and ...：` 會又長又難讀。Python 3.10 引入 **結構化模式比對（structural pattern matching，PEP 634）**，讓你用宣告式的方式描述「資料應該長什麼樣」，並在比對成功時**同時把內部的值解構綁定到變數**。用對地方，它能把一大塊條件判斷變得清晰。

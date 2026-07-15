@@ -40,6 +40,19 @@ def first(items: list[T]) -> T:    # 進來裝 T 的 list，出去就是 T
 - 一句話訊號:**當「回傳型別取決於傳入型別」時,就該用泛型**——
   不然型別檢查器只能給你 `Any`,等於放棄型別安全。
 
+## 🔗 前端對照
+
+泛型（generics）在 Python 與 TypeScript 是同一個概念——**讓型別當參數**,寫一次適用多型別:
+
+| | Python | TypeScript |
+|---|--------|-----------|
+| 泛型函式 | `def first[T](xs: list[T]) -> T:`（3.12+） | `function first<T>(xs: T[]): T` |
+| 泛型類別 | `class Box[T]:`（3.12+） | `class Box<T> {}` |
+| 舊寫法 | `T = TypeVar("T")` + `Generic[T]` | — |
+
+一句話:概念一模一樣（`<T>` ≈ `[T]`）。Python **3.12 起**才有 `[T]` 這種簡潔語法,
+之前要先 `T = TypeVar("T")` 再用——看到舊碼的 `TypeVar` 別驚訝,它就是 TS 的 `<T>`。
+
 ## Why（為什麼）
 
 想寫一個 `first(items)` 回傳列表第一個元素的函式。若標成 `list[Any] -> Any`，型別資訊就丟了——`first([1,2,3])` 的結果 mypy 只當 `Any`，不知道是 int。若標死 `list[int] -> int`，又不能用在 str 列表。**泛型（generics）** 解決這個矛盾：用**型別變數 `TypeVar`** 表達「輸入是某型別 T 的列表、輸出就是那個 T」——保留了「輸入輸出型別的關聯」。這是寫可重用、型別安全的容器與工具函式的基礎。

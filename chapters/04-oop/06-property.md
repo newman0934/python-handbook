@@ -24,6 +24,19 @@
 
 另外記住一個好用的特例：**只定義「讀」、不定義「寫」，就是唯讀屬性**——別人一賦值就報錯。
 
+## 🔗 前端對照
+
+`@property` 對應 JavaScript class 的 **getter / setter**——都是「用起來像屬性,底層卻是方法」:
+
+| | Python | JavaScript |
+|---|--------|-----------|
+| 讀取器 | `@property` | `get x() {}` |
+| 設定器 | `@x.setter` | `set x(v) {}` |
+| 呼叫端 | `obj.x`（不加括號） | `obj.x`（不加括號） |
+
+一句話:**用途和外觀幾乎一樣**——外部把它當普通屬性存取,內部其實跑一段邏輯（驗證、計算、唯讀）。
+只是語法不同（Python 用 decorator、JS 用 `get` / `set` 關鍵字）,心智模型一致。
+
 ## Why（為什麼）
 
 需求：一開始 `account.balance` 是普通屬性，後來想「設定時檢查不能為負」。在 Java 你得一開始就寫 `getBalance()`/`setBalance()`；在 Python，你可以**先用公開屬性、之後需要時無痛升級成 property**——外部程式碼完全不用改（還是寫 `account.balance`）。這就是 `@property` 的威力：把方法包裝成屬性介面。它也是理解描述器（descriptor）的入門。
