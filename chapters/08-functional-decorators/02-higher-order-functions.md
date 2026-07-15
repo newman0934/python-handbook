@@ -21,6 +21,20 @@
 
 所以這章的重點不是「背三劍客」,而是掌握**「把行為當參數傳」**這個思考方式——它在 `sorted(key=...)`、回呼、事件處理裡無所不在。
 
+## 🔗 前端對照
+
+高階函式（higher-order function）——吃函式或回函式的函式——在前端是日常。對照:
+
+| 目的 | Python | JavaScript |
+|------|--------|-----------|
+| 轉換 | `map(f, xs)` | `xs.map(f)` |
+| 過濾 | `filter(p, xs)` | `xs.filter(p)` |
+| 累積 | `reduce(f, xs, init)`（在 `functools`） | `xs.reduce(f, init)` |
+| 回傳函式（工廠） | closure / decorator | closure / HOF |
+
+一句話:概念一模一樣。差別在**風格**:JS 是**方法鏈**（`xs.map().filter()`）;
+Python 的 `map` / `filter` 是**內建函式**且回傳惰性迭代器,實務上很多人乾脆改用 comprehension（更 Pythonic）。
+
 ## Why（為什麼）
 
 `map`、`filter`、`reduce` 是函數式程式設計的經典工具，處理序列的「轉換、篩選、聚合」。Python 支援它們，但也提供了推導式（見 [推導式](../02-fundamentals/13-comprehensions.md)）作為更 Pythonic 的替代。搞混「什麼時候該用 map/filter、什麼時候該用推導式」會讓程式不夠地道。這章講清楚三者的用法、它們的惰性特性，以及與推導式的取捨。

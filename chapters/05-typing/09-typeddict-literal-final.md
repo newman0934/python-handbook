@@ -21,6 +21,19 @@
 四個工具一句話總結：**表單、選單、護貝、便利貼**——都是讓標籤從「大概」變「精確」。
 和其他註記一樣，它們只在檢查期生效，執行期不強制。
 
+## 🔗 前端對照
+
+這章的三個型別工具,幾乎都能在 TypeScript 找到對應:
+
+| Python | TypeScript | 用途 |
+|--------|-----------|------|
+| `TypedDict` | `interface` / `type`（物件形狀） | 描述「dict 的鍵與值型別」 |
+| `Literal["a", "b"]` | `"a" \| "b"`（字面值型別） | 限定只能是某幾個字面值 |
+| `Final` | `readonly` / `const` | 不可重新賦值 |
+
+一句話:`TypedDict` ≈ 給 dict 一個 TS `interface`、`Literal` ≈ TS 的字面值 union、`Final` ≈ `readonly`。
+差別在 `TypedDict` 描述的是一個 **dict**（執行期仍是普通 dict）,而 TS `interface` 描述物件——但處理 JSON 時兩者角色相同。
+
 ## Why（為什麼）
 
 基本型別涵蓋大部分情況，但現實有些常見模式基本型別表達不精確：JSON 回應是「有 `name`、`age` 這些特定 key 的 dict」（不是任意 `dict[str, Any]`）；`mode` 參數只能是 `"r"`/`"w"`/`"a"`（不是任意 str）；某個值是常數不該被改；某個型別要附帶驗證規則。這四個 typing 工具正是為這些場景設計，能大幅提升型別的精確度與可讀性。

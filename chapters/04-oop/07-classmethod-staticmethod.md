@@ -39,6 +39,19 @@
 一句話決策:**要 `self` → 實例方法;不要 `self` 但要 `cls`(通常是工廠)→ classmethod;
 兩者都不要 → 先想想是不是該當普通函式,真要掛在類別上才用 staticmethod。**
 
+## 🔗 前端對照
+
+`@staticmethod` / `@classmethod` 對應 JavaScript class 的 `static`,但 Python 分得更細:
+
+| | Python | JavaScript |
+|---|--------|-----------|
+| 靜態方法（不碰實例 / 類別） | `@staticmethod` | `static method() {}` |
+| 綁定類別（拿得到 `cls`） | `@classmethod`（收 `cls`） | 無直接對應（`static` 裡用類別名或 `this`） |
+| 呼叫 | `Foo.bar()` | `Foo.bar()` |
+
+一句話:JS 只有一種 `static`;**Python 分兩種**——`@staticmethod`（純工具函式,不碰類別）
+和 `@classmethod`（收到 `cls`,常拿來做替代建構子如 `Foo.from_json(...)`）。後者在 JS 要用 `static` + 類別名模擬。
+
 ## Why（為什麼）
 
 不是所有「屬於類別的函式」都需要操作某個實例。有些操作是針對**整個類別**（如「用不同方式建立實例」），有些只是**邏輯上歸屬這個類別、但不需要任何 self/cls**（工具函式）。`@classmethod` 與 `@staticmethod` 讓你表達這些意圖。其中 `@classmethod` 當「替代建構子」（如 `dict.fromkeys`、`datetime.fromtimestamp`）是極常見且優雅的模式，面試也常考三者差異。

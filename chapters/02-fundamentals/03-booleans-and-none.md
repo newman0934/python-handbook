@@ -23,6 +23,20 @@ Python 的慣例是：**空的、零的、無的，回答「不算」**——空
 
 三個習俗記住了，這章的陷阱區（空容器誤判、`== None`、0 被當 False 誤傷）就都有預防針了。
 
+## 🔗 前端對照
+
+`None` 對應前端的 `null` / `undefined`,而「哪些值算 falsy」兩邊有個**會咬人的差異**:
+
+| | Python | JavaScript |
+|---|--------|-----------|
+| 空值 | 只有一個 `None` | `null` 和 `undefined` 兩個 |
+| 判斷空值 | `if x is None:` | `if (x == null)`（同時涵蓋兩者） |
+| 空字串 / `0` / `false` | falsy | falsy |
+| **空 list `[]` / 空 dict `{}`** | **falsy**（`if not items:` 可判空） | **truthy**（`if ([])` 為真!） |
+
+一句話:最大的坑——**Python 的空 list / dict 是 falsy**,能 `if not items:` 判斷空;
+但 JS 的 `[]` / `{}` 是 **truthy**,前端得改用 `arr.length === 0`。這個差異兩個方向都容易踩雷。
+
 ## Why（為什麼）
 
 `if` 判斷是程式的骨架，而 Python 讓「什麼算真、什麼算假」有一套自己的規則：你可以寫 `if items:`（而不是 `if len(items) > 0:`），因為空 list 本身就是「假」。這很 Pythonic，但如果不懂背後的 **truthiness（真值性）** 規則，就會寫出 `if x == True:` 這種既囉嗦又可能出錯的程式，或在該用 `is None` 時誤用 `==`。這章講清楚 bool、None 與真值判斷的完整規則。

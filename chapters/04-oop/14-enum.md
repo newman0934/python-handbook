@@ -25,6 +25,20 @@ class Status(Enum):
 
 一句話：**值只該是固定選項之一時，用 Enum，不用魔術數字**。
 
+## 🔗 前端對照
+
+Python 的 `Enum` 對應 TypeScript 的 `enum`——都是「一組具名常數」。有趣的是,這是 TS 少數會**留到執行期**的型別特性:
+
+| | Python `Enum` | TypeScript `enum` |
+|---|---------------|-------------------|
+| 定義 | `class Color(Enum): RED = 1` | `enum Color { RED = 1 }` |
+| 取成員 | `Color.RED` | `Color.RED` |
+| 執行期存在 | ✅ 是真的物件 | ✅（少數不被擦除的 TS 特性） |
+| 走訪所有成員 | `for c in Color:` | `Object.values(Color)` |
+
+一句話:概念與用法幾乎一樣。Python 的 `Enum` 成員是**功能完整的物件**（有 `.name` / `.value`、可自訂方法）;
+TS 的 `enum` 較陽春,社群近年也常改用 `as const` 物件或 union 字面值取代。
+
 ## Why（為什麼）
 
 程式裡到處是「魔術值」：`status == "pending"`、`if color == 1`。這些字串/數字散落各處，打錯 `"pendign"` 不會報錯、`1` 到底代表什麼要翻文件、IDE 也無法自動補全。**Enum（列舉）** 把「一組相關的具名常數」聚在一起，帶來：型別安全、可讀性、可迭代、IDE 支援。這是任何有「固定選項」的場景該用的工具，卻常被初學者忽略。

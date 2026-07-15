@@ -40,6 +40,20 @@ pytest -x               # 遇到第一個失敗就停
 
 pytest 是 Python 測試的社群標準（本書全部測試都用它）——這章開始,它是你的主力武器。
 
+## 🔗 前端對照
+
+如果你用過 Jest / Vitest,pytest 的概念都能對上,只是斷言風格不同:
+
+| | pytest | Jest / Vitest |
+|---|--------|---------------|
+| 測試 | `def test_xxx():` | `test("xxx", () => {})` / `it(...)` |
+| 斷言 | **`assert x == y`**（原生 assert） | `expect(x).toBe(y)` |
+| 分組 | 檔案 / 類別 | `describe(...)` |
+| 前後置 | fixture（見下一章） | `beforeEach` / `afterEach` |
+
+一句話:最大差異在斷言——Jest 是 **`expect(x).toBe(y)`** 的鏈式風格;
+**pytest 直接用 Python 原生 `assert x == y`**,失敗時它會自動拆解印出兩邊的值,不必背一堆 matcher。
+
 ## Why（為什麼）
 
 pytest 是現代 Python 測試的**事實標準**——比 unittest（見 [unittest](02-unittest.md)）簡潔太多：測試就是普通函式、斷言就用裸 `assert`（pytest 讓它失敗時顯示詳細值）、無需繼承類別或記斷言方法。加上自動發現測試、清楚的失敗輸出、fixture、參數化、龐大的外掛生態——寫測試變得輕鬆。這章講 pytest 的核心用法，是後面 fixture、參數化、mock 各章的基礎。

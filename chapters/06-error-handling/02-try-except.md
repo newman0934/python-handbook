@@ -25,6 +25,21 @@ finally:    # ④ 收拾實驗台 —— 無論成敗，一定要做的清理
 1. **except 要接「具體的」例外**（`except ValueError:`），別寫光禿禿的 `except:`——那會連 Ctrl-C 都吞掉（[第 8 章](08-error-handling-best-practices.md)的鐵律）。
 2. **else 的存在意義**:把「只有成功才該做的事」移出 try——try 裡放越少行,你越清楚在防的是哪一步出錯。
 
+## 🔗 前端對照
+
+例外處理兩邊結構一致,但 Python 多了兩個前端沒有的好東西:
+
+| | Python | JavaScript |
+|---|--------|-----------|
+| 捕捉 | `try: ... except SomeError:` | `try { } catch (e) { }` |
+| 依型別分段捕捉 | `except ValueError` / `except KeyError`（可多段） | 只有一個 `catch`,得自己 `if (e instanceof ...)` |
+| 一定會跑 | `finally:` | `finally { }` |
+| **沒出錯才跑** | `else:`（try 成功才執行） | 無對應 |
+| 拿到例外物件 | `except E as e:` | `catch (e)` |
+
+一句話:結構相同,但 Python 能**依例外型別分多段 `except`**（JS 只有一個 `catch`,要自己判斷型別）,
+還多一個 JS 沒有的 `else`（「try 沒出錯才跑」）。
+
 ## Why（為什麼）
 
 `try/except` 是接住例外的語法，但很多人只用 `try/except` 兩塊，不知道 `else` 和 `finally` 的存在與價值。結果：把「沒出錯才該做的事」也放進 try（可能誤接到不相關的例外）、或忘了在出錯時也釋放資源。搞懂四個區塊的分工，能寫出更精準、更安全的錯誤處理。

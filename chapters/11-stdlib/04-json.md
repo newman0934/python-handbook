@@ -29,6 +29,20 @@ json.dumps(data, ensure_ascii=False, indent=2)
 
 跟 [pickle](12-pickle.md) 的分工之後會講:**JSON 安全、跨語言、限基本型別**——對外交流一律 JSON。
 
+## 🔗 前端對照
+
+JSON 處理是前端的母語,Python 的 `json` 模組幾乎一一對應:
+
+| 目的 | Python | JavaScript |
+|------|--------|-----------|
+| 物件 → JSON 字串 | `json.dumps(obj)` | `JSON.stringify(obj)` |
+| JSON 字串 → 物件 | `json.loads(s)` | `JSON.parse(s)` |
+| 排版縮排 | `json.dumps(obj, indent=2)` | `JSON.stringify(obj, null, 2)` |
+| 型別對應 | dict↔object、list↔array、None↔null、True↔true | 幾乎相同 |
+
+一句話:`dumps` / `loads` ≈ `stringify` / `parse`,連參數的直覺都接近。小差異:Python 的 `None` / `True`
+會轉成 JSON 的 `null` / `true`;而非 ASCII 字元預設會被跳脫,要 `ensure_ascii=False` 才保留中文。
+
 ## Why（為什麼）
 
 JSON 是網路世界資料交換的通用格式——REST API、設定檔、前後端溝通都用它。`json` 模組讓 Python 物件（dict、list…）與 JSON 文字互轉。看似簡單，但有幾個實務要點：型別對應（Python 的 tuple → JSON array、dict key 只能是字串）、中文編碼（`ensure_ascii`）、以及「JSON 不支援的型別」（datetime、自訂物件）怎麼處理。搞懂這些，處理 API/設定資料才不會出包。

@@ -38,6 +38,20 @@ async def main() -> None:
 
 口訣帶走：**await＝站著等一單;create_task/gather＝同時開工**。分不清這兩者,寫出來的 asyncio 全是白搭。
 
+## 🔗 前端對照
+
+`asyncio.Task` 對應 JavaScript 的 `Promise`——都代表「一個正在進行、之後會有結果的非同步工作」:
+
+| 目的 | Python | JavaScript |
+|------|--------|-----------|
+| 排一個工作開始跑 | `asyncio.create_task(coro())` | 呼叫 async 函式（`f()` 就開始跑） |
+| 等全部完成 | `await asyncio.gather(a, b)` | `await Promise.all([a, b])` |
+| 等最快的一個 | `asyncio.wait(..., FIRST_COMPLETED)` | `Promise.race([...])` |
+| 全部結果含失敗 | `gather(..., return_exceptions=True)` | `Promise.allSettled([...])` |
+
+一句話:Task ≈ Promise、`gather` ≈ `Promise.all`。關鍵差異——**JS 的 async 函式一呼叫就開始跑**（等於自動建 task）;
+Python 要**明確 `create_task`** 才會排進 loop 開跑,否則 coroutine 只是躺著（見 [ch08](08-async-await.md)）。
+
 ## Why（為什麼）
 
 上一章強調「`await a(); await b()` 是序列」。那怎麼讓多個協程**真正並發**？答案是 **Task**——把協程「排程」到 event loop，讓它們同時進行。加上併發控制工具（`gather` 收集結果、`wait_for` 設逾時、`cancel` 取消、`Semaphore` 限流），你才能寫出實用的非同步程式：並發抓取、逾時保護、優雅取消。這是 asyncio 從「會用」到「用好」的關鍵。

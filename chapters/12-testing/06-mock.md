@@ -31,6 +31,20 @@ fake_gateway.charge.assert_called_once_with(100)  # 事後問替身:
 
 最後一句平衡話:mock 是利器也是陷阱——**mock 得越多,測試離真實越遠**。能用真物件(記憶體 repo、暫存檔)就別 mock;mock 留給真正碰不得的邊界。
 
+## 🔗 前端對照
+
+mock（替身）在兩邊解決同一件事——把「難測的相依」換成可控的假物件:
+
+| 目的 | Python | Jest / Vitest |
+|------|--------|---------------|
+| 替換函式 / 方法 | `unittest.mock.patch(...)` / `monkeypatch` | `jest.mock(...)` / `vi.mock(...)` |
+| 假函式 | `Mock()` / `MagicMock()` | `jest.fn()` / `vi.fn()` |
+| 設定回傳值 | `m.return_value = 42` | `fn.mockReturnValue(42)` |
+| 驗證有沒有被呼叫 | `m.assert_called_once_with(...)` | `expect(fn).toHaveBeenCalledWith(...)` |
+
+一句話:概念與 API 對應得很整齊。要點也一樣——**mock 你「擁有的邊界」而非別人的內部**,
+而且能不能輕鬆 mock 常反映設計好不好（相依有沒有注入,呼應 [Part 16 DI](../16-architecture/03-dependency-injection.md)）。
+
 ## Why（為什麼）
 
 單元測試的核心是**隔離**——只測「你的邏輯」，不測「外部依賴」。但真實程式常依賴外部：呼叫 API、查資料庫、讀檔、發 email、處理付款。測試若真的執行這些，會**慢**（等網路）、**脆弱**（外部服務掛了測試就紅）、**有副作用**（真的發了 email）、**難重複**（外部狀態會變）。**mock** 把這些依賴替換成「假物件」——你控制它回傳什麼、驗證它被怎麼呼叫。這是寫可靠單元測試的必備技術。
