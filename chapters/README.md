@@ -21,7 +21,7 @@
 | 11 | [標準庫 Standard Library](11-stdlib/) | 18 | os / pathlib / datetime / json / re / logging 等日常必備標準庫。 |
 | 12 | [測試 Testing](12-testing/) | 12 | unittest、pytest、fixture、mock、覆蓋率與 TDD。 |
 | 13 | [工程化與打包 Tooling & Packaging](13-tooling-packaging/) | 10 | pip、venv、uv/poetry、pyproject.toml、打包發佈與 lint/format。 |
-| 14 | [Web 開發 Web Development](14-web/) | 24 | WSGI/ASGI、FastAPI/Flask、REST API、pydantic 驗證與認證。 |
+| 14 | [Web 開發 Web Development](14-web/) | 26 | WSGI/ASGI、FastAPI/Flask、REST API、pydantic 驗證與認證。 |
 | 15 | [資料庫 Database](15-database/) | 26 | **原理篇**:關聯模型、SQL 語意、正規化、儲存/索引/優化器、交易並發(MVCC)、WAL、複製分片、NoSQL 選型;**實作篇**:DB-API、SQLAlchemy、連線池、transaction、migration、Redis、async、N+1、索引、PostgreSQL 專屬(JSONB/UPSERT/GIN)、多資料庫對照、MySQL 專屬(InnoDB/utf8mb4)、MongoDB 文件建模(embed vs reference)。 |
 | 16 | [架構與設計 Architecture](16-architecture/) | 12 | 分層、Clean Architecture、DI、Repository、SOLID 與設計模式。 |
 | 17 | [資料處理與科學計算 Data & Scientific Computing](17-data-science/) | 10 | numpy、pandas、資料清理與視覺化——Python 生態的殺手級應用。 |

@@ -15,7 +15,7 @@
 - 採 **Python 原生改編**：章節模板骨架源自 golang-handbook，但將 Go 專屬主題
   （goroutine/channel、GMP、runtime GC）替換為 Python 對應主題（GIL/asyncio、CPython 內部與引用計數 GC）。
 - 參考結構源自 `newman0934/golang-handbook`。
-- **全書共 31 個 Part**（385 章），分兩條主線：
+- **全書共 31 個 Part**（387 章），分兩條主線：
   - **Python 工程主線（Part 1–22）**：語言核心 → 並發 → CPython 內部 → 標準庫/測試/打包 → Web/資料庫 → 架構 → 微服務/分散式。
   - **資料 / AI / 部署主線（Part 23–31）**：資料分析 → 統計 → 機器學習 → 深度學習 → LLM/RAG/Agent → 生產化 AI → 雲端平台部署。
 

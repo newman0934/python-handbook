@@ -267,6 +267,6 @@ flowchart LR
 
 ---
 
-➡️ 下一章:[Part 14 統整:Web 開發全貌](24-summary.md)
+➡️ 下一章:[應用生命週期:lifespan 啟動與關閉](24-lifespan-startup.md)
 
 [⬆️ 回 Part 14 索引](README.md)

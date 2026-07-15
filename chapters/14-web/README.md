@@ -29,7 +29,9 @@
 | 21 | [背景任務進階：為什麼需要任務佇列](21-task-queue-why.md) |
 | 22 | [Celery 實戰：broker、task、重試與冪等](22-celery.md) |
 | 23 | [排程：cron 型定時任務](23-scheduling.md) |
-| 24 | [**Part 14 統整：Web 開發全貌**](24-summary.md) |
+| 24 | [應用生命週期：lifespan 啟動與關閉](24-lifespan-startup.md) |
+| 25 | [串流回應與 Server-Sent Events](25-streaming-sse.md) |
+| 26 | [**Part 14 統整：Web 開發全貌**](26-summary.md) |
 
 ---
 

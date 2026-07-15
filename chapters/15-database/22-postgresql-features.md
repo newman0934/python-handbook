@@ -104,6 +104,41 @@ UPDATE users SET active = true WHERE id = 1 RETURNING id;
 | **部分索引(partial)** | 只索引符合條件的列 | `WHERE status='active'` |
 | **表達式索引** | 對運算/函式結果建索引 | `(lower(email))` |
 
+**物化檢視(materialized view):把昂貴查詢的結果「存下來」**
+
+一般的**檢視(view)** 只是「存起來的查詢語句」——每次查它,底層都**重跑一次**那段 SQL。
+如果那段 SQL 很貴(掃幾千萬列做聚合、跨好幾張表 join),而它又**被頻繁讀、但資料不必即時**
+(如儀表板的「本月各地區營收」),每次重算就是浪費。
+
+**物化檢視**是解法:它**把查詢結果實際算出來、存成一張實體表**(存在磁碟上,承 [ch04](04-storage-engine.md))。
+之後讀它就像讀普通表一樣快,不必重算;代價是**資料是「上次刷新那一刻」的快照**,會過時,要手動或排程 `REFRESH`。
+
+```sql
+-- 建立:把昂貴的聚合算一次、存下來
+CREATE MATERIALIZED VIEW revenue_by_region AS
+SELECT region, date_trunc('month', created_at) AS month, sum(total) AS revenue
+FROM orders GROUP BY region, month;
+
+CREATE UNIQUE INDEX ON revenue_by_region (region, month);  -- 才能 CONCURRENTLY 刷新
+
+-- 讀它:快如讀普通表(不重算那段 GROUP BY)
+SELECT * FROM revenue_by_region WHERE region = 'APAC';
+
+-- 刷新:重算並更新快照(常搭排程,如每小時/每晚)
+REFRESH MATERIALIZED VIEW CONCURRENTLY revenue_by_region;  -- 刷新時不鎖住讀取
+```
+
+| | 一般檢視 view | 物化檢視 materialized view |
+|---|---------------|---------------------------|
+| 存的是 | 查詢語句 | **實際算出的結果(實體資料)** |
+| 每次讀 | **重跑** SQL | 直接讀存好的結果(快) |
+| 新鮮度 | 永遠即時 | **上次 `REFRESH` 的快照**(會過時) |
+| 適合 | 一般封裝、即時性要求高 | **貴、常讀、可容忍些微延遲**的聚合/報表 |
+
+`REFRESH ... CONCURRENTLY` 刷新時不會鎖住查詢(讀舊快照直到新的算好),但**需要一個唯一索引**且較慢。
+這與 [Part 18 快取](../18-performance/04-caching.md)是同一個取捨:**用「可能過時」換「讀取超快」**——
+物化檢視等於「資料庫內建的、查詢結果快取」。
+
 ## Implementation(底層:JSONB 索引、UPSERT 原子性、EXPLAIN ANALYZE)
 
 **部分索引與表達式索引為何省又快**(承 [ch05](05-index-internals.md)「對欄運算用不到索引」):
