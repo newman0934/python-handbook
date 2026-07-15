@@ -41,6 +41,10 @@ jobs:
       - name: Chapter compliance check
         run: python scripts/check_chapters.py
 
+      # 導覽與計數：下一章/下一 Part 連結正確、Part README 章節齊全、章數一致
+      - name: Nav & count check
+        run: python scripts/gen_nav.py
+
       # exercises/ 為練習用，預設紅燈，故不納入 CI 的通過條件
       - name: Pytest (project / examples / solutions)
         run: pytest project examples solutions

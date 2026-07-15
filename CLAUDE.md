@@ -257,4 +257,8 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
 1. 撰寫/修改章節前，先看該 Part 的 `README.md` 索引，確認章節編號與定位。
 2. 完成章節後：更新該 Part `README.md` 索引、串好上一章/下一章連結。
 3. 有可執行範例時：放入 `examples/`，跑 `pytest`、`ruff check .`、`mypy`。
-4. 驗證通過後再回報完成，不得在未驗證下宣稱完成。
+4. **接好導覽後跑 `python scripts/gen_nav.py --fix`**（或 `make nav`）：它會自動修正
+   `chapters/README.md` 與本檔的章數，並檢查「下一章 / 下一 Part」連結、Part README
+   是否列齊該 Part 每一章。CI 也會跑 `gen_nav.py`（檢查模式），連結接錯會擋下。
+   （注意：本工具**只自動改章數**，footer/README 的內容與標點不會被它重寫，需手動維護。）
+5. 驗證通過後再回報完成，不得在未驗證下宣稱完成。

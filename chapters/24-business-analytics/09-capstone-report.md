@@ -244,4 +244,6 @@ flowchart TD
 
 🎉 **恭喜你完成 Part 24,也完成了 Data Analyst 學習線(Part 23–24)!** 你已能:從資料庫[取數整理](../23-data-analysis/README.md)、用[統計嚴謹地下結論](03-hypothesis-testing.md)、算對[商業指標](06-business-metrics.md)、並把洞察[有效傳達](08-data-storytelling.md)給決策者。這是一位能**影響決策**的資料分析師的完整能力。
 
+➡️ 下一 Part:[機器學習基礎 ML Foundations](../25-machine-learning/README.md)——從「描述已發生的事」進到「預測還沒發生的事」。
+
 [⬆️ 回 Part 24 索引](README.md) ｜ [回章節總覽](../README.md)

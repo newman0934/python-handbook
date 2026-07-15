@@ -1,7 +1,7 @@
 # Python Handbook — 常用指令入口
 # 註：Windows 需自備 make，或直接執行對應的 python/pytest 指令。
 
-.PHONY: help install test test-all lint fmt type chapters run docker-build clean
+.PHONY: help install test test-all lint fmt type chapters nav run docker-build clean
 
 help: ## 顯示可用指令
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -20,9 +20,14 @@ lint: ## ruff 檢查 + mypy 型別檢查 + 章節合規
 	ruff check .
 	mypy .
 	python scripts/check_chapters.py
+	python scripts/gen_nav.py
 
 chapters: ## 章節合規檢查（模板區塊、連結、```python 語法）
 	python scripts/check_chapters.py
+	python scripts/gen_nav.py
+
+nav: ## 修正計數並檢查導覽連結（新增章節後執行）
+	python scripts/gen_nav.py --fix
 
 fmt: ## ruff 自動格式化
 	ruff format .

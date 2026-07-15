@@ -273,4 +273,6 @@ flowchart TD
 
 🎉 **恭喜你完成 Part 30,也完成了 AI Engineer 學習線(Part 28–30)!** 你已能:用 LLM([Part 28](../28-llm-genai/README.md))、把它組裝成產品([Part 29](../29-ai-applications/README.md))、並讓它穩定安全划算地跑上生產(Part 30)。這是把 GenAI 從 demo 帶到真實世界的完整能力。
 
+➡️ 下一 Part:[雲端平台部署 Cloud Platform Deployment(AWS + GCP)](../31-cloud-platform-deployment/README.md)——把 task-api 與 AI 服務真正部署上雲。
+
 [⬆️ 回 Part 30 索引](README.md) ｜ [回章節總覽](../README.md)
