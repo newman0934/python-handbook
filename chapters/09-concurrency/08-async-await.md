@@ -31,6 +31,21 @@ await serve()    # ✓ 這才是「開始執行,做完為止」
 
 最後,整個程式的入口:`asyncio.run(main())`——「開店,讓服務生開始巡場,從 main 這桌服務起」。
 
+## 🔗 前端對照
+
+`async def` / `await` 的語法和 JavaScript 的 `async` / `await` **幾乎一模一樣**——這章你會滿滿既視感。
+對照表:
+
+| 目的 | Python | JavaScript |
+|------|--------|-----------|
+| 定義非同步函式 | `async def f():` | `async function f() {}` |
+| 等待 | `await coro()` | `await promise` |
+| 併發跑多個 | `await asyncio.gather(a, b)` | `await Promise.all([a, b])` |
+| 啟動 | `asyncio.run(main())` | 頂層直接 `await`（或 IIFE） |
+
+一句話:**語法可以直接對譯**,唯一要改的直覺是——JS 的 async 函式一呼叫就開始跑,
+Python 的 coroutine **要 `await` 或丟進 `gather` 才會動**（見上一章）。
+
 ## Why（為什麼）
 
 上一章講了 event loop 的概念，這章聚焦 `async`/`await` 這兩個關鍵字的**語法規則與語意**。新手最卡的問題：`await` 能放哪裡？await 誰？為什麼有些函式要 `await` 有些不用？「coroutine was never awaited」是什麼警告？把這些規則講清楚，你才能正確地組織非同步程式碼，避免最常見的 async 錯誤。

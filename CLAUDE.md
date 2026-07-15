@@ -78,6 +78,7 @@ python-handbook/
 
 ## 💡 白話導讀（建議先讀）      ← 必備，全書所有章節皆有
 ## 🎯 什麼時候會用到            ← 選用（抽象/理論章建議加）
+## 🔗 前端對照（選用）          ← 有 JS/TS 平行概念時才加
 ## Why（為什麼）
 ## Theory（理論）
 ## Specification（規範 / 語言定義）
@@ -101,6 +102,13 @@ python-handbook/
   （如 descriptor、metaclass、Protocol、weakref、generator）——這類章「機制講得清楚，但讀者不知何時該用」。
   內容要**點名真實工具／框架 + 具體情境 + 決策訊號**（例：descriptor → Django/SQLAlchemy 的欄位、驗證器）。
   方法／工具型章節（stdlib、資料結構等）若 `Best Practice` 已有「情境 → 用什麼」的決策清單，就不必重複加。
+- **`🔗 前端對照`（選用）**：擺在導讀／🎯 之後、`Why` 之前。**只在 JS/TS 有明確平行概念、
+  且對照真能加深理解時才加**（本書與姊妹作 `frontend-handbook` 共用讀者群，很多人一邊會、一邊在學）。
+  用一個小表格或兩三句點出「**相同處 → 關鍵差異**」，例：`asyncio` ↔ JS event loop（都是單執行緒事件迴圈；
+  差別：JS 只有 async、Python 還有 threading/multiprocessing）、type hints ↔ TS types（都是註記；
+  差別：TS 編譯期擦除、Python 保留在 `__annotations__` 供 runtime 讀）、decorator ↔ JS/TS decorator、
+  comprehension ↔ `map`/`filter`、closure ↔ JS closure（幾乎相同）。**沒有真平行概念的章節（如 GIL 細節、
+  CPython 內部、後端/OS）就別硬湊**——寧缺勿湊。適合對照的多在語言核心（Part 1–9）與型別（Part 5）。
 - 章節結尾以「下一章」串接，維持可依序閱讀的動線。
 - 圖解使用 **Mermaid**（` ```mermaid `）。
 

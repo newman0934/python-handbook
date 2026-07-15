@@ -47,6 +47,19 @@ class Point:
 一句話:**內部自己用的資料結構 → `dataclass`;跨信任邊界、要驗證外部輸入 → `pydantic`**
 (見 [Pydantic 驗證](../14-web/06-pydantic-validation.md))。
 
+## 🔗 前端對照
+
+如果你在前端用 TypeScript 定義過資料形狀,`dataclass` 會很眼熟——但有個關鍵差異:
+
+| | Python `@dataclass` | TypeScript |
+|---|--------------------|-----------|
+| 欄位型別 | `name: str`（有 runtime 效果） | `interface` / `type`（編譯期,執行期擦除） |
+| 自動產生 | `__init__` / `__repr__` / `__eq__` | 無;`interface` 只是型別,不生程式碼 |
+| 執行期是否存在 | ✅ 是真的 class | ❌ `interface` / `type` 被擦除 |
+
+一句話:TS 的 `interface` 只描述「形狀」、編譯後消失;Python 的 `dataclass` 是**真的類別**,
+會自動幫你生建構子、比較、印字——比較接近 TS 的 `class` 再加上「自動寫好 constructor」。
+
 ## Why（為什麼）
 
 太多類別的本質只是「一組帶名字的欄位」——但要它好用，你得手寫 `__init__`（把每個參數存到 self）、`__repr__`（除錯顯示）、`__eq__`（值比較）……重複又易錯。`@dataclass`（Python 3.7，PEP 557）自動產生這些方法，你只要宣告欄位。它讓資料類別簡潔、正確、可維護，是現代 Python 的標準做法。

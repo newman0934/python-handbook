@@ -30,6 +30,19 @@ squares = [x * x for x in range(5)]
 唯一的警告：**推導式是宣告「結果」的工具，不是炫技場**。
 巢狀兩層以上、或塞了複雜邏輯──寧可退回普通 for 迴圈。一行寫完但沒人看得懂，是負分。
 
+## 🔗 前端對照
+
+Python 的 comprehension（綜合運算式）對應前端最常用的**陣列方法** `.map()` / `.filter()`:
+
+| 目的 | Python | JavaScript |
+|------|--------|-----------|
+| 轉換 | `[f(x) for x in xs]` | `xs.map(f)` |
+| 過濾 | `[x for x in xs if p(x)]` | `xs.filter(p)` |
+| 轉換 + 過濾 | `[f(x) for x in xs if p(x)]` | `xs.filter(p).map(f)` |
+
+一句話:**comprehension 把 map + filter 寫進一個運算式**,可讀性通常更好;JS 則是方法鏈。
+另外 Python 還有 dict / set comprehension（`{k: v for ...}`）,JS 沒有直接對應,得手動組物件。
+
 ## Why（為什麼）
 
 「建立一個新的 list/dict/set，內容由某個序列轉換或篩選而來」是極高頻的需求。用傳統的「先建空容器、迴圈、append」要三四行；推導式一行就完成，而且**更快**（省去反覆的方法查找與呼叫）、更貼近「我想要什麼」的宣告式表達。這是最能代表 Pythonic 風格的語法之一，面試與日常都會大量用到。這章講清楚四種推導式、它們的效能與可讀性邊界，以及和生成器表達式的關鍵差異。

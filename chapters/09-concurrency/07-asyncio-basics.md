@@ -26,6 +26,20 @@ threading 是多請店員。asyncio 反其道而行：**只用一位服務生—
 代價也先講:整場只有一個人——**只要他在任何一處站住不動（阻塞）,全餐廳停擺**（[第 11 章](11-blocking-in-async.md)的頭號地雷）。
 定位:**大量並發 I/O**（數百至數千連線）的首選——現代 Python Web 後端的心臟。
 
+## 🔗 前端對照
+
+如果你懂 JavaScript 的 event loop,`asyncio` 會非常親切——**兩者是同一個模型**:單執行緒,靠一個事件迴圈
+在「等 I/O」時去做別的事（就是比喻表裡那個「單人服務生」）。差別在幾個關鍵細節:
+
+| | Python `asyncio` | JavaScript |
+|---|------------------|-----------|
+| event loop | **要自己啟動**（`asyncio.run(main())`） | **永遠內建在跑**,不用啟動 |
+| 非同步的值 | coroutine——**不 `await` 就完全不執行** | Promise——**建立當下就開始執行** |
+| 還有別的併發選項嗎 | 有:threading / multiprocessing（真並行） | 沒有:只有 async（Web Worker 是獨立執行緒） |
+
+一句話:**event loop 的直覺整套搬得過來**,但記住兩個差異:Python 的 loop 要你手動開,
+而且 coroutine「你不 `await` 它就不動」（JS 的 Promise 一建立就跑了）。
+
 ## Why（為什麼）
 
 當你要同時處理**成千上萬**的網路連線（Web 伺服器、爬蟲、聊天服務），threading 會遇到瓶頸——每個執行緒有記憶體與切換開銷，開幾千個執行緒不切實際。**asyncio** 用完全不同的模型：**單一執行緒**內用**事件迴圈**排程大量協程，每個協程「等 I/O 時主動讓出」，讓一個執行緒就能處理海量並發連線。理解 event loop 與「協作式多工」是理解 asyncio 的關鍵，也是現代 Python I/O 密集服務（FastAPI 等）的基礎。
