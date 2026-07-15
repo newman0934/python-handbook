@@ -1,6 +1,6 @@
 # classmethod 與 staticmethod
 
-> 實例方法收 `self`、類別方法收 `cls`、靜態方法什麼都不收。搞懂這三種方法的差異，尤其 `@classmethod` 作為「替代建構子」的慣用法，是設計良好類別 API 的關鍵。
+> 當你想寫 `User.from_json(...)` 這種「另一種建立 User 的方式」，為什麼該用 `@classmethod` 而不是塞進 `__init__`？三種方法——收 `self`、收 `cls`、什麼都不收——差在哪、各自何時用，這章講給你聽。
 
 ## 💡 白話導讀（建議先讀）
 
