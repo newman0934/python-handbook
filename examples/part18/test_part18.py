@@ -87,3 +87,19 @@ def test_gather_fetch_results() -> None:
     names = ["task0", "task1", "task2"]
     results = asyncio.run(gather_fetch(names, 0.01))
     assert results == ["task0 done", "task1 done", "task2 done"]
+
+
+def test_local_cache_is_per_instance_and_goes_stale() -> None:
+    """本地快取的陷阱:清了 A 的快取,B 仍回舊值(多實例不一致)。"""
+    from examples.part18 import local_vs_distributed_cache as m
+
+    m.DB["price"] = 100
+    a = m.make_instance()
+    b = m.make_instance()
+    assert a() == 100 and b() == 100  # 兩台都快取了 100
+
+    m.DB["price"] = 200  # 資料更新
+    a.cache_clear()  # type: ignore[attr-defined]  # 只清 A
+
+    assert a() == 200  # A 拿到新值
+    assert b() == 100  # B 仍是舊值 —— 這就是多實例本地快取的不一致
