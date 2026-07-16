@@ -1,6 +1,6 @@
 # 路由與請求處理
 
-> 路由把「HTTP 方法 + URL」對應到「處理函式」。FastAPI 用型別區分路徑參數、query 參數、body——搞懂它們怎麼判定、以及用 APIRouter 組織路由，是建結構化 API 的基礎。
+> 同一個 `/users/1`，GET 是查、DELETE 是刪——FastAPI 怎麼知道把哪個請求交給哪個函式？而一個 `user_id`，它憑什麼判定是路徑參數、還是 query、還是 body？這章講路由的判定規則。
 
 ## 💡 白話導讀（建議先讀）
 

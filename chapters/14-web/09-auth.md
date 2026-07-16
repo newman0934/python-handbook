@@ -1,6 +1,6 @@
 # 認證與授權
 
-> 認證（authentication）是「你是誰」、授權（authorization）是「你能做什麼」——兩件不同的事。理解它們的區別、密碼雜湊、token 認證（JWT）與 session，是保護 Web 應用的基礎。
+> 「你是誰」和「你能做什麼」是兩件常被混為一談、卻必須分開的事——前者是認證（authentication）、後者是授權（authorization）。這章講清楚兩者的差別、密碼為何不能明文存、以及 JWT 與 session 怎麼選。
 
 ## 💡 白話導讀（建議先讀）
 

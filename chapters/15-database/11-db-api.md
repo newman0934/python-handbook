@@ -1,6 +1,6 @@
 # DB-API 規範
 
-> Python 存取任何關聯式資料庫，底層都是同一套介面——PEP 249 DB-API 2.0。搞懂 connection、cursor、參數化查詢，你就掌握了所有 DB 驅動的共通語言，換資料庫時也不慌。
+> 從 SQLite 換到 PostgreSQL，你的資料庫存取程式碼要全部重寫嗎？不用——因為它們底層都遵守同一套介面：PEP 249 DB-API。這章講那套共通語言：connection、cursor，以及絕不能省的參數化查詢。
 
 ## 💡 白話導讀（建議先讀）
 

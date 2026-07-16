@@ -1,6 +1,6 @@
 # WSGI 與 ASGI
 
-> WSGI/ASGI 是「Web 伺服器」與「Python 應用」之間的標準介面——WSGI 是同步時代的標準（Flask/Django），ASGI 是非同步時代的標準（FastAPI）。理解它們，才懂 Python Web 框架的底層架構。
+> 你寫的 FastAPI 程式碼，到底是被誰、怎麼呼叫起來的？瀏覽器的一個請求，怎麼變成你那個函式的一次呼叫？答案是 WSGI/ASGI——「Web 伺服器」與「你的框架」之間那道插座規格。
 
 ## 💡 白話導讀（建議先讀）
 
