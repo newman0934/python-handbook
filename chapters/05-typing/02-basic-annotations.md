@@ -1,6 +1,6 @@
 # 基本型別註記
 
-> 從 Python 3.9 起，你可以直接寫 `list[int]`、`dict[str, int]`，不必再 import `List`、`Dict`。掌握內建容器泛型、可呼叫、以及 `from __future__ import annotations` 的延遲評估，是寫好註記的基礎。
+> 為什麼有些教學寫 `List[int]`（大寫、要 import），有些寫 `list[int]`（小寫、免 import）？從 Python 3.9 起，後者才是正解。這章講內建容器泛型、可呼叫型別，以及 `from __future__ import annotations` 那個延遲評估的開關。
 
 ## 💡 白話導讀（建議先讀）
 

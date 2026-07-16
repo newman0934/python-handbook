@@ -1,6 +1,6 @@
 # 作用域與 LEGB 規則
 
-> 當你用一個名稱時，Python 依 Local → Enclosing → Global → Built-in 的順序去找它；而 `global` / `nonlocal` 是你「打破」這個查找、明確指定要改哪一層的工具。
+> 為什麼函式裡「讀」一個外層變數沒問題，一想「改」它卻報錯？因為 Python 找一個名字時，是照 Local → Enclosing → Global → Built-in 四層順序在翻。這章講清楚這套規則，以及 `global` / `nonlocal` 何時該出手。
 
 ## 💡 白話導讀（建議先讀）
 

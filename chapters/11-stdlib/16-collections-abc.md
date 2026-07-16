@@ -1,6 +1,6 @@
 # collections.abc 與抽象基底
 
-> `collections.abc` 提供一組「抽象容器型別」——`Iterable`、`Sequence`、`Mapping`、`Hashable` 等。用它們做 `isinstance` 檢查（「這東西可不可迭代？」）、做型別註記（參數用寬鬆型別）、或當基底類別實作自訂容器。
+> 想檢查「這東西可不可迭代」，該用 `isinstance(x, list)` 嗎？不行——那會漏掉 tuple、set、生成器等一堆同樣可迭代的型別。`collections.abc` 讓你按「行為」（`Iterable`、`Sequence`、`Mapping`）而非「具體型別」來檢查與註記。
 
 ## 💡 白話導讀（建議先讀）
 

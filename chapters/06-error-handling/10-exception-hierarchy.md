@@ -1,6 +1,6 @@
 # 例外階層 exception hierarchy
 
-> 所有例外都在一棵繼承樹上，樹根是 `BaseException`。搞懂這棵樹——尤其「`Exception` vs `BaseException`」和「`except` 會接住子類別」——你才知道該接什麼、不該接什麼。
+> 為什麼 `except Exception` 攔不住 `Ctrl+C`？因為例外有一棵繼承樹，而 `KeyboardInterrupt` 故意不長在 `Exception` 底下。搞懂這棵樹——以及「`except` 會接住子類別」——你才知道該接什麼、絕不該接什麼。
 
 ## 💡 白話導讀（建議先讀）
 

@@ -1,6 +1,6 @@
 # pyproject.toml 全解析
 
-> `pyproject.toml` 是現代 Python 專案的單一設定中心——專案元資料、相依、建置系統、以及 ruff/mypy/pytest 等工具的設定全放這一個檔。理解它的各區段，就掌握了現代專案的骨架。
+> 以前一個 Python 專案要散落 `setup.py`、`setup.cfg`、`requirements.txt`、還有各工具各自的設定檔——現在 `pyproject.toml` 一個檔全收。這章講它的各個區段，等於掌握現代 Python 專案的骨架。
 
 ## 💡 白話導讀（建議先讀）
 

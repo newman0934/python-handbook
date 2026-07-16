@@ -1,6 +1,6 @@
 # typing 模組
 
-> 內建型別能表達大部分註記，但 `typing` 模組提供了更豐富的詞彙：`Any`、`Optional`、`Callable`、`Iterator`、`TypeAlias` 等。知道哪些已被內建取代、哪些仍需 typing，是寫現代註記的關鍵。
+> `list[int]` 這種內建寫法能搞定大部分註記，那還要 `typing` 模組做什麼？因為有些概念內建型別表達不了——`Any`、`Callable`、`Iterator`…。這章講 typing 還剩哪些詞彙必用、哪些已被內建取代（別再抄舊教學了）。
 
 ## 💡 白話導讀（建議先讀）
 

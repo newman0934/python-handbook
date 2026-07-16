@@ -1,6 +1,6 @@
 # json 序列化
 
-> `json` 模組在 Python 物件與 JSON 文字之間轉換——`dumps`/`loads` 處理字串、`dump`/`load` 處理檔案。它是 API、設定、資料交換的通用語言，但有幾個型別對應與陷阱要注意。
+> 為什麼 `json.dumps` 丟一個 `datetime` 進去就爆炸，丟 dict 卻沒事？json 是 API、設定、資料交換的通用語言，但它只認得幾種基本型別。這章講 `dumps`/`loads` 怎麼用，以及那幾個一定會遇到的型別陷阱。
 
 ## 💡 白話導讀（建議先讀）
 
