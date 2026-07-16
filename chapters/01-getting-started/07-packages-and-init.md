@@ -1,6 +1,6 @@
 # package 與 __init__.py
 
-> 當模組多到需要分資料夾管理，就需要 package——而 `__init__.py`、絕對 vs 相對 import，正是把資料夾變成「可 import 的套件」的關鍵。
+> 一個放了 `.py` 的資料夾，Python 憑什麼認得它、能 `import` 它？關鍵是一個叫 `__init__.py` 的檔案。這章講怎麼把資料夾變成「套件」，以及絕對 vs 相對 import 到底該選哪個。
 
 ## 💡 白話導讀（建議先讀）
 
