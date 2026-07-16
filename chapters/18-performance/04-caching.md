@@ -25,6 +25,8 @@ def expensive(n): ...
 
 表也不能無限貼下去（吃光記憶體）,所以要有**淘汰策略**。LRU（Least Recently Used）
 最常用：牆上便條滿了,**撕掉最久沒人看的那張**——賭「最近用過的,近期還會再用」。
+（另一種賭法是 **LFU**：撕掉**被看最少次**的那張——賭「常用的會繼續常用」。Python 的 `lru_cache` 只做 LRU；
+Redis 兩種都能選,取捨見 [Part 15 Redis 淘汰策略](../15-database/18-redis.md#記憶體滿了怎麼辦淘汰策略maxmemory-policy)。）
 
 眼熟嗎?這正是 [Redis 章](../15-database/18-redis.md)「櫃檯便條」的**行程內迷你版**：
 `lru_cache` 快取在單一行程的記憶體裡,Redis 快取在所有服務共享的外部櫃檯。
