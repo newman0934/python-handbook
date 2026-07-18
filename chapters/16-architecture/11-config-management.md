@@ -297,6 +297,6 @@ flowchart TD
 ⬅️ 這是 Part 16 的最後一章。
 
 
-➡️ 下一章：[Part 16 統整：架構與設計全貌](12-summary.md)
+➡️ 下一章：[模組化單體 Modular Monolith](12-modular-monolith.md)
 
 [⬆️ 回 Part 16 索引](README.md)

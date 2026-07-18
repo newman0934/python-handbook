@@ -201,3 +201,24 @@ def test_load_settings_validation() -> None:
         load_settings({"PORT": "8000"})
     with pytest.raises(ValueError, match="整數"):
         load_settings({"DATABASE_URL": "x", "PORT": "eighty"})
+
+
+def test_order_only_depends_on_public_interface() -> None:
+    """orders 透過 UsersAPI 取用 users,不碰其內部。"""
+    from examples.part16.modular_monolith import LocalUsers, OrderService
+
+    svc = OrderService(LocalUsers())
+    assert svc.place_order(1, "書") == "Ada 下單:書"
+
+
+def test_extracting_to_service_needs_no_business_change() -> None:
+    """把 users 換成遠端實作(模擬抽成微服務),OrderService 一行不改照樣運作。"""
+    from examples.part16.modular_monolith import (
+        LocalUsers,
+        OrderService,
+        RemoteUsers,
+    )
+
+    order = "Ada 下單:書"
+    assert OrderService(LocalUsers()).place_order(1, "書") == order
+    assert OrderService(RemoteUsers({1: "Ada"})).place_order(1, "書") == order  # 同結果
